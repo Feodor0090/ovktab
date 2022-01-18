@@ -23,25 +23,23 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
     [Cached]
     public class CommentsPopover : OsuPopover
     {
-        FillFlowContainer content;
-        LoadingLayer ll;
-        OsuTextBox input;
-        Task loading;
-        private int ownerId;
-        private int postId;
+        readonly FillFlowContainer content;
+        readonly LoadingLayer ll;
+        readonly OsuTextBox input;
+        private readonly int ownerId;
+        private readonly int postId;
 
-        private PostFooter footer;
+        private readonly PostFooter footer;
         private OvkApiHub ApiHub { get; set; }
 
         [Cached]
-        PopoverContainer pc;
+        public readonly PopoverContainer pc;
 
         public CommentsPopover(int ownerId, int postId, PostFooter f, Vector2 parentSize)
         {
             footer = f;
             this.ownerId = ownerId;
             this.postId = postId;
-            //RelativeSizeAxes = Axes.Both;
             Size = parentSize * 0.95f;
             Content.AutoSizeAxes = Axes.None;
             Content.RelativeSizeAxes = Axes.Both;

@@ -1,28 +1,17 @@
-﻿using System;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Game.Graphics.UserInterface;
-using osu.Framework.Graphics.Sprites;
-using osu.Game.Graphics;
-using osu.Game.Graphics.Backgrounds;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.UserInterface;
-using System.Linq;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Overlays;
-using osu.Game.Overlays.Notifications;
-using VkNet.Model;
-using osu.Game.Online.Chat;
 using osu.Game.Graphics.UserInterfaceV2;
-using System.Threading.Tasks;
+using osu.Game.Overlays;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class SendPopover : OsuPopover
     {
-        FillFlowContainer content;
-        int ownerId, postId;
+        readonly FillFlowContainer content;
+        private readonly int ownerId;
+        private readonly int postId;
+
         public SendPopover(int ownerId, int postId)
         {
             this.ownerId = ownerId;
@@ -38,8 +27,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 }
             });
         }
-        [Resolved] private DialogOverlay dialogOverlay { get; set; }
-        [Resolved] private OvkApiHub api { get; set; }
+        [Resolved] private DialogOverlay DialogOverlay { get; set; }
+        [Resolved] private OvkApiHub Api { get; set; }
 
         [BackgroundDependencyLoader(true)]
         async void load(OvkApiHub api)
@@ -59,9 +48,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 
         void Send(int peerId, string name)
         {
-            dialogOverlay.Push(new SendDialog(name, () =>
+            DialogOverlay.Push(new SendDialog(name, async () =>
             {
-                api.SendWall(peerId, ownerId, postId);
+                await Api.SendWall(peerId, ownerId, postId);
             }));
         }
     }

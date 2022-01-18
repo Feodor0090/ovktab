@@ -1,7 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
@@ -10,28 +9,21 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
-using osu.Game.Online.Chat;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class SimpleAttachment : BeatSyncedContainer
     {
-        private Circle circle;
-
-        Colour4 kiai = Colour4.PaleVioletRed;
-        Colour4 normal = Colour4.BlueViolet.Lighten(0.05f);
+        private readonly Circle circle;
+        readonly Colour4 kiai = Colour4.PaleVioletRed;
+        readonly Colour4 normal = Colour4.BlueViolet.Lighten(0.05f);
         private (object, Action<TriangleButton>)[] buttons;
-        string trackName;
 
         public SimpleAttachment(IconUsage icon, string firstLine, string secondLine, string note, (object, Action<TriangleButton>)[] buttons = null)
         {
             if (buttons == null) buttons = Array.Empty<(object, Action<TriangleButton>)>();
-            trackName = secondLine + " " + firstLine;
             this.buttons = buttons;
             RelativeSizeAxes = Axes.X;
             Height = 50;

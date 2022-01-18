@@ -24,13 +24,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         private ShakeContainer shake;
 
         [Resolved]
-        private OvkApiHub api { get; set; }
+        private OvkApiHub Api { get; set; }
         [Resolved]
-        private OvkOverlay ovk { get; set; }
+        private OvkOverlay Ovk { get; set; }
         private OvkTabConfig config;
-        private OvkTabRuleset ruleset;
+        private readonly OvkTabRuleset ruleset;
 
-        private Bindable<bool> keepSession = new Bindable<bool>();
+        private readonly Bindable<bool> keepSession = new();
         public VkLoginBlock(OvkTabRuleset ruleset)
         {
             this.ruleset = ruleset;
@@ -109,14 +109,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             errorText.Hide();
             if (config.Get<int>(OvkTabRulesetSetting.Id) != 0 && !string.IsNullOrEmpty(config.Get<string>(OvkTabRulesetSetting.Token)))
             {
-                ovk.loginLoading.Show();
+                Ovk.loginLoading.Show();
                 Task.Run(() =>
                 {
                     try
                     {
-                        api.Auth(config.Get<int>(OvkTabRulesetSetting.Id), config.Get<string>(OvkTabRulesetSetting.Token));
+                        Api.Auth(config.Get<int>(OvkTabRulesetSetting.Id), config.Get<string>(OvkTabRulesetSetting.Token));
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         Schedule(() =>
                         {
@@ -124,7 +124,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                             errorText.Show();
                         });
                     }
-                    Schedule(ovk.loginLoading.Hide);
+                    Schedule(Ovk.loginLoading.Hide);
                 });
             }
         }
@@ -138,17 +138,17 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         async void Auth()
         {
             errorText.Hide();
-            ovk.loginLoading.Show();
+            Ovk.loginLoading.Show();
             await Task.Run(() =>
             {
                 try
                 {
-                    api.Auth(login.Current.Value, password.Current.Value);
+                    Api.Auth(login.Current.Value, password.Current.Value);
                     config.SetValue(OvkTabRulesetSetting.Login, login.Current.Value);
                     if(keepSession.Value)
                     {
-                        config.SetValue(OvkTabRulesetSetting.Id, api.UserId);
-                        config.SetValue(OvkTabRulesetSetting.Token, api.Token);
+                        config.SetValue(OvkTabRulesetSetting.Id, Api.UserId);
+                        config.SetValue(OvkTabRulesetSetting.Token, Api.Token);
                     }
                 }
                 catch (Exception ex)
@@ -162,7 +162,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 }
             });
 
-            Schedule(ovk.loginLoading.Hide);
+            Schedule(Ovk.loginLoading.Hide);
         }
     }
 }

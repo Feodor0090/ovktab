@@ -5,22 +5,18 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Graphics.UserInterface;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VkNet.Model;
-using static osu.Game.Rulesets.OvkTab.OvkApiHub;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class DrawableVkComment : DrawableVkMessage
     {
-        Comment comm;
-        List<CommentsLevel> replies;
+        readonly Comment comm;
+        readonly List<CommentsLevel> replies;
         private PostActionButton likeButton;
-        private Bindable<int> likes = new Bindable<int>();
+        private readonly Bindable<int> likes = new();
 
         bool CanPost { get; set; }
         bool CanLike { get; set; }
@@ -39,9 +35,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         }
 
         [BackgroundDependencyLoader(true)]
-        void load(OsuGame game, LargeTextureStore lts)
+        void load()
         {
-            AddContent(comm.Text, comm.Attachments, game, lts);
+            AddContent(comm.Text, comm.Attachments);
             if (CanLike)
             {
                 likes.Value = comm.Likes.Count;
@@ -66,7 +62,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                             if(l.HasValue)
                             {
                                 likes.Value = (int)l.Value;
-                            } 
+                            }
                             else
                             {
                                 likeButton.Checked = false;
@@ -122,58 +118,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                     replies = new(),
                 }).ToList() ?? new()
             }).ToArray();
-
-            // old method to build full tree
-            List<Comment> replies = new List<Comment>();
-            List<Comment> roots = new List<Comment>();
-            foreach (Comment comment in source)
-            {
-                if (comment.ReplyToComment.HasValue)
-                {
-                    replies.Add(comment);
-                }
-                else
-                {
-                    roots.Add(comment);
-                }
-            }
-            var result = roots.Select(x => new CommentsLevel
-            {
-                id = (int)x.Id,
-                user = users.Where(u => u.id == x.FromId).First(),
-                comment = x,
-                replies = new(),
-            }).ToArray();
-
-            void PushReply(CommentsLevel level)
-            {
-                for (int i = replies.Count - 1; i >= 0; i--)
-                {
-                    if (replies[i].ReplyToComment == level.id)
-                    {
-                        level.replies.Add(new CommentsLevel
-                        {
-                            id = (int)replies[i].Id,
-                            user = users.Where(u => u.id == replies[i].FromId).First(),
-                            comment = replies[i],
-                            replies = new(),
-                        });
-                        replies.RemoveAt(i);
-                    }
-                }
-                for (int i = 0; i < level.replies.Count; i++)
-                {
-                    PushReply(level.replies[i]);
-                }
-            }
-
-            while (replies.Count > 0)
-            {
-                for (int i = 0; i < result.Length; i++)
-                    PushReply(result[i]);
-            }
-
-            return result;
         }
     }
 }

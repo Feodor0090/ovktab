@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         public void OnLogIn(SimpleVkUser user)
         {
             Clear(true);
-            Container cont = new Container
+            Container cont = new()
             {
                 Size = new(50),
                 Scale = new(0.8f),

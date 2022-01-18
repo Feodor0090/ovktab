@@ -16,9 +16,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
     public class PostFooter : FillFlowContainer
     {
         private readonly int ownerId, postId;
-        public readonly BindableInt likes = new BindableInt(0);
-        public readonly BindableInt comments = new BindableInt(0);
-        public readonly BindableInt reposts = new BindableInt(0);
+        public readonly BindableInt likes = new();
+        public readonly BindableInt comments = new();
+        public readonly BindableInt reposts = new();
         private PostActionButton likeButton;
         internal PostActionButton commentsButton;
         private PostActionButton repostButton;
@@ -30,10 +30,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 
         [Resolved(canBeNull: true)] private OvkApiHub OvkApiHub { get; set; }
         [Resolved(canBeNull: true)] private OvkOverlay OvkOverlay { get; set; }
-        [Resolved(canBeNull: true)] private NotificationOverlay nofs { get; set; }
-        [Resolved(canBeNull: true)] private DialogOverlay dialogOverlay { get; set; }
-        [Resolved(canBeNull: true)] private OsuGame osuGame { get; set; }
-        [Resolved(canBeNull: true)] private PopoverContainer popoverContainer { get; set; }
+        [Resolved(canBeNull: true)] private NotificationOverlay Nofs { get; set; }
+        [Resolved(canBeNull: true)] private DialogOverlay DialogOverlay { get; set; }
+        [Resolved(canBeNull: true)] private OsuGame OsuGame { get; set; }
+        [Resolved(canBeNull: true)] private PopoverContainer PopoverContainer { get; set; }
 
         public PostFooter(NewsItem post)
         {
@@ -78,7 +78,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 {
                     Current = likes
                 },
-                commentsButton = new PostActionButton(FontAwesome.Regular.Comment, false, false, OpenComments, ()=>new CommentsPopover(ownerId, postId, this, popoverContainer?.DrawSize ?? new(600))),
+                commentsButton = new PostActionButton(FontAwesome.Regular.Comment, false, false, OpenComments, ()=>new CommentsPopover(ownerId, postId, this, PopoverContainer?.DrawSize ?? new(600))),
                 new PostCounter()
                 {
                     Current = comments
@@ -94,7 +94,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 faveButton = new PostActionButton(FontAwesome.Regular.Star, false, false, Fave),
                 new PostActionButton(FontAwesome.Solid.Link, false, false, () =>
                 {
-                    osuGame?.HandleLink(new LinkDetails(LinkAction.External, $"https://vk.com/wall{ownerId}_{postId}"));
+                    OsuGame?.HandleLink(new LinkDetails(LinkAction.External, $"https://vk.com/wall{ownerId}_{postId}"));
                 }),
             };
         }
@@ -110,7 +110,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 likes.Value = (int)newCount.Value;
             }
             else
-                nofs?.Post(new SimpleErrorNotification()
+                Nofs?.Post(new SimpleErrorNotification()
                 {
                     Text = "Failed to like the post"
                 });
@@ -127,7 +127,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             if (postId == 0 || OvkApiHub == null) return;
             if (repostButton.Checked) return;
 
-            RepostDialog dialog = new RepostDialog(ownerId, postId, OvkApiHub, OvkOverlay?.newsLoading, x =>
+            RepostDialog dialog = new(ownerId, postId, OvkApiHub, OvkOverlay?.newsLoading, x =>
             {
                 OvkOverlay?.newsLoading.Hide();
                 if (x.HasValue)
@@ -138,7 +138,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                     if (x.Value.Item2.HasValue) reposts.Value = x.Value.Item2.Value;
                 }
             });
-            dialogOverlay?.Push(dialog);
+            DialogOverlay?.Push(dialog);
         }
 
         async void Fave()
@@ -153,7 +153,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             }
             else
             {
-                nofs?.Post(new SimpleErrorNotification()
+                Nofs?.Post(new SimpleErrorNotification()
                 {
                     Text = "Failed to fave the post"
                 });

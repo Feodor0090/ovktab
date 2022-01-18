@@ -1,22 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics.Cursor;
-using osu.Game.Graphics.UserInterface;
-using osu.Game.Overlays;
-using osu.Game.Overlays.Notifications;
-using osu.Game.Rulesets.OvkTab.UI.Components;
-using osu.Framework.Graphics.Sprites;
-using osu.Game.Graphics.Sprites;
+using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
+using System.Collections.Generic;
 using VkNet.Model.Attachments;
 using static osu.Game.Rulesets.OvkTab.OvkApiHub;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Textures;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
@@ -32,7 +21,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             RelativeSizeAxes = Axes.X;
             var font = OsuFont.GetFont(size: 20);
 
-            if(user!=null) Add(new OsuSpriteText
+            if (user != null) Add(new OsuSpriteText
             {
                 Text = user.name,
                 Position = new(60, 0),
@@ -70,11 +59,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             });
         }
 
-        protected void AddContent(string text, IEnumerable<Attachment> atts, OsuGame game, LargeTextureStore lts)
+        protected void AddContent(string text, IEnumerable<Attachment> atts)
         {
             content.Add(new TextFlowContainer(x => x.Font = OsuFont.GetFont(size: 18))
             {
-                Text = OvkApiHub.ClearText(text),
+                Text = ClearText(text),
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Padding = new() { Horizontal = 5 },

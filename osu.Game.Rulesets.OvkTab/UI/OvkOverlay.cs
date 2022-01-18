@@ -19,26 +19,24 @@ namespace osu.Game.Rulesets.OvkTab.UI
     internal class OvkOverlay : FullscreenOverlay<OvkOverlayHeader>
     {
         [Cached]
-        PopoverContainer pc;
-        Container container;
+        readonly PopoverContainer pc;
+        readonly Container container;
 
         public LoadingLayer loginLoading;
         public LoadingLayer newsLoading;
 
-        VkLoginBlock loginTab;
-        OverlayScrollContainer newsTab;
-        OverlayScrollContainer recommsTab;
-        DialogsTab dialogsTab;
-        OverlayScrollContainer friendsTab;
-        OverlayScrollContainer groupsTab;
-
-        Drawable[] tabs;
+        readonly VkLoginBlock loginTab;
+        readonly OverlayScrollContainer newsTab;
+        readonly OverlayScrollContainer recommsTab;
+        readonly DialogsTab dialogsTab;
+        readonly OverlayScrollContainer friendsTab;
+        readonly OverlayScrollContainer groupsTab;
+        readonly Drawable[] tabs;
 
         private bool newsLoaded = false;
         private bool recommendedLoaded = false;
         [Cached]
         private readonly OvkApiHub apiHub;
-        private readonly OvkTabRuleset ovkTabRuleset;
         readonly Bindable<SimpleVkUser> logged;
 
         [Resolved]
@@ -47,8 +45,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
         public OvkOverlay(OvkTabRuleset ovkTabRuleset) : base(OverlayColourScheme.Blue)
         {
             // API
-            this.ovkTabRuleset = ovkTabRuleset;
-            apiHub = new OvkApiHub(ovkTabRuleset);
+            apiHub = new OvkApiHub();
             apiHub.OnLongPollFail += ex =>
               {
                   nofs.Post(new SimpleErrorNotification() { Text = "Longpoll failed: "+ex.Message });
@@ -221,6 +218,6 @@ namespace osu.Game.Rulesets.OvkTab.UI
             else { groupsTab.Clear(true); }
         }
 
-        protected override OvkOverlayHeader CreateHeader() => new OvkOverlayHeader();
+        protected override OvkOverlayHeader CreateHeader() => new();
     }
 }

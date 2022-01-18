@@ -1,37 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.OvkTab.UI.Components;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using osu.Game.Tests.Visual;
-using osu.Game.Overlays;
-using osu.Framework.Allocation;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Game.Overlays;
+using osu.Game.Rulesets.OvkTab.UI.Components;
+using osu.Game.Tests.Visual;
+using System;
 using VkNet.Model.Attachments;
 
 namespace osu.Game.Rulesets.OvkTab.Tests.UI
 {
     public class TestScenePostElements : OsuTestScene
     {
-        private FillFlowContainer headerContainer;
-        private FillFlowContainer footerContainer;
-
-        BindableInt likes = new BindableInt(0);
-        BindableInt reposts = new BindableInt(0);
-        BindableInt comments = new BindableInt(0);
+        private readonly FillFlowContainer headerContainer;
+        private readonly FillFlowContainer footerContainer;
+        readonly BindableInt likes = new();
+        readonly BindableInt reposts = new();
+        readonly BindableInt comments = new();
 
         NowPlayingOverlay npo;
 
         [Cached]
-        OverlayColourProvider ocp = new OverlayColourProvider(OverlayColourScheme.Blue);
+        public readonly OverlayColourProvider ocp = new(OverlayColourScheme.Blue);
 
         public TestScenePostElements()
         {
-            Add(new PopoverContainer {
+            Add(new PopoverContainer
+            {
                 RelativeSizeAxes = Axes.Both,
                 Child = new GridContainer()
                 {

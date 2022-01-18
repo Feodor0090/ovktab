@@ -1,41 +1,36 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics.Cursor;
+using osu.Framework.Utils;
+using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
-using osu.Game.Overlays.Notifications;
-using osu.Game.Rulesets.OvkTab.UI.Components;
-using osu.Framework.Graphics.Sprites;
-using VkNet.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using static osu.Game.Rulesets.OvkTab.OvkApiHub;
-using osu.Game.Graphics.Containers;
-using osu.Framework.Utils;
+using VkNet.Model;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     [Cached]
     internal class DialogsTab : Container
     {
-        FillFlowContainer<DrawableDialog> dialogsList;
-        Container dialogView;
-        OsuTextBox messageInput;
-        FillFlowContainer history;
-        LoadingLayer listLoading;
-        LoadingLayer historyLoading;
-        HistoryScroll historyScroll;
+        readonly FillFlowContainer<DrawableDialog> dialogsList;
+        readonly Container dialogView;
+        readonly OsuTextBox messageInput;
+        readonly FillFlowContainer history;
+        readonly LoadingLayer listLoading;
+        readonly LoadingLayer historyLoading;
+        readonly HistoryScroll historyScroll;
 
-        private Dictionary<int, SimpleVkUser> usersCache = new Dictionary<int, SimpleVkUser>();
+        private readonly Dictionary<int, SimpleVkUser> usersCache = new();
 
         public Bindable<int> currentChat = new Bindable<int>(0);
 
         [Resolved]
-        private OvkApiHub apiHub { get; set; }
+        private OvkApiHub ApiHub { get; set; }
         public DialogsTab()
         {
             RelativeSizeAxes = Axes.Both;
@@ -101,9 +96,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         [BackgroundDependencyLoader]
         void load()
         {
-            apiHub.OnNewMessage += OnNewMessage;
+            ApiHub.OnNewMessage += OnNewMessage;
             messageInput.OnCommit += MessageInput_OnCommit;
-            apiHub.loggedUser.ValueChanged += x =>
+            ApiHub.loggedUser.ValueChanged += x =>
             {
                 if (x.NewValue == null) DeleteAll();
             };
@@ -114,7 +109,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             if (currentChat.Value != 0 && !string.IsNullOrWhiteSpace(sender.Text))
             {
                 historyLoading.Show();
-                bool ok = await apiHub.SendMessage(currentChat.Value, sender.Text);
+                bool ok = await ApiHub.SendMessage(currentChat.Value, sender.Text);
                 if (ok)
                 {
                     sender.Text = String.Empty;
@@ -145,12 +140,12 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 if (m.fromId != 0)
                     id = m.fromId;
                 else
-                    id = apiHub.UserId;
+                    id = ApiHub.UserId;
                 Message msg;
                 // let's just load full object for now.
                 if (m.extra.Count > 0)
                 {
-                    msg = apiHub.LoadMessage(m.messageId);
+                    msg = ApiHub.LoadMessage(m.messageId);
                     id = (int)msg.FromId;
                 }
                 else
@@ -172,7 +167,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         public async void Start()
         {
             Schedule(listLoading.Show);
-            var list = await apiHub.GetDialogsList();
+            var list = await ApiHub.GetDialogsList();
             var items = list.Select(x => new DrawableDialog(x));
             dialogsList.Clear(true);
             dialogsList.AddRange(items);
@@ -188,7 +183,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             currentChat.Value = 0;
             historyLoading.Show();
             history.Clear(true);
-            var data = await apiHub.LoadHistory(peerId);
+            var data = await ApiHub.LoadHistory(peerId);
             var msgs = data.Item1;
             history.AddRange(msgs.Select(x => new DrawableVkChatMessage(x.Item1, x.Item2, data.Item2)).Reverse());
             foreach (var x in data.Item2)

@@ -32,9 +32,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         }
 
         [BackgroundDependencyLoader(true)]
-        void load(OsuGame game, LargeTextureStore lts)
+        void load()
         {
-            AddContent(msg.Text, msg.Attachments, game, lts);
+            AddContent(msg.Text, msg.Attachments);
 
             if(msg.ReplyMessage != null)
             {

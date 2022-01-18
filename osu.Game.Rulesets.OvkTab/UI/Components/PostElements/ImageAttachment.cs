@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         }
 
         [BackgroundDependencyLoader]
-        void load(LargeTextureStore lts)
+        void load()
         {
             LoadComponentAsync(new AttSprite(url), load);
         }

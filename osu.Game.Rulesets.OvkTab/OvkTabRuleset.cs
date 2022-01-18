@@ -70,7 +70,7 @@ namespace osu.Game.Rulesets.OvkTab
 
         public class Icon : CompositeDrawable
         {
-            private OvkTabRuleset ruleset;
+            private readonly OvkTabRuleset ruleset;
             public Icon(OvkTabRuleset ovkTab)
             {
                 ruleset = ovkTab;

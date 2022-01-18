@@ -1,33 +1,30 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
-using osu.Framework.IO.Network;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
-using Newtonsoft.Json;
+using osu.Framework.IO.Network;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using VkNet;
-using VkNet.Model;
 using VkNet.Enums.Filters;
 using VkNet.Enums.SafetyEnums;
-using System.Collections.Generic;
-using VkNet.Model.RequestParams;
-using System.Threading.Tasks;
+using VkNet.Model;
 using VkNet.Model.Attachments;
-using osu.Game.Rulesets.OvkTab.UI.Components;
-using System.Threading;
-using Newtonsoft.Json.Linq;
-using osu.Game.Overlays;
+using VkNet.Model.RequestParams;
 
 namespace osu.Game.Rulesets.OvkTab
 {
     [Cached]
     public partial class OvkApiHub
     {
-        private readonly OvkTabRuleset ruleset;
 
         public readonly VkApi api;
 
-        public readonly Bindable<SimpleVkUser> loggedUser = new Bindable<SimpleVkUser>(null);
+        public readonly Bindable<SimpleVkUser> loggedUser = new();
 
         public string Token
         {
@@ -45,11 +42,9 @@ namespace osu.Game.Rulesets.OvkTab
             }
         }
 
-        public OvkApiHub(OvkTabRuleset ruleset)
+        public OvkApiHub()
         {
-            this.ruleset = ruleset;
             api = new VkApi();
-
         }
         const int IPhoneId = 3140623;
         const string IPhoneSecret = "VeWdmVclDCtn6ihuP1nt";
@@ -63,11 +58,11 @@ namespace osu.Game.Rulesets.OvkTab
         public void Auth(string login, string password)
         {
             string result;
-            using (WebRequest request = new WebRequest()
+            using (WebRequest request = new()
             {
                 Method = HttpMethod.Get,
                 Url = "https://oauth.vk.com/token?grant_type=password" +
-                "&client_id=" + VkmId + "&client_secret=lxhD8OD7dMsqtXIm5IUY&username=" + login + "&password=" + password +
+                "&client_id=" + VkmId + "&client_secret=" + VkmSecret + "&username=" + login + "&password=" + password +
                 "&scope=notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads"
             })
             {
@@ -89,9 +84,9 @@ namespace osu.Game.Rulesets.OvkTab
             StartLongPoll();
         }
 
-        public IEnumerable<(NewsItem, SimpleVkUser)> ProcessNewsFeed(NewsFeed feed)
+        public static IEnumerable<(NewsItem, SimpleVkUser)> ProcessNewsFeed(NewsFeed feed)
         {
-            List<(NewsItem, SimpleVkUser)> result = new List<(NewsItem, SimpleVkUser)>();
+            List<(NewsItem, SimpleVkUser)> result = new();
             foreach (var post in feed.Items)
             {
                 SimpleVkUser user;
@@ -134,7 +129,7 @@ namespace osu.Game.Rulesets.OvkTab
         public async Task<IEnumerable<(Post, SimpleVkUser)>> LoadWall(int pageId)
         {
             var r = await api.Wall.GetAsync(new WallGetParams { Count = 100, Extended = true, OwnerId = pageId });
-            List<(Post, SimpleVkUser)> result = new List<(Post, SimpleVkUser)>();
+            List<(Post, SimpleVkUser)> result = new();
             foreach (var post in r.WallPosts)
             {
                 SimpleVkUser user;
@@ -248,8 +243,8 @@ namespace osu.Game.Rulesets.OvkTab
         {
             var r = await Task.Run(() =>
             {
-                IEnumerable<SimpleVkUser> peopleConverted = people?.Select(x => new SimpleVkUser(x)) ?? new SimpleVkUser[0];
-                IEnumerable<SimpleVkUser> groupsConverted = groups?.Select(x => new SimpleVkUser(x)) ?? new SimpleVkUser[0];
+                IEnumerable<SimpleVkUser> peopleConverted = people?.Select(x => new SimpleVkUser(x)) ?? Array.Empty<SimpleVkUser>();
+                IEnumerable<SimpleVkUser> groupsConverted = groups?.Select(x => new SimpleVkUser(x)) ?? Array.Empty<SimpleVkUser>();
                 return peopleConverted.Concat(groupsConverted).ToArray();
             });
             return r;
@@ -359,7 +354,7 @@ namespace osu.Game.Rulesets.OvkTab
                     try
                     {
                         LongpollData ld;
-                        using (WebRequest request = new WebRequest()
+                        using (WebRequest request = new()
                         {
                             Method = HttpMethod.Get,
                             Url = $"https://{lpp.Server}?act=a_check&key={lpp.Key}&ts={activeTs}&wait=25&mode=2&version=3",

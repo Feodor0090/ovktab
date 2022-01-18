@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.OvkTab
 
             var request = new FileWebRequest(filename, docUrl);
 
-            DownloadNotification nof = new DownloadNotification
+            DownloadNotification nof = new()
             {
                 Text = $"Downloading {docName}",
             };
