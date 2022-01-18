@@ -12,11 +12,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class PostHeader : BeatSyncedContainer
     {
-        private readonly OvkApiHub.SimpleUser author;
+        private readonly SimpleVkUser author;
         private readonly OsuSpriteText authorText;
         private DrawableVkAvatar avatar = null;
 
-        public PostHeader(OvkApiHub.SimpleUser author, DateTime time)
+        public PostHeader(SimpleVkUser author, DateTime time)
         {
             this.author = author;
             RelativeSizeAxes = Axes.X;

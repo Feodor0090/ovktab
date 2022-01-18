@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             foreach (var x in r)
             {
                 var u = x.Item1;
-                if (u == null) u = new OvkApiHub.SimpleUser()
+                if (u == null) u = new SimpleVkUser()
                 {
                     name = x.Item2.Conversation.ChatSettings?.Title,
                     avatarUrl = x.Item2.Conversation.ChatSettings?.Photo?.Photo100.AbsoluteUri

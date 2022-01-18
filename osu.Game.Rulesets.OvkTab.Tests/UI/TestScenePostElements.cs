@@ -75,7 +75,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
             AddStep("Show NPO", () => npo?.Show());
             AddStep("Add header", () =>
             {
-                headerContainer.Child = new PostHeader(new OvkApiHub.SimpleUser()
+                headerContainer.Child = new PostHeader(new SimpleVkUser()
                 {
                     avatarUrl = "https://sun9-87.userapi.com/impg/zKRqPgUEstF259F3AT1x47pAAziAYSOPyarB6w/S5nHYGmZg9Y.jpg?size=200x201&quality=96&sign=fab58cebed5730066207d0445ebd14d1&type=album",
                     id = 0,

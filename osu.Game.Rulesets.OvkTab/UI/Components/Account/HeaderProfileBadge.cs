@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             this.FadeOut(250);
         }
 
-        public void OnLogIn(OvkApiHub.SimpleUser user)
+        public void OnLogIn(SimpleVkUser user)
         {
             Clear(true);
             Container cont = new Container
