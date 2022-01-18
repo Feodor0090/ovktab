@@ -26,7 +26,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             CornerRadius = 10;
             TooltipText = user?.name;
             url = user?.avatarUrl ?? "https://vk.com/images/camera_50.png";
-            Action = () => { };
+            Action = () => {
+                this.ShowPopover();
+            };
         }
         public DrawableVkAvatar(string name, string url)
         {
@@ -36,7 +38,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             CornerRadius = 10;
             TooltipText = name;
             this.url = url ?? "https://vk.com/images/camera_50.png";
-            Action = () => { };
         }
         [BackgroundDependencyLoader]
         void load(LargeTextureStore lts)
@@ -47,12 +48,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 RelativeSizeAxes = Axes.Both,
                 Size = new(1)
             });
-        }
-
-        protected override bool OnClick(ClickEvent e)
-        {
-            this.ShowPopover();
-            return base.OnClick(e);
         }
 
         public Popover GetPopover()
