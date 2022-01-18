@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
                     Text = @"Yes. Totally. Repost it.",
                     Action = async () =>
                     {
-                        if(ownerId==0|| postId==0) return;
+                        if(ownerId==0 || postId==0) return;
                         if(api == null) return;
                         if(newsLoading!=null) Schedule(newsLoading.Show);
                         var r = await api.Repost(ownerId, postId);

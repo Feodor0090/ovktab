@@ -5,7 +5,6 @@ using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Input.Events;
 using osu.Game.Graphics.Containers;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
@@ -26,7 +25,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             CornerRadius = 10;
             TooltipText = user?.name;
             url = user?.avatarUrl ?? "https://vk.com/images/camera_50.png";
-            Action = () => {
+            Action = () =>
+            {
                 this.ShowPopover();
             };
         }

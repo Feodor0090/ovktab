@@ -31,10 +31,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         [Resolved] private OvkApiHub Api { get; set; }
 
         [BackgroundDependencyLoader(true)]
-        async void load(OvkApiHub api)
+        async void load()
         {
-            var r = await api.GetDialogsList();
-            foreach (var x in r)
+            foreach (var x in await Api.GetDialogsList())
             {
                 var u = x.Item1;
                 if (u == null) u = new SimpleVkUser()
@@ -46,12 +45,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             }
         }
 
-        void Send(int peerId, string name)
+        void Send(int peerId, string name) => DialogOverlay.Push(new SendDialog(name, async () =>
         {
-            DialogOverlay.Push(new SendDialog(name, async () =>
-            {
-                await Api.SendWall(peerId, ownerId, postId);
-            }));
-        }
+            await Api.SendWall(peerId, ownerId, postId);
+        }));
     }
 }

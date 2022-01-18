@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
-using osu.Game.Graphics.Cursor;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
-using osu.Game.Overlays;
+using System;
+using System.Threading.Tasks;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
@@ -39,7 +34,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         [BackgroundDependencyLoader]
         void load(IRulesetConfigCache c)
         {
-            
+
             RelativeSizeAxes = Axes.Both;
             config = c?.GetConfigFor(ruleset) as OvkTabConfig;
             Add(new FillFlowContainer
@@ -145,7 +140,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 {
                     Api.Auth(login.Current.Value, password.Current.Value);
                     config.SetValue(OvkTabRulesetSetting.Login, login.Current.Value);
-                    if(keepSession.Value)
+                    if (keepSession.Value)
                     {
                         config.SetValue(OvkTabRulesetSetting.Id, Api.UserId);
                         config.SetValue(OvkTabRulesetSetting.Token, Api.Token);

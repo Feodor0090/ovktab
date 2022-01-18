@@ -12,10 +12,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class PostActionButton : OsuButton, IHasPopover
     {
-        private IconUsage icon;
+        private readonly IconUsage icon;
         private OsuColour colour;
         private bool done;
-        private Func<Popover> popover;
+        private readonly Func<Popover> popover;
         private readonly bool isPink;
 
 
@@ -56,7 +56,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         [BackgroundDependencyLoader]
         private void load(OsuColour colours)
         {
-            this.colour = colours;
+            colour = colours;
             Add(Triangles = new SmallTriangles());
             Add(new SpriteIcon()
             {
@@ -77,7 +77,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         private class SmallTriangles : Triangles
         {
             protected override float SpawnRatio => 2f;
-
             public SmallTriangles()
             {
                 RelativeSizeAxes = Axes.Both;

@@ -110,10 +110,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             {
                 historyLoading.Show();
                 bool ok = await ApiHub.SendMessage(currentChat.Value, sender.Text);
-                if (ok)
-                {
-                    sender.Text = String.Empty;
-                }
+                if (ok) sender.Text = String.Empty;
                 Schedule(() =>
                 {
                     historyScroll.ScrollToEnd(true, true);

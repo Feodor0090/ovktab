@@ -16,8 +16,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     internal class DrawableDialog : BeatSyncedContainer
     {
-        private SimpleVkUser user;
-        private ConversationAndLastMessage msg;
+        private readonly SimpleVkUser user;
+        private readonly ConversationAndLastMessage msg;
         private DrawableVkAvatar avatar;
         private OsuSpriteText userName;
         private Drawable unreadMark;
@@ -119,9 +119,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             }
         }
 
-        private class DialogPreview : OsuClickableContainer
+        private sealed class DialogPreview : OsuClickableContainer
         {
-            private Drawable hover;
+            private readonly Drawable hover;
             public DialogPreview(string title, DateTime time, int id, string text, DialogsTab dialogs, Drawable hoverBox, Colour4 unreadMarkColor, 
                 out OsuSpriteText userNameText, out OsuSpriteText timeText, out Drawable unreadCircle, out OsuSpriteText textText)
             {

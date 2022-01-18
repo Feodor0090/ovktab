@@ -1,22 +1,11 @@
-﻿using System;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Game.Graphics.UserInterface;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Backgrounds;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.UserInterface;
-using System.Linq;
-using osu.Framework.Bindables;
-using osu.Framework.Graphics.Containers;
-using osu.Game.Overlays;
-using osu.Game.Overlays.Notifications;
-using VkNet.Model;
-using osu.Game.Online.Chat;
-using osu.Game.Graphics.UserInterfaceV2;
-using System.Threading.Tasks;
 using osu.Game.Graphics.Sprites;
+using osu.Game.Graphics.UserInterface;
+using osu.Game.Overlays;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
@@ -29,7 +18,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             Direction = FillDirection.Horizontal;
             Spacing = new(10, 0);
         }
-        [Resolved(canBeNull: true)] private DialogOverlay dialogOverlay { get; set; }
+        [Resolved(canBeNull: true)] private DialogOverlay DialogOverlay { get; set; }
         OvkApiHub api;
 
         [BackgroundDependencyLoader]
@@ -41,53 +30,45 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                  if (e.NewValue != null)
                      OnLogIn(e.NewValue);
                  else
-                     OnLogOut();
+                     this.FadeOut(250);
              };
             Hide();
         }
 
-        public void OnLogOut()
-        {
-            this.FadeOut(250);
-        }
-
         public void OnLogIn(SimpleVkUser user)
         {
-            Clear(true);
-            Container cont = new()
-            {
-                Size = new(50),
-                Scale = new(0.8f),
-                Origin = Anchor.CentreLeft,
-                Anchor = Anchor.CentreLeft,
-            };
-            Add(cont);
-            Add(new OsuSpriteText()
-            {
-                Text = user.name,
-                Position = new(65, 0),
-                Origin = Anchor.CentreLeft,
-                Anchor = Anchor.CentreLeft,
-                Font = OsuFont.GetFont(size: 18),
-            });
-            var button = new DangerousTriangleButton()
-            {
-                Size = new(40, 40),
-                Origin = Anchor.CentreLeft,
-                Anchor = Anchor.CentreLeft,
-                Action = () =>
+            Container cont;
+            DangerousTriangleButton button;
+            Children = new Drawable[] {
+                cont = new()
                 {
-                    if (dialogOverlay == null)
+                    Size = new(50),
+                    Scale = new(0.8f),
+                    Origin = Anchor.CentreLeft,
+                    Anchor = Anchor.CentreLeft,
+                },
+                new OsuSpriteText()
+                {
+                    Text = user.name,
+                    Position = new(65, 0),
+                    Origin = Anchor.CentreLeft,
+                    Anchor = Anchor.CentreLeft,
+                    Font = OsuFont.GetFont(size: 18),
+                },
+                button = new()
+                {
+                    Size = new(40, 40),
+                    Origin = Anchor.CentreLeft,
+                    Anchor = Anchor.CentreLeft,
+                    Action = () =>
                     {
-                        api.Logout();
-                    }
-                    else
-                    {
-                        dialogOverlay.Push(new LogoutDialog(api.Logout));
+                        if (DialogOverlay == null)
+                            api.Logout();
+                        else
+                            DialogOverlay.Push(new LogoutDialog(api.Logout));
                     }
                 }
             };
-            Add(button);
             button.Add(new SpriteIcon
             {
                 Icon = FontAwesome.Solid.SignOutAlt,

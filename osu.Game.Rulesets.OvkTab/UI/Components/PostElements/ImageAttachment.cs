@@ -6,11 +6,6 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
@@ -40,7 +35,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         void load(AttSprite s)
         {
             Add(s);
-            if (length < 0 && length!=-2) return;
+            if (length < 0 && length != -2) return;
             Add(new Box
             {
                 Rotation = 45,
@@ -61,11 +56,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             if (length > 0)
             {
                 text = ((length / 60).ToString().PadLeft(2, '0') + ":" + (length % 60).ToString().PadLeft(2, '0'));
-            } 
+            }
             else if (length == -2)
             {
                 text = "gif";
-            } 
+            }
             else
             {
                 text = "live";
@@ -74,7 +69,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             {
                 AutoSizeAxes = Axes.Both,
                 Position = new(0),
-                Children  = new Drawable[]
+                Children = new Drawable[]
                 {
                     new Box
                     {

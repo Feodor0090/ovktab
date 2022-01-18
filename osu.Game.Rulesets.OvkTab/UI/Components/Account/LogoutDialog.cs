@@ -1,18 +1,11 @@
-﻿using osu.Game.Overlays.Dialog;
+﻿using osu.Framework.Graphics.Sprites;
+using osu.Game.Overlays.Dialog;
 using System;
-using osu.Framework.Allocation;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using osu.Framework.Graphics.Sprites;
-using osu.Game.Graphics.UserInterface;
-using osu.Game.Overlays;
 
 namespace osu.Game.Rulesets.OvkTab.UI
 {
     public class LogoutDialog : PopupDialog
     {
-
         public LogoutDialog(Action callback)
         {
             Icon = FontAwesome.Solid.SignOutAlt;
