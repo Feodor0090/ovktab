@@ -21,7 +21,7 @@ using osu.Game.Overlays;
 namespace osu.Game.Rulesets.OvkTab
 {
     [Cached]
-    public class OvkApiHub
+    public partial class OvkApiHub
     {
         private readonly OvkTabRuleset ruleset;
 
@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.OvkTab
 
         public BindableBool isLoggedIn = new BindableBool(false);
 
-        private SimpleUser current;
+        private SimpleVkUser current;
         internal HeaderProfileBadge badge;
 
         public string Token
@@ -48,7 +48,7 @@ namespace osu.Game.Rulesets.OvkTab
             }
         }
 
-        public SimpleUser Current { get { return current; } }
+        public SimpleVkUser Current { get { return current; } }
 
         public OvkApiHub(OvkTabRuleset ruleset)
         {
@@ -96,7 +96,7 @@ namespace osu.Game.Rulesets.OvkTab
             try
             {
                 api.Authorize(new ApiAuthParams { AccessToken = token, UserId = id });
-                current = new SimpleUser(api.Users.Get(new[] { (long)id }, ProfileFields.All, NameCase.Nom).First());
+                current = new SimpleVkUser(api.Users.Get(new[] { (long)id }, ProfileFields.All, NameCase.Nom).First());
                 StartLongPoll();
             }
             finally
@@ -105,15 +105,15 @@ namespace osu.Game.Rulesets.OvkTab
             }
         }
 
-        public IEnumerable<(NewsItem, SimpleUser)> ProcessNewsFeed(NewsFeed feed)
+        public IEnumerable<(NewsItem, SimpleVkUser)> ProcessNewsFeed(NewsFeed feed)
         {
-            List<(NewsItem, SimpleUser)> result = new List<(NewsItem, SimpleUser)>();
+            List<(NewsItem, SimpleVkUser)> result = new List<(NewsItem, SimpleVkUser)>();
             foreach (var post in feed.Items)
             {
-                SimpleUser user;
+                SimpleVkUser user;
                 if (post.SourceId < 0)
                 {
-                    user = feed.Groups.Where(x => x.Id == -post.SourceId).Select(g => new SimpleUser()
+                    user = feed.Groups.Where(x => x.Id == -post.SourceId).Select(g => new SimpleVkUser()
                     {
                         id = (int)post.SourceId,
                         name = g.Name,
@@ -122,7 +122,7 @@ namespace osu.Game.Rulesets.OvkTab
                 }
                 else
                 {
-                    user = feed.Profiles.Where(x => x.Id == post.SourceId).Select(x => new SimpleUser()
+                    user = feed.Profiles.Where(x => x.Id == post.SourceId).Select(x => new SimpleVkUser()
                     {
                         id = (int)post.SourceId,
                         name = x.FirstName + " " + x.LastName,
@@ -136,27 +136,27 @@ namespace osu.Game.Rulesets.OvkTab
 
             return result;
         }
-        public async Task<IEnumerable<(NewsItem, SimpleUser)>> LoadNews()
+        public async Task<IEnumerable<(NewsItem, SimpleVkUser)>> LoadNews()
         {
             NewsFeed feed = await api.NewsFeed.GetAsync(new NewsFeedGetParams() { Filters = NewsTypes.Post, MaxPhotos = 10 });
             return ProcessNewsFeed(feed);
         }
-        public async Task<IEnumerable<(NewsItem, SimpleUser)>> LoadRecommended()
+        public async Task<IEnumerable<(NewsItem, SimpleVkUser)>> LoadRecommended()
         {
             NewsFeed feed = await api.NewsFeed.GetRecommendedAsync(new NewsFeedGetRecommendedParams { MaxPhotos = 10 });
             return ProcessNewsFeed(feed);
         }
 
-        public async Task<IEnumerable<(Post, SimpleUser)>> LoadWall(int pageId)
+        public async Task<IEnumerable<(Post, SimpleVkUser)>> LoadWall(int pageId)
         {
             var r = await api.Wall.GetAsync(new WallGetParams { Count = 100, Extended = true, OwnerId = pageId });
-            List<(Post, SimpleUser)> result = new List<(Post, SimpleUser)>();
+            List<(Post, SimpleVkUser)> result = new List<(Post, SimpleVkUser)>();
             foreach (var post in r.WallPosts)
             {
-                SimpleUser user;
+                SimpleVkUser user;
                 if (post.FromId < 0)
                 {
-                    user = r.Groups.Where(x => x.Id == -post.FromId).Select(g => new SimpleUser()
+                    user = r.Groups.Where(x => x.Id == -post.FromId).Select(g => new SimpleVkUser()
                     {
                         id = (int)post.FromId,
                         name = g.Name,
@@ -165,7 +165,7 @@ namespace osu.Game.Rulesets.OvkTab
                 }
                 else
                 {
-                    user = r.Profiles.Where(x => x.Id == post.FromId).Select(x => new SimpleUser()
+                    user = r.Profiles.Where(x => x.Id == post.FromId).Select(x => new SimpleVkUser()
                     {
                         id = (int)post.FromId,
                         name = x.FirstName + " " + x.LastName,
@@ -213,7 +213,7 @@ namespace osu.Game.Rulesets.OvkTab
             }
         }
 
-        public async Task<IEnumerable<SimpleUser>> GetFriendsList()
+        public async Task<IEnumerable<SimpleVkUser>> GetFriendsList()
         {
             var f = await api.Friends.GetAsync(new FriendsGetParams()
             {
@@ -221,16 +221,16 @@ namespace osu.Game.Rulesets.OvkTab
                 UserId = api.UserId.Value,
                 Fields = ProfileFields.All,
             });
-            return f.Select(x => new SimpleUser(x));
+            return f.Select(x => new SimpleVkUser(x));
         }
 
-        public async Task<IEnumerable<SimpleUser>> GetGroupsList()
+        public async Task<IEnumerable<SimpleVkUser>> GetGroupsList()
         {
             var g = await api.Groups.GetAsync(new GroupsGetParams() { Count = 100, Extended = true, UserId = api.UserId.Value, Fields = GroupsFields.All });
-            return g.Select(x => new SimpleUser(x));
+            return g.Select(x => new SimpleVkUser(x));
         }
 
-        public async Task<IEnumerable<(SimpleUser, ConversationAndLastMessage)>> GetDialogsList()
+        public async Task<IEnumerable<(SimpleVkUser, ConversationAndLastMessage)>> GetDialogsList()
         {
             var d = await api.Messages.GetConversationsAsync(new GetConversationsParams { Count = 100, Extended = true });
             return MapObjectsWithUsers(d.Items, await Convert(d.Profiles, d.Groups), x => (int)x.Conversation.Peer.Id);
@@ -254,29 +254,29 @@ namespace osu.Game.Rulesets.OvkTab
             return await api.Fave.AddPostAsync(new VkNet.Model.RequestParams.Fave.FaveAddPostParams { Id = postId, OwnerId = ownerId });
         }
 
-        public async Task<(IEnumerable<(SimpleUser, Message)>, SimpleUser[])> LoadHistory(long peer)
+        public async Task<(IEnumerable<(SimpleVkUser, Message)>, SimpleVkUser[])> LoadHistory(long peer)
         {
             var m = await api.Messages.GetHistoryAsync(new MessagesGetHistoryParams { Count = 200, Extended = true, PeerId = peer });
             var u = await Convert(m.Users, m.Groups);
             return (MapObjectsWithUsers(m.Messages, u, x => (int)x.FromId), u);
         }
-        public static async Task<SimpleUser[]> Convert(IEnumerable<User> people, IEnumerable<Group> groups)
+        public static async Task<SimpleVkUser[]> Convert(IEnumerable<User> people, IEnumerable<Group> groups)
         {
             var r = await Task.Run(() =>
             {
-                IEnumerable<SimpleUser> peopleConverted = people?.Select(x => new SimpleUser(x)) ?? new SimpleUser[0];
-                IEnumerable<SimpleUser> groupsConverted = groups?.Select(x => new SimpleUser(x)) ?? new SimpleUser[0];
+                IEnumerable<SimpleVkUser> peopleConverted = people?.Select(x => new SimpleVkUser(x)) ?? new SimpleVkUser[0];
+                IEnumerable<SimpleVkUser> groupsConverted = groups?.Select(x => new SimpleVkUser(x)) ?? new SimpleVkUser[0];
                 return peopleConverted.Concat(groupsConverted).ToArray();
             });
             return r;
         }
-        public static (SimpleUser, T)[] MapObjectsWithUsers<T>(IEnumerable<T> input, IEnumerable<SimpleUser> users, Func<T, int> idGetter)
+        public static (SimpleVkUser, T)[] MapObjectsWithUsers<T>(IEnumerable<T> input, IEnumerable<SimpleVkUser> users, Func<T, int> idGetter)
         {
             var result = input.Select(x => (users.Where(u => u.id == idGetter(x)).FirstOrDefault(), x)).ToArray();
             return result;
         }
 
-        public async Task<(IEnumerable<Comment>, SimpleUser[], int, bool, bool)> GetComments(int ownerId, int postId)
+        public async Task<(IEnumerable<Comment>, SimpleVkUser[], int, bool, bool)> GetComments(int ownerId, int postId)
         {
             var r = await api.Wall.GetCommentsAsync(new WallGetCommentsParams
             {
@@ -473,37 +473,6 @@ namespace osu.Game.Rulesets.OvkTab
             public DateTime time;
             public string text;
             public Dictionary<string, string> extra;
-        }
-
-        public class SimpleUser
-        {
-            public SimpleUser()
-            {
-            }
-
-            public SimpleUser(User u)
-            {
-                full = u;
-                id = (int)u.Id;
-                name = u.FirstName + " " + u.LastName;
-                avatarUrl = u.Photo50?.AbsoluteUri;
-            }
-            public SimpleUser(Group u)
-            {
-                full = u;
-                id = -(int)u.Id;
-                name = u.Name;
-                avatarUrl = u.Photo50?.AbsoluteUri;
-            }
-            public int id;
-            public string name;
-            public string avatarUrl;
-            public object full;
-        }
-
-        public static void ImportOsuFile(NotificationOverlay nofs, string url)
-        {
-
         }
     }
 }

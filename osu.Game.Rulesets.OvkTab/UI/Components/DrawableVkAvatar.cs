@@ -13,11 +13,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
     [LongRunningLoad]
     public class DrawableVkAvatar : OsuClickableContainer, IHasPopover
     {
-        OvkApiHub.SimpleUser user;
+        SimpleVkUser user;
         readonly string url;
 
         [Resolved(canBeNull: true)] private PopoverContainer popoverContainer { get; set; }
-        public DrawableVkAvatar(OvkApiHub.SimpleUser target)
+        public DrawableVkAvatar(SimpleVkUser target)
         {
             user = target;
             Size = new(50);

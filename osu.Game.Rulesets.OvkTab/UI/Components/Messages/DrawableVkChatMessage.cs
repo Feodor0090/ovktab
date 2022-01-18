@@ -22,10 +22,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class DrawableVkChatMessage : DrawableVkMessage
     {
-        private IEnumerable<SimpleUser> allUsers;
+        private IEnumerable<SimpleVkUser> allUsers;
         private Message msg;
 
-        public DrawableVkChatMessage(SimpleUser user, Message msg, IEnumerable<SimpleUser> allUsers) : base(user)
+        public DrawableVkChatMessage(SimpleVkUser user, Message msg, IEnumerable<SimpleVkUser> allUsers) : base(user)
         {
             this.msg = msg;
             this.allUsers = allUsers;

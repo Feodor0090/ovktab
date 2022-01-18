@@ -29,10 +29,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class UserPanel : BeatSyncedContainer
     {
-        SimpleUser user;
+        SimpleVkUser user;
         private Box bg;
 
-        public UserPanel(SimpleUser user)
+        public UserPanel(SimpleVkUser user)
         {
             RelativeSizeAxes = Axes.X;
             Height = 60;

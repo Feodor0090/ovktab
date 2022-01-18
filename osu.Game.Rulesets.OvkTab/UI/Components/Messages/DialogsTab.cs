@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         LoadingLayer historyLoading;
         HistoryScroll historyScroll;
 
-        private Dictionary<int, SimpleUser> usersCache = new Dictionary<int, SimpleUser>();
+        private Dictionary<int, SimpleVkUser> usersCache = new Dictionary<int, SimpleVkUser>();
 
         public Bindable<int> currentChat = new Bindable<int>(0);
 

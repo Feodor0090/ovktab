@@ -102,12 +102,12 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         public struct CommentsLevel
         {
             public int id;
-            public SimpleUser user;
+            public SimpleVkUser user;
             public Comment comment;
             public List<CommentsLevel> replies;
         }
 
-        public static CommentsLevel[] BuildTree(IEnumerable<Comment> source, SimpleUser[] users)
+        public static CommentsLevel[] BuildTree(IEnumerable<Comment> source, SimpleVkUser[] users)
         {
             return source.Select(x => new CommentsLevel
             {

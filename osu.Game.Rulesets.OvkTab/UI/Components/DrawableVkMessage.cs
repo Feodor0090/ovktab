@@ -22,9 +22,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public abstract class DrawableVkMessage : Container
     {
-        protected SimpleUser user;
+        protected SimpleVkUser user;
         public FillFlowContainer content;
-        public DrawableVkMessage(SimpleUser author)
+        public DrawableVkMessage(SimpleVkUser author)
         {
             user = author;
 

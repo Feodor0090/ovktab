@@ -25,8 +25,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
     public partial class DrawableVkPost : FillFlowContainer
     {
         NewsItem post;
-        OvkApiHub.SimpleUser author;
-        public DrawableVkPost(NewsItem post, OvkApiHub.SimpleUser author)
+        SimpleVkUser author;
+        public DrawableVkPost(NewsItem post, SimpleVkUser author)
         {
             this.post = post;
             this.author = author;

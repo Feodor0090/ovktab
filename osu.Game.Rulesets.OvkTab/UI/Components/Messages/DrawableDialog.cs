@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     internal class DrawableDialog : BeatSyncedContainer
     {
-        private OvkApiHub.SimpleUser user;
+        private SimpleVkUser user;
         private ConversationAndLastMessage msg;
         private DrawableVkAvatar avatar;
         private OsuSpriteText userName;
@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         private OsuSpriteText messageText;
         private OsuSpriteText time;
 
-        public DrawableDialog((OvkApiHub.SimpleUser, ConversationAndLastMessage) x)
+        public DrawableDialog((SimpleVkUser, ConversationAndLastMessage) x)
         {
             user = x.Item1;
             msg = x.Item2;

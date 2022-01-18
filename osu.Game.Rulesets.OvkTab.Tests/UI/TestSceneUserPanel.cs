@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    SimpleUser u = new()
+                    SimpleVkUser u = new()
                     {
                         full = null,
                         id = i+1,

@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
     {
         DrawableVkAvatar avatar;
         Container hoverBox;
-        public DrawableActionableDialog(SimpleUser user, int peerId, Action<int, string> action)
+        public DrawableActionableDialog(SimpleVkUser user, int peerId, Action<int, string> action)
         {
             Height = 50;
             RelativeSizeAxes = Axes.X;

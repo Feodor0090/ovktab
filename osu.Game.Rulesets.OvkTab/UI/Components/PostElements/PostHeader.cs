@@ -24,20 +24,20 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             var font = OsuFont.GetFont(size: 20);
             Children = new Drawable[]
             {
-                    authorText = new OsuSpriteText()
-                    {
-                        Text = author.name,
-                        Position = new(65, 15),
-                        Origin = Anchor.CentreLeft,
-                        Font = font,
-                    },
-                    new OsuSpriteText()
-                    {
-                        Text = $"{time:d MMMM HH:mm} ",
-                        Position = new(65, 45),
-                        Origin = Anchor.CentreLeft,
-                        Font = font,
-                    }
+                authorText = new OsuSpriteText()
+                {
+                    Text = author.name,
+                    Position = new(65, 15),
+                    Origin = Anchor.CentreLeft,
+                    Font = font,
+                },
+                new OsuSpriteText()
+                {
+                    Text = $"{time:d MMMM HH:mm} ",
+                    Position = new(65, 45),
+                    Origin = Anchor.CentreLeft,
+                    Font = font,
+                }
             };
         }
 
