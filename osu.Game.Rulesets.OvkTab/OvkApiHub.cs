@@ -27,10 +27,7 @@ namespace osu.Game.Rulesets.OvkTab
 
         public readonly VkApi api;
 
-        public BindableBool isLoggedIn = new BindableBool(false);
-
-        private SimpleVkUser current;
-        internal HeaderProfileBadge badge;
+        public readonly Bindable<SimpleVkUser> loggedUser = new Bindable<SimpleVkUser>(null);
 
         public string Token
         {
@@ -47,8 +44,6 @@ namespace osu.Game.Rulesets.OvkTab
                 return (int)(api.UserId ?? 0);
             }
         }
-
-        public SimpleVkUser Current { get { return current; } }
 
         public OvkApiHub(OvkTabRuleset ruleset)
         {
@@ -84,25 +79,14 @@ namespace osu.Game.Rulesets.OvkTab
 
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
 
-            string token = dict["access_token"];
-            string userId = dict["user_id"];
-            int userIdInt = int.Parse(userId);
-
-            Auth(userIdInt, token);
+            Auth(int.Parse(dict["user_id"]), dict["access_token"]);
         }
 
         public void Auth(int id, string token)
         {
-            try
-            {
-                api.Authorize(new ApiAuthParams { AccessToken = token, UserId = id });
-                current = new SimpleVkUser(api.Users.Get(new[] { (long)id }, ProfileFields.All, NameCase.Nom).First());
-                StartLongPoll();
-            }
-            finally
-            {
-                isLoggedIn.Value = api.IsAuthorized;
-            }
+            api.Authorize(new ApiAuthParams { AccessToken = token, UserId = id });
+            loggedUser.Value = new SimpleVkUser(api.Users.Get(new[] { (long)id }, ProfileFields.All, NameCase.Nom).First());
+            StartLongPoll();
         }
 
         public IEnumerable<(NewsItem, SimpleVkUser)> ProcessNewsFeed(NewsFeed feed)
@@ -307,9 +291,7 @@ namespace osu.Game.Rulesets.OvkTab
         public void Logout()
         {
             api.LogOut();
-            isLoggedIn.Value = false;
-            current = null;
-            badge.OnLogOut();
+            loggedUser.Value = null;
         }
 
         public async Task<bool> SendMessage(int peerId, string text)
@@ -391,7 +373,6 @@ namespace osu.Game.Rulesets.OvkTab
                         activeTs = ld.Ts;
                         if (!ld.HasUpdates)
                         {
-                            await Task.Delay(5000);
                             continue;
                         }
 

@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
     {
         [Cached]
         PopoverContainer pc;
-            Container container;
+        Container container;
 
         public LoadingLayer loginLoading;
         public LoadingLayer newsLoading;
@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
         [Cached]
         private readonly OvkApiHub apiHub;
         private readonly OvkTabRuleset ovkTabRuleset;
-        readonly Bindable<bool> isLoggedIn;
+        readonly Bindable<SimpleVkUser> logged;
 
         [Resolved]
         private NotificationOverlay nofs { get; set; }
@@ -53,10 +53,10 @@ namespace osu.Game.Rulesets.OvkTab.UI
               {
                   nofs.Post(new SimpleErrorNotification() { Text = "Longpoll failed: "+ex.Message });
               };
-            isLoggedIn = apiHub.isLoggedIn.GetBoundCopy();
-            isLoggedIn.BindValueChanged(e =>
+            logged = apiHub.loggedUser.GetBoundCopy();
+            logged.BindValueChanged(e =>
             {
-                if (e.NewValue == true)
+                if (e.NewValue != null)
                 {
                     Schedule(() =>
                     {
@@ -165,7 +165,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
         }
         private async void ChangeTab(OVKSections section)
         {
-            if (!isLoggedIn.Value) return;
+            if (logged.Value == null) return;
             container.ChangeChildDepth(tabs[(int)section], (float)-Clock.CurrentTime);
             foreach (var d in tabs)
             {

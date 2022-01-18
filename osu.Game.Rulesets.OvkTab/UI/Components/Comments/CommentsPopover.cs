@@ -118,14 +118,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 
         public async void SendComment(TextBox sender, string text, int replyTo, FillFlowContainer container)
         {
-            if(string.IsNullOrEmpty(text)) return;
+            if (string.IsNullOrEmpty(text)) return;
             ll.Show();
             try
             {
                 await ApiHub.WriteComment(ownerId, postId, replyTo, text);
                 container.Add(new DrawableVkComment(new DrawableVkComment.CommentsLevel
                 {
-                    user = ApiHub.Current,
+                    user = ApiHub.loggedUser.Value,
                     replies = new(),
                     comment = new Comment
                     {

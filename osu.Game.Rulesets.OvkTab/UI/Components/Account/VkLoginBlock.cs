@@ -115,7 +115,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                     try
                     {
                         api.Auth(config.Get<int>(OvkTabRulesetSetting.Id), config.Get<string>(OvkTabRulesetSetting.Token));
-                        Schedule(() => api.badge.OnLogIn(api.Current));
                     }
                     catch (Exception ex)
                     {
@@ -151,7 +150,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                         config.SetValue(OvkTabRulesetSetting.Id, api.UserId);
                         config.SetValue(OvkTabRulesetSetting.Token, api.Token);
                     }
-                    Schedule(() => api.badge.OnLogIn(api.Current));
                 }
                 catch (Exception ex)
                 {

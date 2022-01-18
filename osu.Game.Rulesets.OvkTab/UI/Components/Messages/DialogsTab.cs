@@ -103,9 +103,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         {
             apiHub.OnNewMessage += OnNewMessage;
             messageInput.OnCommit += MessageInput_OnCommit;
-            apiHub.isLoggedIn.ValueChanged += x =>
+            apiHub.loggedUser.ValueChanged += x =>
             {
-                if (x.NewValue == false) DeleteAll();
+                if (x.NewValue == null) DeleteAll();
             };
         }
 

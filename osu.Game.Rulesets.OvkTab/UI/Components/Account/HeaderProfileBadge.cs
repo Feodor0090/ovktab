@@ -36,7 +36,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         void load(OvkApiHub ovk)
         {
             api = ovk;
-            ovk.badge = this;
+            ovk.loggedUser.ValueChanged += e =>
+             {
+                 if (e.NewValue != null)
+                     OnLogIn(e.NewValue);
+                 else
+                     OnLogOut();
+             };
             Hide();
         }
 
