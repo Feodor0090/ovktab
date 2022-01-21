@@ -22,7 +22,7 @@ namespace osu.Game.Rulesets.OvkTab
     public partial class OvkApiHub
     {
 
-        public readonly VkApi api;
+        private readonly VkApi api;
 
         public readonly Bindable<SimpleVkUser> loggedUser = new();
 

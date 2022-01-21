@@ -24,6 +24,9 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
         [Cached]
         public readonly OverlayColourProvider ocp = new(OverlayColourScheme.Blue);
 
+        [Cached]
+        public readonly DialogOverlay dialogOverlay = new();
+
         public TestScenePostElements()
         {
             Add(new PopoverContainer
@@ -60,10 +63,11 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
         {
             LoadComponentAsync(new NowPlayingOverlay(), o =>
             {
-                o.Origin = o.Anchor = Anchor.TopLeft;
+                o.Origin = o.Anchor = Anchor.TopRight;
                 Add(o);
                 npo = o;
             });
+            Add(dialogOverlay);
         }
         protected override void LoadComplete()
         {
