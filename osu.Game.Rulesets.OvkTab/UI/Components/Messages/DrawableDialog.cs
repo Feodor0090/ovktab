@@ -88,13 +88,16 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 
         private void ActiveChat_ValueChanged(ValueChangedEvent<int> e)
         {
-            if (e.NewValue == peerId)
+            Schedule(() =>
             {
-                selectionBox.FadeIn(500);
-                unreadMark.ScaleTo(0, 500, Easing.InBounce);
-            }
-            else
-                selectionBox.FadeOut(500);
+                if (e.NewValue == peerId)
+                {
+                    selectionBox.FadeIn(500);
+                    unreadMark.ScaleTo(0, 500, Easing.InBounce);
+                }
+                else
+                    selectionBox.FadeOut(500);
+            });
         }
 
         public void Update(string newText, DateTime newTime)

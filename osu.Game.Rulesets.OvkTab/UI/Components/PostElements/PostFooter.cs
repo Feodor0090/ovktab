@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         private PostActionButton faveButton;
 
         [Cached]
-        internal PostFooter footer;
+        private PostFooter footer;
 
         [Resolved(canBeNull: true)] private OvkApiHub OvkApiHub { get; set; }
         [Resolved(canBeNull: true)] private OvkOverlay OvkOverlay { get; set; }

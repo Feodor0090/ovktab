@@ -6,18 +6,29 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
+using System;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
-    public class HeaderProfileBadge : FillFlowContainer
+    public class HeaderProfileBadge : Container
     {
         public HeaderProfileBadge()
         {
+            cont = new FillFlowContainer()
+            {
+                RelativeSizeAxes = Axes.Y,
+                AutoSizeAxes = Axes.X,
+                Direction = FillDirection.Horizontal,
+                Spacing = new(10, 0)
+            };
             RelativeSizeAxes = Axes.Y;
             AutoSizeAxes = Axes.X;
-            Direction = FillDirection.Horizontal;
-            Spacing = new(10, 0);
+            Add(cont);
+            cont.Hide();
+            Alpha = 1;
         }
+
+        private FillFlowContainer cont;
         [Resolved(canBeNull: true)] private DialogOverlay DialogOverlay { get; set; }
         OvkApiHub api;
 
@@ -25,22 +36,70 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         void load(OvkApiHub ovk)
         {
             api = ovk;
-            ovk.loggedUser.ValueChanged += e =>
+            ovk.loggedUser.BindValueChanged(e =>
              {
                  if (e.NewValue != null)
-                     OnLogIn(e.NewValue);
+                     Schedule(() => OnLogIn(e.NewValue));
                  else
-                     this.FadeOut(250);
+                     cont.FadeOut(250);
+             }, true);
+            ovk.isLongpollFailing.ValueChanged += e =>
+             {
+                 if (!e.NewValue && ovk.loggedUser.Value != null)
+                 {
+                     Schedule(() => OnLogIn(ovk.loggedUser.Value));
+                 }
+                 else
+                 {
+                     Schedule(OnConnectionFail);
+                 }
              };
-            Hide();
+        }
+
+        private void OnConnectionFail()
+        {
+            LoadingSpinner spinner;
+            cont.Children = new Drawable[] {
+                spinner = new LoadingSpinner(true)
+                {
+                    Size = new(40),
+                    Origin = Anchor.CentreLeft,
+                    Anchor = Anchor.CentreLeft,
+                },
+                new OsuSpriteText()
+                {
+                    Text = "Connection is failing...",
+                    Position = new(65, 0),
+                    Origin = Anchor.CentreLeft,
+                    Anchor = Anchor.CentreLeft,
+                    Font = OsuFont.GetFont(size: 18),
+                    Colour = Colour4.LightPink,
+                },
+                new DangerousTriangleButton()
+                {
+                    Size = new(100, 40),
+                    Origin = Anchor.CentreLeft,
+                    Anchor = Anchor.CentreLeft,
+                    Text = "Log out",
+                    Action = () =>
+                    {
+                        if (DialogOverlay == null)
+                            api.Logout();
+                        else
+                            DialogOverlay.Push(new LogoutDialog(api.Logout));
+                    }
+                }
+            };
+            cont.FadeIn(1000);
+            spinner.Show();
         }
 
         public void OnLogIn(SimpleVkUser user)
         {
-            Container cont;
+            Container avCont;
             DangerousTriangleButton button;
-            Children = new Drawable[] {
-                cont = new()
+            cont.Children = new Drawable[] {
+                avCont = new()
                 {
                     Size = new(50),
                     Scale = new(0.8f),
@@ -76,8 +135,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 Origin = Anchor.Centre,
                 Size = new(18),
             });
-            this.FadeIn(1000);
-            LoadComponentAsync(new DrawableVkAvatar(user) { Position = new(25) }, x => cont.Add(x));
+            cont.FadeIn(1000);
+            LoadComponentAsync(new DrawableVkAvatar(user) { Position = new(25) }, x => avCont.Add(x));
         }
     }
 }

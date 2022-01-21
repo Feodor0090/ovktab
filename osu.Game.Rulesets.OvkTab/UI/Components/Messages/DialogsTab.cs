@@ -23,6 +23,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         readonly FillFlowContainer history;
         readonly LoadingLayer listLoading;
         readonly LoadingLayer historyLoading;
+        readonly LoadingLayer longpollPending;
         readonly HistoryScroll historyScroll;
 
         private readonly Dictionary<int, SimpleVkUser> usersCache = new();
@@ -36,6 +37,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             RelativeSizeAxes = Axes.Both;
             listLoading = new LoadingLayer(dimBackground: true);
             historyLoading = new LoadingLayer(dimBackground: true);
+            longpollPending = new LoadingLayer(dimBackground: true);
             dialogsList = new FillFlowContainer<DrawableDialog>
             {
                 RelativeSizeAxes = Axes.X,
@@ -91,6 +93,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             });
             Add(dialogView);
             Add(historyLoading);
+            Add(longpollPending);
         }
 
         [BackgroundDependencyLoader]
@@ -102,6 +105,23 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             {
                 if (x.NewValue == null) DeleteAll();
             };
+            ApiHub.isLongpollFailing.BindValueChanged(e =>
+            {
+                if (e.NewValue)
+                    Schedule(longpollPending.Show);
+                else
+                    Schedule(longpollPending.Hide);
+            }, true);
+            ApiHub.isLongpollFailing.BindValueChanged(e =>
+            {
+                if (!e.NewValue)
+                {
+                    if(currentChat.Value!=0)
+                    {
+                        Schedule(()=>Open(currentChat.Value));
+                    }
+                }
+            }, false);
         }
 
         private async void MessageInput_OnCommit(Framework.Graphics.UserInterface.TextBox sender, bool newText)

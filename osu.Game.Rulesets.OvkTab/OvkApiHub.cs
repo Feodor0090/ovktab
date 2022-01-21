@@ -401,8 +401,8 @@ namespace osu.Game.Rulesets.OvkTab
                             {
 
                                 request.Perform();
-                                request = null;
                                 ld = JsonConvert.DeserializeObject<LongpollData>(request.GetResponseString());
+                                request = null;
                             }
                             activeTs = ld.Ts;
                             if (!ld.HasUpdates)
