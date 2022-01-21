@@ -41,6 +41,8 @@ namespace osu.Game.Rulesets.OvkTab.UI
         private bool recommendedLoaded = false;
         [Cached]
         private readonly OvkApiHub apiHub;
+        [Cached]
+        public readonly IOvkApiHub iApiHub;
         readonly Bindable<SimpleVkUser> logged;
 
         [Resolved]
@@ -54,6 +56,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
               {
                   if(e.NewValue == true) nofs.Post(new SimpleErrorNotification() { Text = "Longpoll is failing. Check your connection." });
               };
+            iApiHub = apiHub;
             logged = apiHub.LoggedUser.GetBoundCopy();
             logged.BindValueChanged(e =>
             {
