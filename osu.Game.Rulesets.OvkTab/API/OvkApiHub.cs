@@ -17,7 +17,7 @@ using VkNet.Model.RequestParams;
 namespace osu.Game.Rulesets.OvkTab.API
 {
     [Cached]
-    public sealed class OvkApiHub
+    public sealed class OvkApiHub : IOvkApiHub
     {
 
         private readonly VkApi api;
