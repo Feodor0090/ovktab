@@ -46,9 +46,9 @@ namespace osu.Game.Rulesets.OvkTab.UI
         {
             // API
             apiHub = new OvkApiHub();
-            apiHub.OnLongPollFail += ex =>
+            apiHub.isLongpollFailing.ValueChanged += e =>
               {
-                  nofs.Post(new SimpleErrorNotification() { Text = "Longpoll failed: "+ex.Message });
+                  if(e.NewValue == true) nofs.Post(new SimpleErrorNotification() { Text = "Longpoll is failing. Check your connection." });
               };
             logged = apiHub.loggedUser.GetBoundCopy();
             logged.BindValueChanged(e =>

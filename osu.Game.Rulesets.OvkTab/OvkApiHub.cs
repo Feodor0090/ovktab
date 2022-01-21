@@ -26,6 +26,11 @@ namespace osu.Game.Rulesets.OvkTab
 
         public readonly Bindable<SimpleVkUser> loggedUser = new();
 
+        /// <summary>
+        /// Will be true, if longpoll is failing.
+        /// </summary>
+        public readonly BindableBool isLongpollFailing = new(false);
+
         public string Token
         {
             get
@@ -82,6 +87,10 @@ namespace osu.Game.Rulesets.OvkTab
             api.Authorize(new ApiAuthParams { AccessToken = token, UserId = id });
             loggedUser.Value = new SimpleVkUser(api.Users.Get(new[] { (long)id }, ProfileFields.All, NameCase.Nom).First());
             StartLongPoll();
+            loggedUser.ValueChanged += e =>
+             {
+                 if (e.NewValue == null) StopLongPoll();
+             };
         }
 
         public static IEnumerable<(NewsItem, SimpleVkUser)> ProcessNewsFeed(NewsFeed feed)
@@ -338,57 +347,96 @@ namespace osu.Game.Rulesets.OvkTab
             return text.Replace("$#quot;", "\"");
         }
 
-        public CancellationTokenSource longpoll;
+        
         public event Action<LongpollMessage> OnNewMessage;
-        public event Action<Exception> OnLongPollFail;
+
+        private LongpollQuery currentLongPoll = null;
 
         public void StartLongPoll()
         {
-            longpoll = new CancellationTokenSource();
-            Task.Factory.StartNew(async () =>
+            if (currentLongPoll != null) currentLongPoll.Dispose();
+            currentLongPoll = new LongpollQuery(this);
+            Task.Factory.StartNew(currentLongPoll.Run, TaskCreationOptions.LongRunning);
+        }
+
+        public void StopLongPoll()
+        {
+            currentLongPoll.Dispose();
+            currentLongPoll = null;
+        }
+
+        public sealed class LongpollQuery : IDisposable
+        {
+            private readonly OvkApiHub api;
+
+            public LongpollQuery(OvkApiHub api)
             {
-                var lpp = await api.Messages.GetLongPollServerAsync(true);
-                string activeTs = lpp.Ts;
-                while (!longpoll.IsCancellationRequested)
+                this.api = api;
+            }
+
+            private bool stop = false;
+            private WebRequest request = null;
+
+            public async void Run()
+            {
+                // loop for reconnection to longpoll server
+                while (!stop)
                 {
                     try
                     {
-                        LongpollData ld;
-                        using (WebRequest request = new()
+                        var lpp = await api.api.Messages.GetLongPollServerAsync(true);
+                        api.isLongpollFailing.Value = false;
+                        string activeTs = lpp.Ts;
+                        // loop for handling requests
+                        while (!stop)
                         {
-                            Method = HttpMethod.Get,
-                            Url = $"https://{lpp.Server}?act=a_check&key={lpp.Key}&ts={activeTs}&wait=25&mode=2&version=3",
-                            Timeout = 60000,
-                            AllowRetryOnTimeout = true
-                        })
-                        {
-                            request.Perform();
-                            ld = JsonConvert.DeserializeObject<LongpollData>(request.GetResponseString());
-                        }
-                        activeTs = ld.Ts;
-                        if (!ld.HasUpdates)
-                        {
-                            continue;
-                        }
-
-                        var updates = ld.GetUpdates();
-                        foreach (LongpollUpdate update in updates)
-                        {
-                            if (update.type == 4)
+                            LongpollData ld;
+                            using (request = new()
                             {
-                                OnNewMessage.Invoke(new LongpollMessage(update));
+                                Method = HttpMethod.Get,
+                                Url = $"https://{lpp.Server}?act=a_check&key={lpp.Key}&ts={activeTs}&wait=25&mode=2&version=3",
+                                Timeout = 60000,
+                                AllowRetryOnTimeout = true
+                            })
+                            {
+
+                                request.Perform();
+                                request = null;
+                                ld = JsonConvert.DeserializeObject<LongpollData>(request.GetResponseString());
+                            }
+                            activeTs = ld.Ts;
+                            if (!ld.HasUpdates)
+                            {
+                                continue;
+                            }
+
+                            var updates = ld.GetUpdates();
+
+                            if (stop) return;
+                            foreach (LongpollUpdate update in updates)
+                            {
+                                if (update.type == 4)
+                                {
+                                    api.OnNewMessage.Invoke(new LongpollMessage(update));
+                                }
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        OnLongPollFail.Invoke(ex);
+                        if (stop) return;
+                        api.isLongpollFailing.Value = true;
                         await Task.Delay(10000);
                     }
-
                 }
+            }
 
-            }, TaskCreationOptions.LongRunning);
+            public void Dispose()
+            {
+                api.isLongpollFailing.Value = false;
+                stop = true;
+                request?.Abort();
+            }
         }
 
         public sealed class LongpollData
