@@ -17,7 +17,7 @@ using VkNet.Model.RequestParams;
 namespace osu.Game.Rulesets.OvkTab.API
 {
     [Cached]
-    public sealed partial class OvkApiHub
+    public sealed class OvkApiHub
     {
 
         private readonly VkApi api;
@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         /// <summary>
         /// Will be true, if longpoll is failing.
         /// </summary>
-        public BindableBool IsLongpollFailing { get => IsLongpollFailing; }
+        public BindableBool IsLongpollFailing { get => isLongpollFailing; }
 
         public string Token { get => api.Token; }
 
