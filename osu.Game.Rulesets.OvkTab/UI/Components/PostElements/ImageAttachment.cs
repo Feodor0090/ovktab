@@ -7,7 +7,7 @@ using osu.Framework.Graphics.Textures;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     internal class ImageAttachment : Container
     {
@@ -55,7 +55,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             string text;
             if (length > 0)
             {
-                text = ((length / 60).ToString().PadLeft(2, '0') + ":" + (length % 60).ToString().PadLeft(2, '0'));
+                text = (length / 60).ToString().PadLeft(2, '0') + ":" + (length % 60).ToString().PadLeft(2, '0');
             }
             else if (length == -2)
             {

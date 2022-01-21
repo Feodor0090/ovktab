@@ -17,9 +17,8 @@ using VkNet.Model;
 using VkNet.Model.Attachments;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Graphics.Sprites;
-using osu.Game.Rulesets.OvkTab;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class ImagesRow : FillFlowContainer
     {
@@ -57,7 +56,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                     totalW += sw;
                 }
                 float avalW = DrawWidth - 10 * images.Length; // margins
-                float mul = (avalW / totalW);
+                float mul = avalW / totalW;
                 if (images.Length == 1 && mul > 1) mul = 1;
                 for (int i = 0; i < images.Length; i++)
                 {
@@ -93,13 +92,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             public string normal;
             public int length;
 
-            public ImageInfo (Photo x, bool isGif = false)
+            public ImageInfo(Photo x, bool isGif = false)
             {
                 PhotoSize size = x.Sizes.Where(p => p.Width < 1280).OrderByDescending(p => p.Height).First();
                 normal = size.Url?.AbsoluteUri ?? size.Src.AbsoluteUri;
                 w = (int)size.Width;
                 h = (int)size.Height;
-                length = isGif?-2:-1;
+                length = isGif ? -2 : -1;
             }
             public ImageInfo(Video x)
             {

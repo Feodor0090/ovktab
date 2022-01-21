@@ -11,19 +11,19 @@ using osu.Game.Overlays;
 using VkNet;
 using VkNet.Model;
 using VkNet.Model.Attachments;
-using osu.Game.Rulesets.OvkTab;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
-using static osu.Game.Rulesets.OvkTab.OvkApiHub;
+using static osu.Game.Rulesets.OvkTab.API.OvkApiHub;
 using osu.Game.Graphics.Containers;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Framework.Audio.Track;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets.OvkTab.API;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {

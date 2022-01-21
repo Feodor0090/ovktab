@@ -6,13 +6,15 @@ using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Overlays;
+using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
 using osuTK;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using VkNet.Model;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
 {
     [Cached]
     public class CommentsPopover : OsuPopover
@@ -117,7 +119,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 await ApiHub.WriteComment(ownerId, postId, replyTo, text);
                 container.Add(new DrawableVkComment(new DrawableVkComment.CommentsLevel
                 {
-                    user = ApiHub.loggedUser.Value,
+                    user = ApiHub.LoggedUser.Value,
                     replies = new(),
                     comment = new Comment
                     {
@@ -126,7 +128,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 }, false, false));
                 footer.comments.Value++;
                 footer.commentsButton.Checked = true;
-                sender.Text = String.Empty;
+                sender.Text = string.Empty;
             }
             catch
             {

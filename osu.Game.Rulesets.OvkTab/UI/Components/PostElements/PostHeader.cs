@@ -7,8 +7,9 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Framework.Audio.Track;
+using osu.Game.Rulesets.OvkTab.API;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class PostHeader : BeatSyncedContainer
     {

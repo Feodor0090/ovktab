@@ -1,6 +1,6 @@
 ﻿using VkNet.Model;
 
-namespace osu.Game.Rulesets.OvkTab
+namespace osu.Game.Rulesets.OvkTab.API
 {
     public class SimpleVkUser
     {

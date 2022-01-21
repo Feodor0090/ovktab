@@ -1,9 +1,10 @@
 ﻿using osu.Framework.Allocation;
+using osu.Game.Rulesets.OvkTab.API;
 using System.Collections.Generic;
 using System.Linq;
 using VkNet.Model;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {
     public class DrawableVkChatMessage : DrawableVkMessage
     {

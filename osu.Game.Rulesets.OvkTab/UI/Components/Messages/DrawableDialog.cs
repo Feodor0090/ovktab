@@ -11,8 +11,9 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Input.Events;
+using osu.Game.Rulesets.OvkTab.API;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {
     internal class DrawableDialog : BeatSyncedContainer
     {
@@ -62,7 +63,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                         new KiaiTriangles(colour.Blue3, colour.BlueDarker, 1f),
                     }
                 },
-                new DialogPreview(user?.name ?? msg.Conversation.ChatSettings?.Title,msg.LastMessage.Date??DateTime.Now, peerId, msg.LastMessage.Text, dialogs, hoverBox, colour.Blue, 
+                new DialogPreview(user?.name ?? msg.Conversation.ChatSettings?.Title,msg.LastMessage.Date??DateTime.Now, peerId, msg.LastMessage.Text, dialogs, hoverBox, colour.Blue,
                 out userName, out time, out unreadMark, out messageText),
             };
             if (!msg.Conversation.UnreadCount.HasValue || msg.Conversation.UnreadCount == 0)
@@ -125,7 +126,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         private sealed class DialogPreview : OsuClickableContainer
         {
             private readonly Drawable hover;
-            public DialogPreview(string title, DateTime time, int id, string text, DialogsTab dialogs, Drawable hoverBox, Colour4 unreadMarkColor, 
+            public DialogPreview(string title, DateTime time, int id, string text, DialogsTab dialogs, Drawable hoverBox, Colour4 unreadMarkColor,
                 out OsuSpriteText userNameText, out OsuSpriteText timeText, out Drawable unreadCircle, out OsuSpriteText textText)
             {
                 hover = hoverBox;

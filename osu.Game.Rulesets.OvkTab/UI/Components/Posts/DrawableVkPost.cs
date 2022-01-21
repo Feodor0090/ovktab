@@ -11,7 +11,6 @@ using osu.Game.Overlays;
 using VkNet;
 using VkNet.Model;
 using VkNet.Model.Attachments;
-using osu.Game.Rulesets.OvkTab;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Online.Chat;
@@ -19,8 +18,10 @@ using osu.Game.Graphics;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
+using osu.Game.Rulesets.OvkTab.API;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
 {
     public partial class DrawableVkPost : FillFlowContainer
     {
@@ -67,10 +68,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             List<Drawable> result = new List<Drawable>();
 
             // photos, videos
-            var photoAtts = atts.Where(x => x.Instance is Photo || x.Instance is Video || (x.Instance is Document doc && doc.Preview?.Photo != null));
+            var photoAtts = atts.Where(x => x.Instance is Photo || x.Instance is Video || x.Instance is Document doc && doc.Preview?.Photo != null);
             var gifs = atts.Where(x => x.Instance is Document doc && doc.Preview.Photo != null);
             var photos = photoAtts
-                .Select(x => (x.Instance is Photo) ? new ImagesRow.ImageInfo(x.Instance as Photo) : (x.Instance is Video) ? new ImagesRow.ImageInfo(x.Instance as Video) : new ImagesRow.ImageInfo(((Document)x.Instance).Preview.Photo, ((Document)x.Instance).Ext.ToLower()=="gif"))
+                .Select(x => x.Instance is Photo ? new ImagesRow.ImageInfo(x.Instance as Photo) : x.Instance is Video ? new ImagesRow.ImageInfo(x.Instance as Video) : new ImagesRow.ImageInfo(((Document)x.Instance).Preview.Photo, ((Document)x.Instance).Ext.ToLower() == "gif"))
                 .ToList();
             if (photos.Count != 0)
             {
@@ -93,7 +94,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             atts = atts.Except(photoAtts);
             foreach (var att in atts)
             {
-                switch(att.Instance)
+                switch (att.Instance)
                 {
                     case VkNet.Model.Attachments.Audio x:
                         string length = (x.Duration / 60).ToString().PadLeft(2, '0') + ":" + (x.Duration % 60).ToString().PadLeft(2, '0');
@@ -149,7 +150,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                     case AudioMessage x:
                         string len = (x.Duration / 60).ToString().PadLeft(2, '0') + ":" + (x.Duration % 60).ToString().PadLeft(2, '0');
                         result.Add(new SimpleAttachment(FontAwesome.Solid.Microphone, "Voice message", len, null));
-                        if(x.Transcript!=null) result.Add(new TextFlowContainer
+                        if (x.Transcript != null) result.Add(new TextFlowContainer
                         {
                             Text = x.Transcript,
                             RelativeSizeAxes = Axes.X,
@@ -175,7 +176,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                         });
                         break;
                     case Poll x:
-                        result.Add(new SimpleAttachment(FontAwesome.Solid.Poll, x.Question, $"{x.Votes??0} users voted", null, null));
+                        result.Add(new SimpleAttachment(FontAwesome.Solid.Poll, x.Question, $"{x.Votes ?? 0} users voted", null, null));
                         break;
                     default:
                         result.Add(new SimpleAttachment(FontAwesome.Solid.Ban, "Unsupported attachment", att.Instance.ToString(), null, null));

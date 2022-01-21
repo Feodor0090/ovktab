@@ -6,13 +6,14 @@ using osu.Framework.Utils;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
+using osu.Game.Rulesets.OvkTab.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VkNet.Model;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {
     [Cached]
     internal class DialogsTab : Container
@@ -101,24 +102,24 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         {
             ApiHub.OnNewMessage += OnNewMessage;
             messageInput.OnCommit += MessageInput_OnCommit;
-            ApiHub.loggedUser.ValueChanged += x =>
+            ApiHub.LoggedUser.ValueChanged += x =>
             {
                 if (x.NewValue == null) DeleteAll();
             };
-            ApiHub.isLongpollFailing.BindValueChanged(e =>
+            ApiHub.IsLongpollFailing.BindValueChanged(e =>
             {
                 if (e.NewValue)
                     Schedule(longpollPending.Show);
                 else
                     Schedule(longpollPending.Hide);
             }, true);
-            ApiHub.isLongpollFailing.BindValueChanged(e =>
+            ApiHub.IsLongpollFailing.BindValueChanged(e =>
             {
                 if (!e.NewValue)
                 {
-                    if(currentChat.Value!=0)
+                    if (currentChat.Value != 0)
                     {
-                        Schedule(()=>Open(currentChat.Value));
+                        Schedule(() => Open(currentChat.Value));
                     }
                 }
             }, false);
@@ -130,7 +131,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             {
                 historyLoading.Show();
                 bool ok = await ApiHub.SendMessage(currentChat.Value, sender.Text);
-                if (ok) sender.Text = String.Empty;
+                if (ok) sender.Text = string.Empty;
                 Schedule(() =>
                 {
                     historyScroll.ScrollToEnd(true, true);
@@ -139,7 +140,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             }
         }
 
-        private void OnNewMessage(OvkApiHub.LongpollMessage m)
+        private void OnNewMessage(LongpollMessage m)
         {
             DrawableDialog dialog = dialogsList.Where(x => x.peerId == m.targetId).FirstOrDefault();
             if (dialog != null)

@@ -3,7 +3,7 @@ using System;
 using osu.Framework.Graphics.Sprites;
 
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class SendDialog : PopupDialog
     {

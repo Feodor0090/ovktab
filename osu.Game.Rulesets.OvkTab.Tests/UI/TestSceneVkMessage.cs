@@ -1,6 +1,8 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components;
+using osu.Game.Rulesets.OvkTab.UI.Components.Messages;
 using osu.Game.Tests.Visual;
 using System;
 

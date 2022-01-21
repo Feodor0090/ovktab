@@ -1,21 +1,14 @@
-﻿using System;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Game.Graphics.UserInterface;
-using osu.Framework.Graphics.Sprites;
-using osu.Game.Graphics;
-using osu.Game.Graphics.Backgrounds;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.UserInterface;
-using System.Linq;
-using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Overlays;
-using osu.Game.Overlays.Notifications;
-using VkNet.Model;
-using osu.Game.Online.Chat;
+using osu.Framework.Graphics.Cursor;
+using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
-using System.Threading.Tasks;
+using osu.Game.Overlays;
+using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.UI.Components.Posts;
+using System.Linq;
+
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class WallPopover : OsuPopover
@@ -56,7 +49,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         async void load(OvkApiHub api)
         {
             var r = await api.LoadWall(ownerId);
-            var posts = r.Select(x=>new DrawableVkWallPost(x.Item1, x.Item2)).ToArray();
+            var posts = r.Select(x => new DrawableVkWallPost(x.Item1, x.Item2)).ToArray();
             Schedule(() =>
             {
                 content.AddRange(posts);

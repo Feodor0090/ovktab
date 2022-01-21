@@ -12,7 +12,7 @@ using osu.Game.Graphics.UserInterface;
 using System;
 using System.Linq;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class SimpleAttachment : BeatSyncedContainer
     {

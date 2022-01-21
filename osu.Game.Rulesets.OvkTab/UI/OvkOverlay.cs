@@ -12,6 +12,10 @@ using osu.Game.Overlays.Notifications;
 using osu.Game.Rulesets.OvkTab.UI.Components;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Cursor;
+using osu.Game.Rulesets.OvkTab.UI.Components.Account;
+using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.UI.Components.Messages;
+using osu.Game.Rulesets.OvkTab.UI.Components.Posts;
 
 namespace osu.Game.Rulesets.OvkTab.UI
 {
@@ -46,11 +50,11 @@ namespace osu.Game.Rulesets.OvkTab.UI
         {
             // API
             apiHub = new OvkApiHub();
-            apiHub.isLongpollFailing.ValueChanged += e =>
+            apiHub.IsLongpollFailing.ValueChanged += e =>
               {
                   if(e.NewValue == true) nofs.Post(new SimpleErrorNotification() { Text = "Longpoll is failing. Check your connection." });
               };
-            logged = apiHub.loggedUser.GetBoundCopy();
+            logged = apiHub.LoggedUser.GetBoundCopy();
             logged.BindValueChanged(e =>
             {
                 if (e.NewValue != null)

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
+using osu.Game.Rulesets.OvkTab.API;
 
-namespace osu.Game.Rulesets.OvkTab.UI
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class RepostDialog : PopupDialog
     {

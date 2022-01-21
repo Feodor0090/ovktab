@@ -3,7 +3,7 @@ using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class PostCounter : RollingCounter<int>
     {

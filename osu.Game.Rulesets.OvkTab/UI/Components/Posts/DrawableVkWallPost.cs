@@ -1,24 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics.Cursor;
-using osu.Game.Overlays;
-using VkNet;
-using VkNet.Model;
-using VkNet.Model.Attachments;
-using osu.Game.Rulesets.OvkTab;
-using osu.Game.Graphics.UserInterfaceV2;
-using osu.Framework.Graphics.Sprites;
-using osu.Game.Online.Chat;
-using osu.Game.Graphics;
 using osu.Framework.Graphics.Textures;
+using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
+using System;
+using VkNet.Model.Attachments;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
 {
     public class DrawableVkWallPost : FillFlowContainer
     {

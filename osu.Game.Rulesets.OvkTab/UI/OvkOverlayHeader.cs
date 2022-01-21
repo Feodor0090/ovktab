@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
+﻿using osu.Framework.Graphics;
 using osu.Game.Overlays;
-using osu.Game.Rulesets.OvkTab.UI.Components;
+using osu.Game.Rulesets.OvkTab.UI.Components.Account;
 
 namespace osu.Game.Rulesets.OvkTab.UI
 {

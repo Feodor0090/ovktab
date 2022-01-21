@@ -8,7 +8,7 @@ using osu.Game.Graphics.Backgrounds;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class PostActionButton : OsuButton, IHasPopover
     {
@@ -65,7 +65,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 Origin = Anchor.Centre,
                 Size = new(18),
             });
-            Checked = done; 
+            Checked = done;
         }
 
         public Popover GetPopover()

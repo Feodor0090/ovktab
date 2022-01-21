@@ -2,7 +2,7 @@
 using osu.Game.Overlays.Dialog;
 using System;
 
-namespace osu.Game.Rulesets.OvkTab.UI
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
 {
     public class LogoutDialog : PopupDialog
     {

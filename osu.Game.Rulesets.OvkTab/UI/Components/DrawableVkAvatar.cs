@@ -6,6 +6,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Graphics.Containers;
+using osu.Game.Rulesets.OvkTab.API;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {

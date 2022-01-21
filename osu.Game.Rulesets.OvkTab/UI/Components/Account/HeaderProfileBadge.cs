@@ -6,9 +6,10 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
+using osu.Game.Rulesets.OvkTab.API;
 using System;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
 {
     public class HeaderProfileBadge : Container
     {
@@ -36,18 +37,18 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         void load(OvkApiHub ovk)
         {
             api = ovk;
-            ovk.loggedUser.BindValueChanged(e =>
+            ovk.LoggedUser.BindValueChanged(e =>
              {
                  if (e.NewValue != null)
                      Schedule(() => OnLogIn(e.NewValue));
                  else
                      cont.FadeOut(250);
              }, true);
-            ovk.isLongpollFailing.ValueChanged += e =>
+            ovk.IsLongpollFailing.ValueChanged += e =>
              {
-                 if (!e.NewValue && ovk.loggedUser.Value != null)
+                 if (!e.NewValue && ovk.LoggedUser.Value != null)
                  {
-                     Schedule(() => OnLogIn(ovk.loggedUser.Value));
+                     Schedule(() => OnLogIn(ovk.LoggedUser.Value));
                  }
                  else
                  {

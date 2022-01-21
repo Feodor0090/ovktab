@@ -10,8 +10,10 @@ using VkNet.Model;
 using osu.Game.Online.Chat;
 using VkNet.Model.Attachments;
 using osu.Framework.Graphics.Cursor;
+using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.UI.Components.Comments;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class PostFooter : FillFlowContainer
     {
@@ -83,7 +85,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 {
                     Current = comments
                 },
-                repostButton = new PostActionButton(FontAwesome.Solid.Bullhorn, false, repostsInfo?.UserReposted??false, (likesInfo?.CanPublish != false)?Repost:null),
+                repostButton = new PostActionButton(FontAwesome.Solid.Bullhorn, false, repostsInfo?.UserReposted??false, likesInfo?.CanPublish != false?Repost:null),
                 new PostCounter()
                 {
                     Current = reposts

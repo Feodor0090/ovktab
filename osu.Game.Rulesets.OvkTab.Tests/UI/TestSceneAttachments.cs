@@ -8,6 +8,7 @@ using osu.Game.Rulesets.OvkTab.UI.Components;
 using osu.Framework.Graphics;
 using osu.Game.Tests.Visual;
 using osu.Framework.Graphics.Sprites;
+using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
 
 namespace osu.Game.Rulesets.OvkTab.Tests.UI
 {

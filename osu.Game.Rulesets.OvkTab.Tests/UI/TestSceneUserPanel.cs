@@ -3,6 +3,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.OvkTab.UI.Components;
 using osu.Framework.Graphics;
 using osu.Game.Tests.Visual;
+using osu.Game.Rulesets.OvkTab.API;
 
 namespace osu.Game.Rulesets.OvkTab.Tests.UI
 {

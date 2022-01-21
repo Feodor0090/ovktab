@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.IO.Network;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using VkNet;
 using VkNet.Enums.Filters;
@@ -16,41 +14,35 @@ using VkNet.Model;
 using VkNet.Model.Attachments;
 using VkNet.Model.RequestParams;
 
-namespace osu.Game.Rulesets.OvkTab
+namespace osu.Game.Rulesets.OvkTab.API
 {
     [Cached]
-    public partial class OvkApiHub
+    public sealed partial class OvkApiHub
     {
 
         private readonly VkApi api;
+        private readonly Bindable<SimpleVkUser> loggedUser = new();
+        private readonly BindableBool isLongpollFailing = new(false);
+        private LongpollQuery currentLongPoll = null;
 
-        public readonly Bindable<SimpleVkUser> loggedUser = new();
+        public Bindable<SimpleVkUser> LoggedUser { get => loggedUser; }
 
         /// <summary>
         /// Will be true, if longpoll is failing.
         /// </summary>
-        public readonly BindableBool isLongpollFailing = new(false);
+        public BindableBool IsLongpollFailing { get => IsLongpollFailing; }
 
-        public string Token
-        {
-            get
-            {
-                return api.Token;
-            }
-        }
+        public string Token { get => api.Token; }
 
-        public int UserId
-        {
-            get
-            {
-                return (int)(api.UserId ?? 0);
-            }
-        }
+        public int UserId { get => (int)(api.UserId ?? 0); }
+
+        public event Action<LongpollMessage> OnNewMessage;
 
         public OvkApiHub()
         {
             api = new VkApi();
         }
+
         const int IPhoneId = 3140623;
         const string IPhoneSecret = "VeWdmVclDCtn6ihuP1nt";
         const int AndroidId = 2274003;
@@ -228,7 +220,7 @@ namespace osu.Game.Rulesets.OvkTab
         {
             try
             {
-                var p = await api.Wall.RepostAsync("wall" + ownerId + "_" + postId, String.Empty, null, false);
+                var p = await api.Wall.RepostAsync("wall" + ownerId + "_" + postId, string.Empty, null, false);
                 return (p.LikesCount, p.RepostsCount);
             }
             catch
@@ -347,11 +339,6 @@ namespace osu.Game.Rulesets.OvkTab
             return text.Replace("$#quot;", "\"");
         }
 
-        
-        public event Action<LongpollMessage> OnNewMessage;
-
-        private LongpollQuery currentLongPoll = null;
-
         public void StartLongPoll()
         {
             if (currentLongPoll != null) currentLongPoll.Dispose();
@@ -365,138 +352,14 @@ namespace osu.Game.Rulesets.OvkTab
             currentLongPoll = null;
         }
 
-        public sealed class LongpollQuery : IDisposable
+        public async Task<LongPollServerResponse> ConnectToLongPoll()
         {
-            private readonly OvkApiHub api;
-
-            public LongpollQuery(OvkApiHub api)
-            {
-                this.api = api;
-            }
-
-            private bool stop = false;
-            private WebRequest request = null;
-
-            public async void Run()
-            {
-                // loop for reconnection to longpoll server
-                while (!stop)
-                {
-                    try
-                    {
-                        var lpp = await api.api.Messages.GetLongPollServerAsync(true);
-                        api.isLongpollFailing.Value = false;
-                        string activeTs = lpp.Ts;
-                        // loop for handling requests
-                        while (!stop)
-                        {
-                            LongpollData ld;
-                            using (request = new()
-                            {
-                                Method = HttpMethod.Get,
-                                Url = $"https://{lpp.Server}?act=a_check&key={lpp.Key}&ts={activeTs}&wait=25&mode=2&version=3",
-                                Timeout = 60000,
-                                AllowRetryOnTimeout = true
-                            })
-                            {
-
-                                request.Perform();
-                                ld = JsonConvert.DeserializeObject<LongpollData>(request.GetResponseString());
-                                request = null;
-                            }
-                            activeTs = ld.Ts;
-                            if (!ld.HasUpdates)
-                            {
-                                continue;
-                            }
-
-                            var updates = ld.GetUpdates();
-
-                            if (stop) return;
-                            foreach (LongpollUpdate update in updates)
-                            {
-                                if (update.type == 4)
-                                {
-                                    api.OnNewMessage.Invoke(new LongpollMessage(update));
-                                }
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        if (stop) return;
-                        api.isLongpollFailing.Value = true;
-                        await Task.Delay(10000);
-                    }
-                }
-            }
-
-            public void Dispose()
-            {
-                api.isLongpollFailing.Value = false;
-                stop = true;
-                request?.Abort();
-            }
+            return await api.Messages.GetLongPollServerAsync(true);
         }
 
-        public sealed class LongpollData
+        public void ReceiveNewMessage(LongpollMessage msg)
         {
-            public string Ts { get; set; }
-            public object[][] updates { get; set; }
-
-            public bool HasUpdates { get => updates != null && updates.Length > 0; }
-            public LongpollUpdate[] GetUpdates()
-            {
-                var r = new LongpollUpdate[updates.Length];
-                for (int i = 0; i < updates.Length; i++)
-                {
-                    r[i] = new LongpollUpdate
-                    {
-                        type = int.Parse(updates[i][0].ToString()),
-                        data = updates[i].Skip(1).ToArray()
-                    };
-                }
-                return r;
-            }
-        }
-
-        public struct LongpollUpdate
-        {
-            public int type;
-            public object[] data;
-        }
-
-        public struct LongpollMessage
-        {
-            public LongpollMessage(LongpollUpdate upd)
-            {
-                if (upd.type != 4) throw new ArgumentException();
-                var data = upd.data;
-                messageId = System.Convert.ToInt32(data[0]);
-                flags = System.Convert.ToInt32(data[1]);
-                targetId = System.Convert.ToInt32(data[2]);
-                time = (new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).AddSeconds(System.Convert.ToInt32(data[3])).ToLocalTime();
-                text = (string)data[4];
-                extra = new Dictionary<string, string>();
-                fromId = 0;
-                foreach (var dict in data.Skip(5).Cast<JObject>())
-                {
-                    foreach (var p in dict)
-                    {
-                        if (p.Key == "from")
-                            fromId = int.Parse(p.Value.ToString());
-                        else
-                            extra.Add(p.Key, p.Value.ToString());
-                    }
-                }
-            }
-            public int messageId;
-            public int flags;
-            public int targetId;
-            public int fromId;
-            public DateTime time;
-            public string text;
-            public Dictionary<string, string> extra;
+            OnNewMessage.Invoke(msg);
         }
     }
 }
