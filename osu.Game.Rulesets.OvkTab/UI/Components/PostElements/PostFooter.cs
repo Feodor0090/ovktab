@@ -39,28 +39,43 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
         public PostFooter(NewsItem post)
         {
-            ownerId = (int)(post?.SourceId ?? 0);
-            postId = (int)(post?.PostId ?? 0);
+            if (post == null) throw new ArgumentNullException(nameof(post));
+            ownerId = (int)post.SourceId;
+            postId = (int)post.PostId;
             footer = this;
 
-            likes.Value = post?.Likes?.Count ?? 0;
-            comments.Value = post?.Comments?.Count ?? 0;
-            reposts.Value = post?.Reposts?.Count ?? 0;
+            likes.Value = post.Likes?.Count ?? 0;
+            comments.Value = post.Comments?.Count ?? 0;
+            reposts.Value = post.Reposts?.Count ?? 0;
 
-            Initialize(post?.Likes, post?.Reposts);
+            Initialize(post.Likes, post.Reposts);
         }
 
         public PostFooter(Post post)
         {
-            ownerId = (int)(post?.OwnerId ?? 0);
-            postId = (int)(post?.Id ?? 0);
+            if (post == null) throw new ArgumentNullException(nameof(post));
+            ownerId = (int)post.OwnerId;
+            postId = (int)post.Id;
             footer = this;
 
-            likes.Value = post?.Likes?.Count ?? 0;
-            comments.Value = post?.Comments?.Count ?? 0;
-            reposts.Value = post?.Reposts?.Count ?? 0;
+            likes.Value = post.Likes?.Count ?? 0;
+            comments.Value = post.Comments?.Count ?? 0;
+            reposts.Value = post.Reposts?.Count ?? 0;
 
-            Initialize(post?.Likes, post?.Reposts);
+            Initialize(post.Likes, post.Reposts);
+        }
+
+        public PostFooter()
+        {
+            ownerId = 0;
+            postId = 0;
+            footer = this;
+
+            likes.Value = 0;
+            comments.Value = 0;
+            reposts.Value = 0;
+
+            Initialize(null, null);
         }
 
         private void Initialize(Likes likesInfo, Reposts repostsInfo)
