@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
                     Padding = new() { Horizontal = 5 }
                 }
             };
-            AddRange(DrawableVkPost.parseAttachments(post.Attachments, Dependencies));
+            AddRange(post.Attachments.ParseAttachments(Dependencies));
             // footer
             Add(new PostFooter(post));
         }

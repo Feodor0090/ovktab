@@ -70,7 +70,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 AutoSizeAxes = Axes.Y,
                 Padding = new() { Horizontal = 5 },
             });
-            content.AddRange(DrawableVkPost.parseAttachments(atts, Dependencies));
+            content.AddRange(atts.ParseAttachments(Dependencies));
 
             LoadComponentAsync(new DrawableVkAvatar(user)
             {
