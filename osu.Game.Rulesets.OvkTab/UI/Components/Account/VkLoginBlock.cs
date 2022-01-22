@@ -37,7 +37,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         {
 
             RelativeSizeAxes = Axes.Both;
-            config = c?.GetConfigFor(ruleset) as OvkTabConfig;
+            if(ruleset!=null) config = c?.GetConfigFor(ruleset) as OvkTabConfig;
+            string loginStr = config?.Get<string>(OvkTabRulesetSetting.Login) ?? string.Empty;
             Add(new FillFlowContainer
             {
                 Anchor = Anchor.Centre,
@@ -56,7 +57,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                     {
                         PlaceholderText = "login",
                         RelativeSizeAxes = Axes.X,
-                        Text = config.Get<string>(OvkTabRulesetSetting.Login),
+                        Text = loginStr,
                         TabbableContentContainer = this,
                     },
                     password = new OsuPasswordTextBox
@@ -103,6 +104,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
             });
             password.OnCommit += (_, _) => Auth();
             errorText.Hide();
+            if (config == null) return;
+            // auto-login section
             if (config.Get<int>(OvkTabRulesetSetting.Id) != 0 && !string.IsNullOrEmpty(config.Get<string>(OvkTabRulesetSetting.Token)))
             {
                 Ovk.loginLoading.Show();
@@ -127,6 +130,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
 
         public void ClearSession()
         {
+            if(config == null) return;
             config.SetValue(OvkTabRulesetSetting.Id, 0);
             config.SetValue(OvkTabRulesetSetting.Token, string.Empty);
         }
@@ -140,11 +144,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                 try
                 {
                     Api.Auth(login.Current.Value, password.Current.Value);
-                    config.SetValue(OvkTabRulesetSetting.Login, login.Current.Value);
-                    if (keepSession.Value)
+                    if (config != null)
                     {
-                        config.SetValue(OvkTabRulesetSetting.Id, Api.UserId);
-                        config.SetValue(OvkTabRulesetSetting.Token, Api.Token);
+                        config.SetValue(OvkTabRulesetSetting.Login, login.Current.Value);
+                        if (keepSession.Value)
+                        {
+                            config.SetValue(OvkTabRulesetSetting.Id, Api.UserId);
+                            config.SetValue(OvkTabRulesetSetting.Token, Api.Token);
+                        }
                     }
                 }
                 catch (Exception ex)

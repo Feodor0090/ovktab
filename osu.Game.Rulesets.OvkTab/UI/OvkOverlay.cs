@@ -18,7 +18,7 @@ using osu.Game.Rulesets.OvkTab.UI.Components.Posts;
 namespace osu.Game.Rulesets.OvkTab.UI
 {
     [Cached]
-    internal class OvkOverlay : FullscreenOverlay<OvkOverlayHeader>
+    public class OvkOverlay : FullscreenOverlay<OvkOverlayHeader>
     {
         [Cached]
         readonly PopoverContainer pc;
