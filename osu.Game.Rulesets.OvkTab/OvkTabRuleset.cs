@@ -83,14 +83,13 @@ namespace osu.Game.Rulesets.OvkTab
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre
                     },
-                    new SpriteText {
-                        UseFullGlyphHeight = false,
-                        Text = "OVK",
-                        Font = OsuFont.GetFont( size: 12, weight: FontWeight.Bold ),
+                    new SpriteIcon {
+                        Icon = FontAwesome.Brands.Vk,
+                        RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre,
-                        Position = new Vector2 { X=0, Y=-1 },
-                    }
+                        Size = new(0.5f),
+                    },
                 };
             }
             public static string ErrorMessage(string code)
