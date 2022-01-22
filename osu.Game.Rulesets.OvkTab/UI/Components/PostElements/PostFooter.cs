@@ -66,6 +66,20 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             Initialize(post.Likes, post.Reposts);
         }
 
+        public PostFooter(Wall post)
+        {
+            if (post == null) throw new ArgumentNullException(nameof(post));
+            ownerId = (int)post.OwnerId;
+            postId = (int)post.Id;
+            footer = this;
+
+            likes.Value = post.Likes?.Count ?? 0;
+            comments.Value = post.Comments?.Count ?? 0;
+            reposts.Value = post.Reposts?.Count ?? 0;
+
+            Initialize(post.Likes, post.Reposts);
+        }
+
         public PostFooter()
         {
             ownerId = 0;

@@ -8,6 +8,7 @@ using osu.Game.Graphics;
 using osu.Game.Online.Chat;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
+using osu.Game.Rulesets.OvkTab.UI.Components.Posts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace osu.Game.Rulesets.OvkTab.API
 {
     public static class VkModelsExtensions
     {
-        public static IEnumerable<Drawable> ParseAttachments(this IEnumerable<Attachment> atts, IReadOnlyDependencyContainer deps)
+        public static IEnumerable<Drawable> ParseAttachments(this IEnumerable<Attachment> atts, IReadOnlyDependencyContainer deps, IEnumerable<SimpleVkUser> users = null)
         {
             OsuGame game = deps.Get<OsuGame>();
             LargeTextureStore lts = deps.Get<LargeTextureStore>();
@@ -51,6 +52,7 @@ namespace osu.Game.Rulesets.OvkTab.API
                     result.Add(new ImagesRow(photos.GetRange(0, photos.Count - 6)));
                 }
             }
+            List<Wall> walls = new List<Wall>();
             atts = atts.Except(photoAtts);
             foreach (var att in atts)
             {
@@ -138,10 +140,18 @@ namespace osu.Game.Rulesets.OvkTab.API
                     case Poll x:
                         result.Add(new SimpleAttachment(FontAwesome.Solid.Poll, x.Question, $"{x.Votes ?? 0} users voted", null, null));
                         break;
+                    case Wall x:
+                        walls.Add(x);
+                        break;
                     default:
                         result.Add(new SimpleAttachment(FontAwesome.Solid.Ban, "Unsupported attachment", att.Instance.ToString(), null, null));
                         break;
                 }
+            }
+
+            foreach(var x in walls)
+            {
+                result.Add(new DrawableVkWall(x, users?.Where(u=>u.id == x.OwnerId).FirstOrDefault()));
             }
             return result;
         }

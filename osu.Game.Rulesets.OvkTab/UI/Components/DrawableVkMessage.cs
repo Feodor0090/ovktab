@@ -75,7 +75,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         /// <param name="text">Text of the message.</param>
         /// <param name="atts">List of attachments</param>
         /// <param name="date">Time, when this message was sent.</param>
-        protected void AddContent(string text, IEnumerable<Attachment> atts, DateTime date)
+        protected void AddContent(string text, IEnumerable<Attachment> atts, DateTime date, IEnumerable<SimpleVkUser> users = null)
         {
             content.Add(new TextFlowContainer(x => x.Font = OsuFont.GetFont(size: 18))
             {
@@ -84,7 +84,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 AutoSizeAxes = Axes.Y,
                 Padding = new() { Horizontal = 5 },
             });
-            content.AddRange(atts.ParseAttachments(Dependencies));
+            content.AddRange(atts.ParseAttachments(Dependencies, users));
             header.Add(new OsuSpriteText
             {
                 Font = OsuFont.GetFont(size: 18),

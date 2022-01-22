@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         [BackgroundDependencyLoader(true)]
         void load()
         {
-            AddContent(msg.Text, msg.Attachments, msg.Date ?? DateTime.Now);
+            AddContent(msg.Text, msg.Attachments, msg.Date ?? DateTime.Now, allUsers);
 
             if (msg.ReplyMessage != null)
             {
