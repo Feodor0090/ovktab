@@ -72,11 +72,10 @@ namespace osu.Game.Rulesets.OvkTab.API
                         SimpleAttachment.AttachmentAction[] actions;
                         IconUsage icon;
                         string type;
-                        // only beatmaps are supported for now.
-                        if (x.Ext == "osz")
+                        if (x.Ext == "osz" || x.Ext == "osr" || x.Ext == "osk")
                         {
                             icon = OsuIcon.Logo;
-                            type = "osu! beatmap set";
+                            type = x.Ext == "osz" ? "osu! beatmap set" : x.Ext == "osr" ? "osu! replay" : "osu! legacy skin";
                             actions = new[]
                             {
                                 new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.Download, b =>
@@ -151,9 +150,9 @@ namespace osu.Game.Rulesets.OvkTab.API
                 }
             }
 
-            foreach(var x in walls)
+            foreach (var x in walls)
             {
-                result.Add(new DrawableVkWall(x, users?.Where(u=>u.id == x.OwnerId).FirstOrDefault()));
+                result.Add(new DrawableVkWall(x, users?.Where(u => u.id == x.OwnerId).FirstOrDefault()));
             }
             return result;
         }
