@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             {
                 authorText = new OsuSpriteText()
                 {
-                    Text = author.name,
+                    Text = author?.name ?? string.Empty,
                     Position = new(65, 15),
                     Origin = Anchor.CentreLeft,
                     Font = font,
