@@ -5,6 +5,9 @@
     <OutputType>Library</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RootNamespace>osu.Game.Rulesets.OvkTab</RootNamespace>
+    <Authors>Feodor0090</Authors>
+    <AssemblyVersion>2022.122.0</AssemblyVersion>
+    <Version>2022.122.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\**" />
