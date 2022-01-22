@@ -4,7 +4,7 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics.Backgrounds;
 using osu.Game.Graphics.Containers;
 
-namespace osu.Game.Rulesets.OvkTab.UI.Components
+namespace osu.Game.Rulesets.OvkTab.UI.Components.Misc
 {
     public class KiaiTriangles : BeatSyncedContainer
     {

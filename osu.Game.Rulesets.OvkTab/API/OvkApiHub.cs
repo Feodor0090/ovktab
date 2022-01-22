@@ -289,7 +289,7 @@ namespace osu.Game.Rulesets.OvkTab.API
             loggedUser.Value = null;
         }
 
-        public async Task<bool> SendMessage(int peerId, string text)
+        public async Task<bool> SendMessage(int peerId, string text, int replyTo = 0)
         {
             try
             {
@@ -297,7 +297,8 @@ namespace osu.Game.Rulesets.OvkTab.API
                 {
                     PeerId = peerId,
                     Message = text,
-                    RandomId = DateTime.Now.Ticks
+                    RandomId = DateTime.Now.Ticks,
+                    ReplyTo = replyTo,
                 });
                 return true;
             }

@@ -12,6 +12,7 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Bindables;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {

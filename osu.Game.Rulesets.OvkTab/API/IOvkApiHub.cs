@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         void Logout();
         void ReceiveNewMessage(LongpollMessage msg);
         Task<(int?, int?)?> Repost(int ownerId, int postId);
-        Task<bool> SendMessage(int peerId, string text);
+        Task<bool> SendMessage(int peerId, string text, int replyTo);
         Task<bool> SendWall(int peerId, int ownerId, int postId, string text = null);
         void StartLongPoll();
         void StopLongPoll();

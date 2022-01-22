@@ -204,7 +204,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
             return Task.FromResult<(int?, int?)?>((1296000, 131));
         }
 
-        public Task<bool> SendMessage(int peerId, string text)
+        public Task<bool> SendMessage(int peerId, string text, int replyTo)
         {
             throw new NotImplementedException();
         }

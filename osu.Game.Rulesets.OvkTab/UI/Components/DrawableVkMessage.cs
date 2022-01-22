@@ -4,6 +4,7 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
 using System;
 using System.Collections.Generic;
 using VkNet.Model.Attachments;
@@ -15,6 +16,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         protected SimpleVkUser user;
         public FillFlowContainer content;
         public FillFlowContainer header;
+        protected readonly Box background;
+        protected readonly KiaiTriangles triangles;
         public DrawableVkMessage(SimpleVkUser author)
         {
             user = author;
@@ -51,12 +54,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                     RelativeSizeAxes = Axes.X,
                     Children = new Drawable[]
                     {
-                        new Box
+                        background = new Box
                         {
                             RelativeSizeAxes = Axes.Both,
                             Alpha = 0.3f,
                             Colour = Colour4.Black
                         },
+                        triangles = new KiaiTriangles(Colour4.AliceBlue, Colour4.CadetBlue, 0.5f),
                         content = new FillFlowContainer
                         {
                             AutoSizeAxes = Axes.Y,
@@ -67,6 +71,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                     }
                 }
             });
+            triangles.Hide();
         }
 
         /// <summary>

@@ -1,12 +1,17 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +21,7 @@ using VkNet.Model;
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {
     [Cached]
-    internal class DialogsTab : Container
+    public class DialogsTab : Container
     {
         readonly FillFlowContainer<DrawableDialog> dialogsList;
         readonly Container dialogView;
@@ -29,7 +34,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 
         private readonly Dictionary<int, SimpleVkUser> usersCache = new();
 
-        public Bindable<int> currentChat = new Bindable<int>(0);
+        public Bindable<int> currentChat = new(0);
+
+        public Bindable<int> replyMessage = new(0);
+        public Bindable<string> replyPreview = new();
+        readonly AttachmentsPopoverContainer attsPopover;
 
         [Resolved]
         private IOvkApiHub ApiHub { get; set; }
@@ -72,9 +81,36 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                             ScrollbarVisible = true,
                         }
                     },
-                    messageInput,
+                    new Container
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 40,
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        Padding = new MarginPadding{ Left = 45 },
+                        Child = messageInput,
+                    },
+                    attsPopover = new AttachmentsPopoverContainer(this)
+                    {
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Size = new(40,40),
+                    },
+                    new IconTrianglesButton
+                    {
+                        Anchor = Anchor.BottomLeft,
+                        Origin = Anchor.BottomLeft,
+                        Size = new(40,40),
+                        icon = FontAwesome.Solid.Bars,
+                        iconSize = new(25),
+                        Action = () => {
+                            attsPopover.ShowPopover();
+                        }
+
+                    },
                 }
             };
+
 
             Add(new Container
             {
@@ -104,15 +140,15 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             messageInput.OnCommit += MessageInput_OnCommit;
             ApiHub.LoggedUser.ValueChanged += x =>
             {
-                if (x.NewValue == null) DeleteAll();
+                if (x.NewValue == null) ClearContents();
             };
-            ApiHub.IsLongpollFailing.BindValueChanged(e =>
+            ApiHub.IsLongpollFailing.BindValueChanged(e => Schedule(() =>
             {
                 if (e.NewValue)
-                    Schedule(longpollPending.Show);
+                    longpollPending.Show();
                 else
-                    Schedule(longpollPending.Hide);
-            }, true);
+                    longpollPending.Hide();
+            }), true);
             ApiHub.IsLongpollFailing.BindValueChanged(e =>
             {
                 if (!e.NewValue)
@@ -131,8 +167,12 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             if (currentChat.Value != 0 && !string.IsNullOrWhiteSpace(sender.Text))
             {
                 historyLoading.Show();
-                bool ok = await ApiHub.SendMessage(currentChat.Value, sender.Text);
-                if (ok) sender.Text = string.Empty;
+                bool ok = await ApiHub.SendMessage(currentChat.Value, sender.Text, replyMessage.Value);
+                if (ok)
+                {
+                    sender.Text = string.Empty;
+                    replyMessage.Value = 0;
+                }
                 Schedule(() =>
                 {
                     historyScroll.ScrollToEnd(true, true);
@@ -171,15 +211,17 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                 {
                     msg = new Message
                     {
-                        Text = m.text
+                        Text = m.text,
+                        Id = m.messageId,
                     };
                 }
                 Schedule(() => history.Add(new DrawableVkChatMessage(usersCache[id], msg, usersCache.Values)));
             }
         }
 
-        void DeleteAll()
+        void ClearContents()
         {
+            currentChat.Value = 0;
             dialogsList.Clear(true);
             history.Clear(true);
         }
@@ -203,6 +245,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         public async void Open(int peerId)
         {
             currentChat.Value = 0;
+            replyMessage.Value = 0;
             historyLoading.Show();
             history.Clear(true);
             var data = await ApiHub.LoadHistory(peerId);
@@ -216,8 +259,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             Schedule(() =>
             {
                 historyScroll.ScrollToEnd(true, true);
+                historyLoading.Hide();
             });
-            Schedule(historyLoading.Hide);
             currentChat.Value = peerId;
         }
 
@@ -234,6 +277,19 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             }
 
             public override bool RequestsFocus => true;
+        }
+
+        private class AttachmentsPopoverContainer : Drawable, IHasPopover
+        {
+            DialogsTab tab;
+            public AttachmentsPopoverContainer(DialogsTab dialogsTab)
+            {
+                tab = dialogsTab;
+            }
+            public Popover GetPopover()
+            {
+                return new AttachmentsPopover(tab);
+            }
         }
 
         private class HistoryScroll : UserTrackingScrollContainer
