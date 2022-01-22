@@ -19,7 +19,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         private readonly Circle circle;
         readonly Colour4 kiai = Colour4.PaleVioletRed;
         readonly Colour4 normal = Colour4.BlueViolet.Lighten(0.05f);
-        private AttachmentAction[] actions;
+        private readonly AttachmentAction[] actions;
 
         public SimpleAttachment(IconUsage icon, string firstLine, string secondLine, string note, AttachmentAction[] buttons = null)
         {
