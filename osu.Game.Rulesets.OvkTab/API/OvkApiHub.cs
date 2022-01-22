@@ -331,14 +331,6 @@ namespace osu.Game.Rulesets.OvkTab.API
                 return false;
             }
         }
-
-        public static string ClearText(string text)
-        {
-            var r = new System.Text.RegularExpressions.Regex(@"\[\w*\|([^\]]*)\]");
-            text = r.Replace(text, "$1");
-            return text.Replace("$#quot;", "\"");
-        }
-
         public void StartLongPoll()
         {
             if (currentLongPoll != null) currentLongPoll.Dispose();

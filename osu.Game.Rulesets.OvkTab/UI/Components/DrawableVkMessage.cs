@@ -65,7 +65,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         {
             content.Add(new TextFlowContainer(x => x.Font = OsuFont.GetFont(size: 18))
             {
-                Text = ClearText(text),
+                Text = text.ClearTextFromMentions(),
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Padding = new() { Horizontal = 5 },

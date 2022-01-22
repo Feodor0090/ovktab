@@ -145,5 +145,12 @@ namespace osu.Game.Rulesets.OvkTab.API
             }
             return result;
         }
+
+        public static string ClearTextFromMentions(this string text)
+        {
+            var r = new System.Text.RegularExpressions.Regex(@"\[\w*\|([^\]]*)\]");
+            text = r.Replace(text, "$1");
+            return text.Replace("$#quot;", "\"");
+        }
     }
 }
