@@ -24,6 +24,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         public SimpleAttachment(IconUsage icon, string firstLine, string secondLine, string note, AttachmentAction[] buttons = null)
         {
             actions = buttons;
+            int buttonsCount = buttons?.Length ?? 0;
             RelativeSizeAxes = Axes.X;
             Height = 50;
             var font = OsuFont.GetFont(size: 20);
@@ -59,13 +60,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 new OsuSpriteText()
                 {
                     Text = note,
-                    Position = new(-45*buttons.Length, 50f/4),
+                    Position = new(-45*buttonsCount, 50f/4),
                     Origin = Anchor.CentreRight,
                     Anchor = Anchor.TopRight,
                     Font = font,
                 },
             };
-            for (int i = 0; i < (buttons?.Length ?? 0); i++)
+            for (int i = 0; i < buttonsCount; i++)
             {
                 Add(new TriangleButton
                 {
@@ -88,7 +89,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 button.Add(actions[i].Get(ts));
                 button.Action = () => actions[i].Action(button);
             }
-            actions = null;
         }
 
         protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
