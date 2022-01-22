@@ -26,3 +26,5 @@ Test browser:
 dotnet build osu.Game.Rulesets.OvkTab.Tests
 ```
 You also can build it to get VkNet library.
+
+Note that some functionality (especially, integrations) requires you to run inside full game instance and use default server (osu.ppy.sh). So, some features won't work correctly inside test browser.
