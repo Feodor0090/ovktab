@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         private ShakeContainer shake;
 
         [Resolved]
-        private OvkApiHub Api { get; set; }
+        private IOvkApiHub Api { get; set; }
         [Resolved]
         private OvkOverlay Ovk { get; set; }
         private OvkTabConfig config;

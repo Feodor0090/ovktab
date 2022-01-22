@@ -5,12 +5,10 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics.Cursor;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osu.Game.Overlays.Notifications;
 using osu.Game.Rulesets.OvkTab.UI.Components;
-using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Cursor;
 using osu.Game.Rulesets.OvkTab.UI.Components.Account;
 using osu.Game.Rulesets.OvkTab.API;
@@ -39,10 +37,9 @@ namespace osu.Game.Rulesets.OvkTab.UI
 
         private bool newsLoaded = false;
         private bool recommendedLoaded = false;
-        [Cached]
-        private readonly OvkApiHub apiHub;
-        [Cached]
-        public readonly IOvkApiHub iApiHub;
+
+        [Cached(typeof(IOvkApiHub))]
+        private readonly IOvkApiHub apiHub;
         readonly Bindable<SimpleVkUser> logged;
 
         [Resolved]
@@ -56,7 +53,6 @@ namespace osu.Game.Rulesets.OvkTab.UI
               {
                   if(e.NewValue == true) nofs.Post(new SimpleErrorNotification() { Text = "Longpoll is failing. Check your connection." });
               };
-            iApiHub = apiHub;
             logged = apiHub.LoggedUser.GetBoundCopy();
             logged.BindValueChanged(e =>
             {

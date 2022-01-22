@@ -8,6 +8,7 @@ using VkNet.Model.Attachments;
 
 namespace osu.Game.Rulesets.OvkTab.API
 {
+    [Cached]
     public interface IOvkApiHub
     {
         BindableBool IsLongpollFailing { get; }

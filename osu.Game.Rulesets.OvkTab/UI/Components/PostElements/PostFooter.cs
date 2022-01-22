@@ -72,9 +72,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             postId = 0;
             footer = this;
 
-            likes.Value = 0;
-            comments.Value = 0;
-            reposts.Value = 0;
+            Initialize(null, null);
+        }
+        public PostFooter(int owner, int id)
+        {
+            ownerId = owner;
+            postId = id;
+            footer = this;
 
             Initialize(null, null);
         }
@@ -94,12 +98,17 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             {
                 likeButton = new PostActionButton(FontAwesome.Regular.Heart, true, userLikes, Like),
                 new PostCounter(likes),
-                commentsButton = new PostActionButton(FontAwesome.Regular.Comment, false, false, commentsButton.ShowPopover, ()=>new CommentsPopover(ownerId, postId, this, PopoverContainer?.DrawSize ?? new(600))),
+                commentsButton = new PostActionButton(FontAwesome.Regular.Comment, false, false, ()=>{
+                    commentsButton.ShowPopover();
+                }, ()=>new CommentsPopover(ownerId, postId, this, PopoverContainer?.DrawSize ?? new(600))),
                 new PostCounter(comments),
                 repostButton = new PostActionButton(FontAwesome.Solid.Bullhorn, false, repostsInfo?.UserReposted??false, likesInfo?.CanPublish != false?Repost:null),
                 new PostCounter(reposts),
                 sendButton = new PostActionButton(FontAwesome.Regular.PaperPlane, false, false,
-                    sendButton.ShowPopover, ()=>new SendPopover(ownerId, postId)),
+                    ()=>{
+                        sendButton.ShowPopover(); 
+                    }, 
+                    ()=>new SendPopover(ownerId, postId)),
                 faveButton = new PostActionButton(FontAwesome.Regular.Star, false, false, Fave),
                 new PostActionButton(FontAwesome.Solid.Link, false, false, () =>
                 {

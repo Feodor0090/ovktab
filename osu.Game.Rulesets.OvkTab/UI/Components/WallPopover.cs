@@ -46,7 +46,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         }
 
         [BackgroundDependencyLoader]
-        async void load(OvkApiHub api)
+        async void load(IOvkApiHub api)
         {
             var r = await api.LoadWall(ownerId);
             var posts = r.Select(x => new DrawableVkWallPost(x.Item1, x.Item2)).ToArray();

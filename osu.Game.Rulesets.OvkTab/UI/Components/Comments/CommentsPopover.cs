@@ -79,10 +79,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
             input.Hide();
         }
 
-        [BackgroundDependencyLoader(true)]
+        [BackgroundDependencyLoader]
         async void load(IOvkApiHub api)
         {
-            if (api == null) return;
             ApiHub = api;
             input.OnCommit += Input_OnCommit;
             await Task.Run(async () =>
@@ -90,10 +89,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
                 var c = await api.GetComments(ownerId, postId);
                 var t = DrawableVkComment.BuildTree(c.Item1, c.Item2);
                 bool canPost = c.Item4;
-                footer.comments.Value = c.Item3;
                 var a = t.Select(x => new DrawableVkComment(x, canPost, c.Item5)).ToArray();
                 Schedule(() =>
                 {
+                    footer.comments.Value = c.Item3;
                     content.AddRange(a);
                     if (canPost)
                     {

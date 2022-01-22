@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         public Bindable<int> currentChat = new Bindable<int>(0);
 
         [Resolved]
-        private OvkApiHub ApiHub { get; set; }
+        private IOvkApiHub ApiHub { get; set; }
         public DialogsTab()
         {
             RelativeSizeAxes = Axes.Both;

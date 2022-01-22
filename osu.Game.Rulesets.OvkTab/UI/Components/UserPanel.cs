@@ -1,29 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using osu.Framework.Allocation;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics.Cursor;
-using osu.Game.Overlays;
-using VkNet;
-using VkNet.Model;
-using VkNet.Model.Attachments;
-using osu.Game.Graphics.UserInterfaceV2;
-using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.UserInterface;
-using osu.Framework.Graphics.Shapes;
-using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
-using static osu.Game.Rulesets.OvkTab.API.OvkApiHub;
-using osu.Game.Graphics.Containers;
-using osu.Game.Beatmaps.ControlPoints;
+﻿using osu.Framework.Allocation;
 using osu.Framework.Audio.Track;
-using osu.Framework.Graphics.Sprites;
-using osu.Game.Graphics.UserInterface;
+using osu.Framework.Graphics;
+using osu.Framework.Graphics.Shapes;
+using osu.Game.Beatmaps.ControlPoints;
+using osu.Game.Graphics;
+using osu.Game.Graphics.Containers;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.OvkTab.API;
+using VkNet.Model;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
@@ -81,7 +65,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
         {
             base.OnNewBeat(beatIndex, timingPoint, effectPoint, amplitudes);
-            bg?.FlashColour(effectPoint.KiaiMode?kiai:normal, timingPoint.BeatLength);
+            bg?.FlashColour(effectPoint.KiaiMode ? kiai : normal, timingPoint.BeatLength);
         }
     }
 }

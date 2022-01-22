@@ -1,6 +1,10 @@
-﻿using osu.Framework.Graphics;
+﻿using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Cursor;
+using osu.Game.Overlays;
 using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.Tests.Stubs;
 using osu.Game.Rulesets.OvkTab.UI.Components;
 using osu.Game.Rulesets.OvkTab.UI.Components.Messages;
 using osu.Game.Tests.Visual;
@@ -11,14 +15,25 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
     public class TestSceneVkMessage : OsuTestScene
     {
         private readonly FillFlowContainer container;
+        [Cached]
+        public readonly OverlayColourProvider ocp = new(OverlayColourScheme.Blue);
 
+        [Cached]
+        public readonly DialogOverlay dialogOverlay = new();
+
+        [Cached(typeof(IOvkApiHub))]
+        public readonly IOvkApiHub apiHub = new OvkApiHubStub();
         public TestSceneVkMessage()
         {
-            Add(container = new FillFlowContainer()
+            Add(new PopoverContainer
             {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new(60),
-                Spacing = new(10),
+                Child = container = new FillFlowContainer()
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Padding = new(60),
+                    Spacing = new(10),
+                },
+                RelativeSizeAxes = Axes.Both
             });
         }
         Random r;
@@ -72,6 +87,11 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
             });
         }
 
+        [BackgroundDependencyLoader]
+        void load()
+        {
+            Add(dialogOverlay);
+        }
         string PickRandom(string[] array)
         {
             if (r == null) return array[0];

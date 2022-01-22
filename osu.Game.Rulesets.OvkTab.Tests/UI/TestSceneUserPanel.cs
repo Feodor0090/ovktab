@@ -4,20 +4,36 @@ using osu.Game.Rulesets.OvkTab.UI.Components;
 using osu.Framework.Graphics;
 using osu.Game.Tests.Visual;
 using osu.Game.Rulesets.OvkTab.API;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Allocation;
+using osu.Game.Overlays;
+using osu.Game.Rulesets.OvkTab.Tests.Stubs;
 
 namespace osu.Game.Rulesets.OvkTab.Tests.UI
 {
     public class TestSceneUserPanel : OsuTestScene
     {
         private readonly FillFlowContainer container;
+        [Cached]
+        public readonly OverlayColourProvider ocp = new(OverlayColourScheme.Blue);
 
+        [Cached]
+        public readonly DialogOverlay dialogOverlay = new();
+
+        [Cached(typeof(IOvkApiHub))]
+        public readonly IOvkApiHub apiHub = new OvkApiHubStub();
+        NowPlayingOverlay npo;
         public TestSceneUserPanel()
         {
-            Add(container = new FillFlowContainer()
+            Add(new PopoverContainer
             {
-                RelativeSizeAxes = Axes.Both,
-                Padding = new(60),
-                Spacing = new(10),
+                Child = container = new FillFlowContainer()
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Padding = new(60),
+                    Spacing = new(10),
+                },
+                RelativeSizeAxes = Axes.Both
             });
         }
         Random r;
@@ -39,19 +55,32 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
             });
             AddStep("Add some panels", () =>
             {
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     SimpleVkUser u = new()
                     {
                         full = null,
-                        id = i+1,
-                        name = PickRandom(t)+" "+PickRandom(t)+" "+ PickRandom(t) + " " + PickRandom(t),
+                        id = i + 1,
+                        name = PickRandom(t) + " " + PickRandom(t) + " " + PickRandom(t) + " " + PickRandom(t),
                         avatarUrl = PickRandom(avatars),
                     };
                     container.Add(new UserPanel(u));
                 }
             });
+            AddStep("Show NPO", () => npo.Show());
             AddStep("Clear", () => container.Clear(true));
+        }
+
+        [BackgroundDependencyLoader]
+        void load()
+        {
+            LoadComponentAsync(new NowPlayingOverlay(), o =>
+            {
+                o.Origin = o.Anchor = Anchor.TopRight;
+                Add(o);
+                npo = o;
+            });
+            Add(dialogOverlay);
         }
 
         string PickRandom(string[] array)
