@@ -120,6 +120,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                     if (currentChat.Value != 0)
                     {
                         Schedule(() => Open(currentChat.Value));
+                        LoadDialogsList();
                     }
                 }
             }, false);
@@ -182,13 +183,16 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             dialogsList.Clear(true);
             history.Clear(true);
         }
-        public async void Start()
+        public async void LoadDialogsList()
         {
             Schedule(listLoading.Show);
             var list = await ApiHub.GetDialogsList();
             var items = list.Select(x => new DrawableDialog(x));
-            dialogsList.Clear(true);
-            dialogsList.AddRange(items);
+            Schedule(() =>
+            {
+                dialogsList.Clear(true);
+                dialogsList.AddRange(items);
+            });
             foreach (var x in list)
             {
                 if (x.Item1 != null) usersCache.TryAdd(x.Item1.id, x.Item1);

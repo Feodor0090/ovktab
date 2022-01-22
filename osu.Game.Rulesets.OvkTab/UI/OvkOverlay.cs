@@ -61,7 +61,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
                     Schedule(() =>
                     {
                         loginTab.FadeOut(100);
-                        dialogsTab.Start();
+                        dialogsTab.LoadDialogsList();
                         ChangeTab(Header.Current.Value);
                     });
                 }
