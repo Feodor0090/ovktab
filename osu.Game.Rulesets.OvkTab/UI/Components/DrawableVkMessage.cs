@@ -4,11 +4,9 @@ using osu.Framework.Graphics.Shapes;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.OvkTab.API;
-using osu.Game.Rulesets.OvkTab.UI.Components.Posts;
 using System;
 using System.Collections.Generic;
 using VkNet.Model.Attachments;
-using static osu.Game.Rulesets.OvkTab.API.OvkApiHub;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
