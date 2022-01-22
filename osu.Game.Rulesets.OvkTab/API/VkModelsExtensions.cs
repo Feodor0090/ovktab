@@ -71,10 +71,12 @@ namespace osu.Game.Rulesets.OvkTab.API
                     case Document x:
                         SimpleAttachment.AttachmentAction[] actions;
                         IconUsage icon;
+                        string type;
                         // only beatmaps are supported for now.
                         if (x.Ext == "osz")
                         {
                             icon = OsuIcon.Logo;
+                            type = "osu! beatmap set";
                             actions = new[]
                             {
                                 new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.Download, b =>
@@ -83,12 +85,11 @@ namespace osu.Game.Rulesets.OvkTab.API
                                     b.Name = "L";
                                     var cc = b.BackgroundColour;
                                     b.BackgroundColour = Colour4.LimeGreen;
-                                    new VkOsuFile()
+                                    new VkOsuFile(game)
                                     {
                                         docUrl = x.Uri,
-                                        ext = "osz",
+                                        ext = x.Ext.ToLower(),
                                         docName = x.Title,
-                                        importer = bm,
                                         OnFail = () => { b.BackgroundColour = cc; b.Name = "0"; },
                                         OnOk = () => { },
                                         PostNotification = n => no.Post(n),
@@ -99,6 +100,7 @@ namespace osu.Game.Rulesets.OvkTab.API
                         else
                         {
                             icon = FontAwesome.Solid.Paperclip;
+                            type = x.Ext + " document";
                             actions = new[]
                             {
                                 new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.Link, b =>
@@ -107,7 +109,7 @@ namespace osu.Game.Rulesets.OvkTab.API
                                 }),
                             };
                         }
-                        result.Add(new SimpleAttachment(icon, x.Title, $"{x.Size / 1024} kb", null, actions));
+                        result.Add(new SimpleAttachment(icon, x.Title, type, $"{x.Size / 1024} kb", actions));
                         break;
                     case AudioMessage x:
                         string len = (x.Duration / 60).ToString().PadLeft(2, '0') + ":" + (x.Duration % 60).ToString().PadLeft(2, '0');

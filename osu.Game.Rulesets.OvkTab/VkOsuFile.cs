@@ -17,24 +17,18 @@ namespace osu.Game.Rulesets.OvkTab
         public string ext;
         public string docName;
         private string filename;
-        public BeatmapManager importer;
         public Action<Notification> PostNotification;
         public Action OnFail;
         public Action OnOk;
+        private readonly OsuGame game;
 
-        public VkOsuFile()
+        public VkOsuFile(OsuGame osuGame)
         {
-
+            game = osuGame;
         }
 
         public void Download()
         {
-            // Only beatmaps are supported for now.
-            if(!ext.Equals("osz"))
-            {
-                OnFail();
-                return;
-            }
             string file = Path.GetTempFileName();
 
             File.Move(file, filename = Path.ChangeExtension(file, ext));
@@ -53,6 +47,9 @@ namespace osu.Game.Rulesets.OvkTab
                 OnFail();
                 return true;
             };
+            nof.State = ProgressNotificationState.Active;
+            nof.CompletionClickAction = () => true;
+            nof.CompletionText = "Document downloaded!";
             request.Failed += e =>
             {
                 nof.State = ProgressNotificationState.Cancelled;
@@ -62,11 +59,8 @@ namespace osu.Game.Rulesets.OvkTab
             {
                 Task.Factory.StartNew(async () =>
                 {
-                    var imported = await importer.Import(nof, new ImportTask(filename)).ConfigureAwait(false);
-
-                    if (!imported.Any())
-                        OnFail();
-
+                    nof.State = ProgressNotificationState.Completed;
+                    await game.Import(filename);
                     OnOk();
                 }, TaskCreationOptions.LongRunning);
             };
