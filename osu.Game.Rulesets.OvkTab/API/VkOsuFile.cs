@@ -1,16 +1,14 @@
 ﻿using osu.Framework.IO.Network;
-using osu.Game.Beatmaps;
-using osu.Game.Database;
 using osu.Game.Overlays.Notifications;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace osu.Game.Rulesets.OvkTab
+namespace osu.Game.Rulesets.OvkTab.API
 {
+    /// <summary>
+    /// VK document, that can be downloaded and imported into the game.
+    /// </summary>
     public class VkOsuFile
     {
         public string docUrl;
@@ -27,6 +25,9 @@ namespace osu.Game.Rulesets.OvkTab
             game = osuGame;
         }
 
+        /// <summary>
+        /// Begin downloading.
+        /// </summary>
         public void Download()
         {
             string file = Path.GetTempFileName();
@@ -35,21 +36,16 @@ namespace osu.Game.Rulesets.OvkTab
 
             var request = new FileWebRequest(filename, docUrl);
 
-            DownloadNotification nof = new()
-            {
-                Text = $"Downloading {docName}",
-            };
+            DocDownloadNotification nof = new(docName);
 
-            request.DownloadProgress += (a, b) => { nof.Progress = (float)a / b; };
             nof.CancelRequested += () =>
             {
                 request.Abort();
                 OnFail();
                 return true;
             };
-            nof.State = ProgressNotificationState.Active;
-            nof.CompletionClickAction = () => true;
-            nof.CompletionText = "Document downloaded!";
+
+            request.DownloadProgress += (a, b) => { nof.Progress = (float)a / b; };
             request.Failed += e =>
             {
                 nof.State = ProgressNotificationState.Cancelled;
@@ -69,11 +65,17 @@ namespace osu.Game.Rulesets.OvkTab
             request.PerformAsync();
         }
 
-
-
-        private class DownloadNotification : ProgressNotification
+        private class DocDownloadNotification : ProgressNotification
         {
             public override bool IsImportant => false;
+
+            public DocDownloadNotification(string docName)
+            {
+                Text = $"Downloading {docName}";
+                CompletionText = $"{docName} downloaded!";
+                State = ProgressNotificationState.Active;
+                CompletionClickAction = () => true;
+            }
 
             protected override Notification CreateCompletionNotification() => new ProgressCompletionNotification
             {
