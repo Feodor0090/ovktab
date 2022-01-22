@@ -26,7 +26,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         private readonly int postId;
 
         private readonly PostFooter footer;
-        private OvkApiHub ApiHub { get; set; }
+        private IOvkApiHub ApiHub { get; set; }
 
         [Cached]
         public readonly PopoverContainer pc;
@@ -80,7 +80,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         }
 
         [BackgroundDependencyLoader(true)]
-        async void load(OvkApiHub api)
+        async void load(IOvkApiHub api)
         {
             if (api == null) return;
             ApiHub = api;

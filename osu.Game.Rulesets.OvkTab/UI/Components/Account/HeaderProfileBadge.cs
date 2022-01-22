@@ -31,10 +31,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
 
         private FillFlowContainer cont;
         [Resolved(canBeNull: true)] private DialogOverlay DialogOverlay { get; set; }
-        OvkApiHub api;
+        IOvkApiHub api;
 
         [BackgroundDependencyLoader]
-        void load(OvkApiHub ovk)
+        void load(IOvkApiHub ovk)
         {
             api = ovk;
             ovk.LoggedUser.BindValueChanged(e =>

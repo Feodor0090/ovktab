@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         [Resolved]
         private CommentsPopover comms { get; set; }
         [Resolved]
-        private OvkApiHub api { get; set; }
+        private IOvkApiHub api { get; set; }
 
         public DrawableVkComment(CommentsLevel level, bool canPost, bool canLike) : base(level.user)
         {

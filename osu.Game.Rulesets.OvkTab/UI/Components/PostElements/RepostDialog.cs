@@ -1,20 +1,15 @@
-﻿using osu.Game.Overlays.Dialog;
-using System;
-using osu.Framework.Allocation;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using osu.Framework.Graphics.Sprites;
+﻿using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
-using osu.Game.Overlays;
+using osu.Game.Overlays.Dialog;
 using osu.Game.Rulesets.OvkTab.API;
+using System;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class RepostDialog : PopupDialog
     {
 
-        public RepostDialog(int ownerId, int postId, OvkApiHub api, LoadingLayer newsLoading, Action<(int?, int?)?> callback)
+        public RepostDialog(int ownerId, int postId, IOvkApiHub api, LoadingLayer newsLoading, Action<(int?, int?)?> callback)
         {
             Icon = FontAwesome.Solid.Bullhorn;
             HeaderText = "Confirm the repost";

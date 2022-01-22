@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             });
         }
         [Resolved] private DialogOverlay DialogOverlay { get; set; }
-        [Resolved] private OvkApiHub Api { get; set; }
+        [Resolved] private IOvkApiHub Api { get; set; }
 
         [BackgroundDependencyLoader(true)]
         async void load()
