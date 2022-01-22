@@ -69,10 +69,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
                                 likeButton.Checked = false;
                             }
                         }),
-                        new PostCounter()
-                        {
-                            Current = likes
-                        },
+                        new PostCounter(likes),
                     }
                 });
             }
