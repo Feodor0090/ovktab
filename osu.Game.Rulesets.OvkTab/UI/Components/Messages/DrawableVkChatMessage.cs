@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Game.Rulesets.OvkTab.API;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VkNet.Model;
@@ -20,7 +21,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         [BackgroundDependencyLoader(true)]
         void load()
         {
-            AddContent(msg.Text, msg.Attachments);
+            AddContent(msg.Text, msg.Attachments, msg.Date ?? DateTime.Now);
 
             if (msg.ReplyMessage != null)
             {

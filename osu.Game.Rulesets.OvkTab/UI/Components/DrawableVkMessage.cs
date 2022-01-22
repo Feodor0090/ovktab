@@ -5,6 +5,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.Posts;
+using System;
 using System.Collections.Generic;
 using VkNet.Model.Attachments;
 using static osu.Game.Rulesets.OvkTab.API.OvkApiHub;
@@ -15,6 +16,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
     {
         protected SimpleVkUser user;
         public FillFlowContainer content;
+        public FillFlowContainer header;
         public DrawableVkMessage(SimpleVkUser author)
         {
             user = author;
@@ -23,10 +25,18 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             RelativeSizeAxes = Axes.X;
             var font = OsuFont.GetFont(size: 20);
 
-            if (user != null) Add(new OsuSpriteText
+            header = new FillFlowContainer
+            {
+                Direction = FillDirection.Horizontal,
+                Spacing = new(10, 0),
+                Height = 20,
+                RelativeSizeAxes = Axes.X,
+                Padding = new() { Left = 65 }
+            };
+            Add(header);
+            if (user != null) header.Add(new OsuSpriteText
             {
                 Text = user.name,
-                Position = new(60, 0),
                 Font = font,
             });
 
@@ -34,7 +44,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             {
                 AutoSizeAxes = Axes.Y,
                 RelativeSizeAxes = Axes.X,
-                Padding = new MarginPadding { Right = 5, Bottom = 5, Left = 55, Top = 20 },
+                Padding = new MarginPadding { Right = 5, Bottom = 5, Left = 60, Top = 20 },
                 Child = new Container
                 {
                     Masking = true,
@@ -61,7 +71,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             });
         }
 
-        protected void AddContent(string text, IEnumerable<Attachment> atts)
+        /// <summary>
+        /// Initializes this message with text, send date and list of attachments.
+        /// </summary>
+        /// <param name="text">Text of the message.</param>
+        /// <param name="atts">List of attachments</param>
+        /// <param name="date">Time, when this message was sent.</param>
+        protected void AddContent(string text, IEnumerable<Attachment> atts, DateTime date)
         {
             content.Add(new TextFlowContainer(x => x.Font = OsuFont.GetFont(size: 18))
             {
@@ -71,7 +87,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 Padding = new() { Horizontal = 5 },
             });
             content.AddRange(atts.ParseAttachments(Dependencies));
-
+            header.Add(new OsuSpriteText
+            {
+                Font = OsuFont.GetFont(size: 18),
+                Text = $"{date:d MMMM HH:mm}",
+                Origin = Anchor.CentreLeft,
+                Anchor = Anchor.CentreLeft,
+                Colour = Colour4.Gray
+            });
             LoadComponentAsync(new DrawableVkAvatar(user)
             {
                 Position = new(30, 25),

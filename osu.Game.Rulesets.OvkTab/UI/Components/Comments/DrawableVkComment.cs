@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         [BackgroundDependencyLoader(true)]
         void load()
         {
-            AddContent(comm.Text, comm.Attachments);
+            AddContent(comm.Text, comm.Attachments, comm.Date ?? System.DateTime.Now);
             if (CanLike)
             {
                 likes.Value = comm.Likes.Count;
