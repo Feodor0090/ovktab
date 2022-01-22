@@ -122,19 +122,32 @@ namespace osu.Game.Rulesets.OvkTab.API
                         });
                         break;
                     case VkNet.Model.Attachments.Link x:
-                        result.Add(new SimpleAttachment(FontAwesome.Solid.ExternalLinkAlt, x.Title, x.Uri.AbsoluteUri, null, new[]
+                        var globalLinkBtn = new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.Link, b =>
                         {
-                            new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.Link, b =>
+                            game.HandleLink(new LinkDetails(LinkAction.External, x.Uri.AbsoluteUri));
+                        });
+                        SimpleAttachment.AttachmentAction[] linkBtns;
+                        IconUsage linkIcon;
+                        if (x.Uri.Host == "osu.ppy.sh")
+                        {
+                            linkBtns = new[] { new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.AngleDoubleRight, b =>
                             {
-                                game.HandleLink(new LinkDetails(LinkAction.External, x.Uri.AbsoluteUri));
-                            }),
-                        }));
+                                string url = x.Uri.AbsoluteUri;
+                                game.HandleLink(url);
+                            }), globalLinkBtn };
+                            linkIcon = FontAwesome.Solid.Hashtag;
+                        }
+                        else
+                        {
+                            linkIcon = FontAwesome.Solid.ExternalLinkAlt;
+                            linkBtns = new[] { globalLinkBtn };
+                        }
+                        result.Add(new SimpleAttachment(linkIcon, x.Title, x.Uri.AbsoluteUri, null, linkBtns));
                         break;
                     case Sticker x:
                         result.Add(new Sprite
                         {
-                            Width = 150,
-                            Height = 150,
+                            Size = new(150),
                             Texture = lts?.Get(x.Images.Skip(1).First().Url.AbsoluteUri)
                         });
                         break;
