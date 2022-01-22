@@ -114,5 +114,48 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             base.OnNewBeat(beatIndex, timingPoint, effectPoint, amplitudes);
             circle?.FlashColour(effectPoint.KiaiMode ? kiai : normal, timingPoint.BeatLength);
         }
+
+        public abstract class AttachmentAction
+        {
+            public Action Action { get; protected set; }
+
+            public abstract Drawable Get(TextureStore ts);
+        }
+        public class IconAttachmentAction : AttachmentAction
+        {
+            private readonly IconUsage icon;
+
+            public IconAttachmentAction(IconUsage icon, Action action)
+            {
+                Action = action;
+                this.icon = icon;
+            }
+
+            public override Drawable Get(TextureStore ts) => new SpriteIcon
+            {
+                Icon = icon,
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new(20),
+            };
+        }
+        public class SpriteAttachmentAction : AttachmentAction
+        {
+            private readonly string sprite;
+
+            public SpriteAttachmentAction(string texName, Action action)
+            {
+                sprite = texName;
+                Action = action;
+            }
+
+            public override Drawable Get(TextureStore ts) => new Sprite
+            {
+                Texture = ts?.Get(sprite),
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new(30),
+            };
+        }
     }
 }
