@@ -2,17 +2,18 @@
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics;
+using osu.Framework.Bindables;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class PostCounter : RollingCounter<int>
     {
-        public PostCounter()
+        public PostCounter(Bindable<int> bind)
         {
             AutoSizeAxes = Axes.X;
             RelativeSizeAxes = Axes.Y;
             Margin = new MarginPadding() { Right = 10 };
-
+            Current = bind;
         }
         protected override double RollingDuration => 1500;
         protected override Easing RollingEasing => Easing.Out;

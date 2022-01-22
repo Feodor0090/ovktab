@@ -12,6 +12,7 @@ using VkNet.Model.Attachments;
 using osu.Framework.Graphics.Cursor;
 using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.Comments;
+using System;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
@@ -30,10 +31,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         [Cached]
         private PostFooter footer;
 
-        [Resolved(canBeNull: true)] private OvkApiHub OvkApiHub { get; set; }
+        [Resolved] private IOvkApiHub OvkApiHub { get; set; }
         [Resolved(canBeNull: true)] private OvkOverlay OvkOverlay { get; set; }
         [Resolved(canBeNull: true)] private NotificationOverlay Nofs { get; set; }
-        [Resolved(canBeNull: true)] private DialogOverlay DialogOverlay { get; set; }
+        [Resolved] private DialogOverlay DialogOverlay { get; set; }
         [Resolved(canBeNull: true)] private OsuGame OsuGame { get; set; }
         [Resolved(canBeNull: true)] private PopoverContainer PopoverContainer { get; set; }
 
@@ -88,26 +89,17 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             {
                 Left = 5
             };
+            bool userLikes = likesInfo?.UserLikes ?? false;
             Children = new Drawable[]
             {
-                likeButton = new PostActionButton(FontAwesome.Regular.Heart, true, likesInfo?.UserLikes??false, LikePost),
-                new PostCounter()
-                {
-                    Current = likes
-                },
-                commentsButton = new PostActionButton(FontAwesome.Regular.Comment, false, false, OpenComments, ()=>new CommentsPopover(ownerId, postId, this, PopoverContainer?.DrawSize ?? new(600))),
-                new PostCounter()
-                {
-                    Current = comments
-                },
+                likeButton = new PostActionButton(FontAwesome.Regular.Heart, true, userLikes, Like),
+                new PostCounter(likes),
+                commentsButton = new PostActionButton(FontAwesome.Regular.Comment, false, false, commentsButton.ShowPopover, ()=>new CommentsPopover(ownerId, postId, this, PopoverContainer?.DrawSize ?? new(600))),
+                new PostCounter(comments),
                 repostButton = new PostActionButton(FontAwesome.Solid.Bullhorn, false, repostsInfo?.UserReposted??false, likesInfo?.CanPublish != false?Repost:null),
-                new PostCounter()
-                {
-                    Current = reposts
-                },
-                sendButton = new PostActionButton(FontAwesome.Regular.PaperPlane, false, false, () => {
-                    sendButton.ShowPopover();
-                }, ()=>new SendPopover(ownerId, postId)),
+                new PostCounter(reposts),
+                sendButton = new PostActionButton(FontAwesome.Regular.PaperPlane, false, false,
+                    sendButton.ShowPopover, ()=>new SendPopover(ownerId, postId)),
                 faveButton = new PostActionButton(FontAwesome.Regular.Star, false, false, Fave),
                 new PostActionButton(FontAwesome.Solid.Link, false, false, () =>
                 {
@@ -116,9 +108,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             };
         }
 
-        async void LikePost()
+        async void Like()
         {
-            if (postId == 0 || OvkApiHub == null) return;
+            if (postId == 0) return;
             OvkOverlay?.newsLoading.Show();
             long? newCount = await OvkApiHub.LikePost(ownerId, postId, !likeButton.Checked);
             if (newCount.HasValue)
@@ -131,18 +123,12 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 {
                     Text = "Failed to like the post"
                 });
-            OvkOverlay.newsLoading.Hide();
-        }
-
-        void OpenComments()
-        {
-            commentsButton.ShowPopover();
+            OvkOverlay?.newsLoading.Hide();
         }
 
         void Repost()
         {
-            if (postId == 0 || OvkApiHub == null) return;
-            if (repostButton.Checked) return;
+            if (postId == 0 || repostButton.Checked) return;
 
             RepostDialog dialog = new(ownerId, postId, OvkApiHub, OvkOverlay?.newsLoading, x =>
             {
@@ -155,15 +141,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                     if (x.Value.Item2.HasValue) reposts.Value = x.Value.Item2.Value;
                 }
             });
-            DialogOverlay?.Push(dialog);
+            DialogOverlay.Push(dialog);
         }
 
         async void Fave()
         {
-            if (postId == 0 || OvkApiHub == null) return;
-            if (faveButton.Checked) return;
+            if (postId == 0 || faveButton.Checked) return;
             OvkOverlay?.newsLoading.Show();
-            bool ok = await OvkApiHub?.AddToBookmarks(ownerId, postId);
+            bool ok = await OvkApiHub.AddToBookmarks(ownerId, postId);
             if (ok)
             {
                 faveButton.Checked = true;
@@ -172,7 +157,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             {
                 Nofs?.Post(new SimpleErrorNotification()
                 {
-                    Text = "Failed to fave the post"
+                    Text = "Failed to fave the post. Is it favourite already?"
                 });
             }
             OvkOverlay?.newsLoading.Hide();
