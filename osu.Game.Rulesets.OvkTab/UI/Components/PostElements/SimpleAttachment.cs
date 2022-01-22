@@ -19,12 +19,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         private readonly Circle circle;
         readonly Colour4 kiai = Colour4.PaleVioletRed;
         readonly Colour4 normal = Colour4.BlueViolet.Lighten(0.05f);
-        private (object, Action<TriangleButton>)[] buttons;
+        private AttachmentAction[] actions;
 
-        public SimpleAttachment(IconUsage icon, string firstLine, string secondLine, string note, (object, Action<TriangleButton>)[] buttons = null)
+        public SimpleAttachment(IconUsage icon, string firstLine, string secondLine, string note, AttachmentAction[] buttons = null)
         {
-            if (buttons == null) buttons = Array.Empty<(object, Action<TriangleButton>)>();
-            this.buttons = buttons;
+            actions = buttons;
             RelativeSizeAxes = Axes.X;
             Height = 50;
             var font = OsuFont.GetFont(size: 20);
@@ -66,7 +65,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                     Font = font,
                 },
             };
-            for (int i = 0; i < buttons.Length; i++)
+            for (int i = 0; i < (buttons?.Length ?? 0); i++)
             {
                 Add(new TriangleButton
                 {
@@ -81,32 +80,15 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         [BackgroundDependencyLoader]
         void load(TextureStore ts)
         {
+            if (actions == null) return;
             var btns = this.OfType<TriangleButton>().ToArray();
             for (int i = 0; i < btns.Length; i++)
             {
                 var button = btns[i];
-                if (buttons[i].Item1 is IconUsage icon)
-                {
-                    button.Add(new SpriteIcon
-                    {
-                        Icon = icon,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Size = new(20),
-                    });
-                }
-                else
-                {
-                    button.Add(new Sprite
-                    {
-                        Texture = ts?.Get(buttons[i].Item1.ToString()),
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Size = new(30),
-                    });
-                }
-                button.Action = () => buttons[i].Item2(button);
+                button.Add(actions[i].Get(ts));
+                button.Action = () => actions[i].Action(button);
             }
+            actions = null;
         }
 
         protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
@@ -117,7 +99,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
         public abstract class AttachmentAction
         {
-            public Action Action { get; protected set; }
+            public Action<TriangleButton> Action { get; protected set; }
 
             public abstract Drawable Get(TextureStore ts);
         }
@@ -125,7 +107,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         {
             private readonly IconUsage icon;
 
-            public IconAttachmentAction(IconUsage icon, Action action)
+            public IconAttachmentAction(IconUsage icon, Action<TriangleButton> action)
             {
                 Action = action;
                 this.icon = icon;
@@ -143,7 +125,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         {
             private readonly string sprite;
 
-            public SpriteAttachmentAction(string texName, Action action)
+            public SpriteAttachmentAction(string texName, Action<TriangleButton> action)
             {
                 sprite = texName;
                 Action = action;

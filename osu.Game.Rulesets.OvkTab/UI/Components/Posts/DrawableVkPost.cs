@@ -98,24 +98,24 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
                 {
                     case VkNet.Model.Attachments.Audio x:
                         string length = (x.Duration / 60).ToString().PadLeft(2, '0') + ":" + (x.Duration % 60).ToString().PadLeft(2, '0');
-                        result.Add(new SimpleAttachment(FontAwesome.Solid.Music, x.Title, x.Artist, length, new (object, Action<TriangleButton>)[]
+                        result.Add(new SimpleAttachment(FontAwesome.Solid.Music, x.Title, x.Artist, length, new[]
                         {
-                            ("Icons/Hexacons/beatmap", b =>
+                            new SimpleAttachment.SpriteAttachmentAction("Icons/Hexacons/beatmap", b =>
                             {
                                 game.HandleLink(new LinkDetails(LinkAction.SearchBeatmapSet, x.Artist+" "+x.Title));
                             }),
                         }));
                         break;
                     case Document x:
-                        (object, Action<TriangleButton>)[] actions;
+                        SimpleAttachment.AttachmentAction[] actions;
                         IconUsage icon;
                         // only beatmaps are supported for now.
                         if (x.Ext == "osz")
                         {
                             icon = OsuIcon.Logo;
-                            actions = new (object, Action<TriangleButton>)[]
+                            actions = new[]
                             {
-                                (FontAwesome.Solid.Download, b =>
+                                new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.Download, b =>
                                 {
                                     if(b.Name == "L") return;
                                     b.Name = "L";
@@ -137,9 +137,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
                         else
                         {
                             icon = FontAwesome.Solid.Paperclip;
-                            actions = new (object, Action<TriangleButton>)[]
+                            actions = new[]
                             {
-                                (FontAwesome.Solid.Link, b =>
+                                new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.Link, b =>
                                 {
                                     game.HandleLink(new LinkDetails(LinkAction.External, x.Uri));
                                 }),
@@ -159,9 +159,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
                         });
                         break;
                     case VkNet.Model.Attachments.Link x:
-                        result.Add(new SimpleAttachment(FontAwesome.Solid.ExternalLinkAlt, x.Title, x.Uri.AbsoluteUri, null, new (object, Action<TriangleButton>)[]
+                        result.Add(new SimpleAttachment(FontAwesome.Solid.ExternalLinkAlt, x.Title, x.Uri.AbsoluteUri, null, new[]
                         {
-                            (FontAwesome.Solid.Link, b =>
+                            new SimpleAttachment.IconAttachmentAction(FontAwesome.Solid.Link, b =>
                             {
                                 game.HandleLink(new LinkDetails(LinkAction.External, x.Uri.AbsoluteUri));
                             }),
