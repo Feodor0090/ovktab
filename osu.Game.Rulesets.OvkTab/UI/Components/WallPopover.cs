@@ -14,11 +14,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
     public class WallPopover : OsuPopover
     {
         readonly int ownerId;
-        FillFlowContainer content;
-        LoadingLayer ll;
+        readonly FillFlowContainer content;
+        readonly LoadingLayer ll;
 
         [Cached]
-        PopoverContainer pc;
+        public readonly PopoverContainer pc;
         public WallPopover(int id, osuTK.Vector2 parentSize)
         {
             ownerId = id;

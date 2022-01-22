@@ -25,8 +25,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
 {
     public partial class DrawableVkPost : FillFlowContainer
     {
-        NewsItem post;
-        SimpleVkUser author;
+        readonly NewsItem post;
+        readonly SimpleVkUser author;
         public DrawableVkPost(NewsItem post, SimpleVkUser author)
         {
             this.post = post;
@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
         }
 
         [BackgroundDependencyLoader(true)]
-        void load(OsuGame game, LargeTextureStore lts)
+        void load()
         {
             Children = new Drawable[]
             {

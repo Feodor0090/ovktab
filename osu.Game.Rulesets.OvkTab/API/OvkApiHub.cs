@@ -43,14 +43,14 @@ namespace osu.Game.Rulesets.OvkTab.API
             api = new VkApi();
         }
 
-        const int IPhoneId = 3140623;
-        const string IPhoneSecret = "VeWdmVclDCtn6ihuP1nt";
-        const int AndroidId = 2274003;
-        const string AndroidSecret = "hHbZxrka2uZ6jB1inYsH";
-        const int VkMeId = 6146827;
-        const string VkMeSecret = "qVxWRF1CwHERuIrKBnqe";
-        const int VkmId = 2685278;
-        const string VkmSecret = "lxhD8OD7dMsqtXIm5IUY";
+        public const int IPhoneId = 3140623;
+        public const string IPhoneSecret = "VeWdmVclDCtn6ihuP1nt";
+        public const int AndroidId = 2274003;
+        public const string AndroidSecret = "hHbZxrka2uZ6jB1inYsH";
+        public const int VkMeId = 6146827;
+        public const string VkMeSecret = "qVxWRF1CwHERuIrKBnqe";
+        public const int VkmId = 2685278;
+        public const string VkmSecret = "lxhD8OD7dMsqtXIm5IUY";
 
         public void Auth(string login, string password)
         {
@@ -234,7 +234,7 @@ namespace osu.Game.Rulesets.OvkTab.API
             return await api.Fave.AddPostAsync(new VkNet.Model.RequestParams.Fave.FaveAddPostParams { Id = postId, OwnerId = ownerId });
         }
 
-        public async Task<(IEnumerable<(SimpleVkUser, Message)>, SimpleVkUser[])> LoadHistory(long peer)
+        public async Task<((SimpleVkUser, Message)[], SimpleVkUser[])> LoadHistory(long peer)
         {
             var m = await api.Messages.GetHistoryAsync(new MessagesGetHistoryParams { Count = 200, Extended = true, PeerId = peer });
             var u = await Convert(m.Users, m.Groups);
@@ -252,8 +252,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         }
         public static (SimpleVkUser, T)[] MapObjectsWithUsers<T>(IEnumerable<T> input, IEnumerable<SimpleVkUser> users, Func<T, int> idGetter)
         {
-            var result = input.Select(x => (users.Where(u => u.id == idGetter(x)).FirstOrDefault(), x)).ToArray();
-            return result;
+            return input.Select(x => (users.Where(u => u.id == idGetter(x)).FirstOrDefault(), x)).ToArray();
         }
 
         public async Task<(IEnumerable<Comment>, SimpleVkUser[], int, bool, bool)> GetComments(int ownerId, int postId)
@@ -308,11 +307,8 @@ namespace osu.Game.Rulesets.OvkTab.API
             }
         }
 
-        public Message LoadMessage(int id)
-        {
-            var r = api.Messages.GetById(new ulong[] { (ulong)id }, Array.Empty<string>(), 0, true);
-            return r[0];
-        }
+        public Message LoadMessage(int id) => api.Messages.GetById(new ulong[] { (ulong)id }, Array.Empty<string>(), 0, true)[0];
+
         public async Task<bool> SendWall(int peerId, int ownerId, int postId, string text = null)
         {
             try

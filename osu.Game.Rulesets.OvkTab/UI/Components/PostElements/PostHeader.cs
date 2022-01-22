@@ -43,7 +43,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         }
 
         [BackgroundDependencyLoader]
-        void load(LargeTextureStore lts, OsuColour colour)
+        void load()
         {
             LoadComponentAsync(new DrawableVkAvatar(author)
             {

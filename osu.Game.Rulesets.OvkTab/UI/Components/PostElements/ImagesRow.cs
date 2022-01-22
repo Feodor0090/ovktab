@@ -1,28 +1,17 @@
-﻿using System;
+﻿using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
+using osu.Game.Graphics.UserInterface;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using osu.Framework.Allocation;
-using osu.Framework.Bindables;
-using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Game.Graphics.Cursor;
-using osu.Game.Graphics.UserInterface;
-using osu.Game.Overlays;
-using osu.Game.Overlays.Notifications;
-using osu.Framework.Graphics.Sprites;
-using VkNet;
 using VkNet.Model;
 using VkNet.Model.Attachments;
-using osu.Framework.Graphics.Textures;
-using osu.Game.Graphics.Sprites;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public class ImagesRow : FillFlowContainer
     {
-        ImageInfo[] images;
+        readonly ImageInfo[] images;
         int loadedCount = 0;
 
         public ImagesRow(IEnumerable<ImageInfo> photos)

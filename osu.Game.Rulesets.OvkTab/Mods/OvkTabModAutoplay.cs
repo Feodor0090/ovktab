@@ -12,7 +12,7 @@ namespace osu.Game.Rulesets.OvkTab.Mods
 {
     public class OvkTabModAutoplay : ModAutoplay
     {
-        public override Score CreateReplayScore(IBeatmap beatmap, IReadOnlyList<Mod> mods) => new Score
+        public override Score CreateReplayScore(IBeatmap beatmap, IReadOnlyList<Mod> mods) => new()
         {
             ScoreInfo = new ScoreInfo
             {

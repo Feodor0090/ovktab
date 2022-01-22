@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.OvkTab.Replays
 {
     public class OvkTabReplayFrame : ReplayFrame
     {
-        public List<OvkTabAction> Actions = new List<OvkTabAction>();
+        public List<OvkTabAction> Actions = new();
         public Vector2 Position;
 
         public OvkTabReplayFrame(OvkTabAction? button = null)

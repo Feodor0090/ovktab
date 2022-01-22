@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         readonly SimpleVkUser user;
         readonly string url;
 
-        [Resolved(canBeNull: true)] private PopoverContainer popoverContainer { get; set; }
+        [Resolved(canBeNull: true)] private PopoverContainer PopoverContainer { get; set; }
         public DrawableVkAvatar(SimpleVkUser target)
         {
             user = target;
@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         public Popover GetPopover()
         {
             if (user.id == 0) return null;
-            return new WallPopover(user.id, popoverContainer?.DrawSize ?? new(600));
+            return new WallPopover(user.id, PopoverContainer?.DrawSize ?? new(600));
         }
     }
 }

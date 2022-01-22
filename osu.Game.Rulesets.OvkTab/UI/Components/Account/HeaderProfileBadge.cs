@@ -29,7 +29,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
             Alpha = 1;
         }
 
-        private FillFlowContainer cont;
+        private readonly FillFlowContainer cont;
         [Resolved(canBeNull: true)] private DialogOverlay DialogOverlay { get; set; }
         IOvkApiHub api;
 

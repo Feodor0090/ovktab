@@ -28,7 +28,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         Task<IEnumerable<SimpleVkUser>> GetGroupsList();
         Task<long?> LikeComment(Comment comm);
         Task<long?> LikePost(int ownerId, int postId, bool add);
-        Task<(IEnumerable<(SimpleVkUser, Message)>, SimpleVkUser[])> LoadHistory(long peer);
+        Task<((SimpleVkUser, Message)[], SimpleVkUser[])> LoadHistory(long peer);
         Message LoadMessage(int id);
         Task<IEnumerable<(NewsItem, SimpleVkUser)>> LoadNews();
         Task<IEnumerable<(NewsItem, SimpleVkUser)>> LoadRecommended();

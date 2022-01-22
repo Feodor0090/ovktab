@@ -1,23 +1,14 @@
-﻿using osu.Framework.Graphics.Containers;
-using System;
-using VkNet.Model;
-using osu.Framework.Allocation;
+﻿using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
-using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
-using osu.Game.Graphics.Containers;
 using osu.Game.Beatmaps.ControlPoints;
-using osu.Framework.Audio.Track;
-using osu.Framework.Bindables;
-using osu.Framework.Input.Events;
 using osu.Game.Graphics.Backgrounds;
+using osu.Game.Graphics.Containers;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     public class KiaiTriangles : BeatSyncedContainer
     {
-        private Triangles triangles;
+        private readonly Triangles triangles;
         public float MaxAlpha { get; private set; }
         private bool wasKiai = false;
 
@@ -32,7 +23,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
 
         protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
         {
-            if(effectPoint.KiaiMode && !wasKiai)
+            if (effectPoint.KiaiMode && !wasKiai)
             {
                 wasKiai = true;
                 triangles.FadeTo(MaxAlpha, timingPoint.BeatLength, Easing.None);

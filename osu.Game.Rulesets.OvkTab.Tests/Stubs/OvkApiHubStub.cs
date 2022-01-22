@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
 
         public Bindable<SimpleVkUser> LoggedUser { get => loggedUser; }
 
-        private Bindable<SimpleVkUser> loggedUser = new();
+        private readonly Bindable<SimpleVkUser> loggedUser = new();
         public string Token => "Maho-sempai";
 
         public int UserId => 727;
@@ -45,7 +45,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
 
         public Task<(IEnumerable<Comment>, SimpleVkUser[], int, bool, bool)> GetComments(int ownerId, int postId)
         {
-            Comment first = new Comment
+            Comment first = new()
             {
                 FromId = 292,
                 Text = "vk4me is shit",
@@ -54,7 +54,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
                     Count = 1,
                     Items = new System.Collections.ObjectModel.ReadOnlyCollection<Comment>(new Comment[]
                     {
-                        new Comment
+                        new()
                         {
                             FromId = 292,
                             Text = "vkm is better",
@@ -64,7 +64,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
                 },
                 Likes = new Likes { Count = 4, CanLike = true },
             };
-            Comment second = new Comment
+            Comment second = new()
             {
                 FromId = 292,
                 Text = "donate pls",
@@ -75,7 +75,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
 
         public Task<IEnumerable<(SimpleVkUser, ConversationAndLastMessage)>> GetDialogsList()
         {
-            List<(SimpleVkUser, ConversationAndLastMessage)> a = new List<(SimpleVkUser, ConversationAndLastMessage)>(new (SimpleVkUser, ConversationAndLastMessage)[]
+            List<(SimpleVkUser, ConversationAndLastMessage)> a = new(new (SimpleVkUser, ConversationAndLastMessage)[]
             {
                 (null, new ConversationAndLastMessage
                 {
@@ -140,7 +140,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
             return Task.FromResult<long?>(add ? 728 : 726);
         }
 
-        public Task<(IEnumerable<(SimpleVkUser, Message)>, SimpleVkUser[])> LoadHistory(long peer)
+        public Task<((SimpleVkUser, Message)[], SimpleVkUser[])> LoadHistory(long peer)
         {
             throw new NotImplementedException();
         }
@@ -162,11 +162,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
 
         public Task<IEnumerable<(Post, SimpleVkUser)>> LoadWall(int pageId)
         {
-            string photoSize = "\"sizes\": [{ \"type\": \"z\", \"url\": \"https://i.ytimg.com/vi/NhmE5Pp8ebM/maxresdefault.jpg\",\"width\": 1280,\"height\": 720}]";
-            string att = "{\"type\":\"photo\", "+photoSize+"}";
-
-            Attachment attachment = new Attachment();
-            Post p = new Post
+            Post p = new()
             {
                 OwnerId = 292,
                 Id = 1296000,
@@ -188,26 +184,6 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
 
 Для работы требуется Symbian 9.1 и выше и установленные библиотеки osu!framework версии 2022.118.0 и выше.
 Загрузить можно с http://nnproject.cc",
-                /*Attachments = new System.Collections.ObjectModel.ReadOnlyCollection<Attachment>(new[]
-                {
-
-                    new Attachment {
-                        Instance = new Photo()
-                        {
-                            Width = 1280,
-                            Height = 720,
-                            Sizes = new System.Collections.ObjectModel.ReadOnlyCollection<PhotoSize>(new[]
-                            {
-                                new PhotoSize()
-                                {
-                                    Height = 720,
-                                    Width = 1280,
-                                    Url = new Uri("https://i.ytimg.com/vi/NhmE5Pp8ebM/maxresdefault.jpg"),
-                                }
-                            })
-                        }
-                    }
-                }),*/
             };
 
             return Task.FromResult<IEnumerable<(Post, SimpleVkUser)>>(new[] { (p, Maho) });
