@@ -30,7 +30,7 @@ namespace osu.Game.Rulesets.OvkTab.API
 
             // photos, videos
             var photoAtts = atts.Where(x => x.Instance is Photo || x.Instance is Video || x.Instance is Document doc && doc.Preview?.Photo != null);
-            var gifs = atts.Where(x => x.Instance is Document doc && doc.Preview.Photo != null);
+            var gifs = atts.Where(x => x.Instance is Document doc && doc.Preview?.Photo != null);
             var photos = photoAtts
                 .Select(x => x.Instance is Photo ? new ImagesRow.ImageInfo(x.Instance as Photo) : x.Instance is Video ? new ImagesRow.ImageInfo(x.Instance as Video) : new ImagesRow.ImageInfo(((Document)x.Instance).Preview.Photo, ((Document)x.Instance).Ext.ToLower() == "gif"))
                 .ToList();
