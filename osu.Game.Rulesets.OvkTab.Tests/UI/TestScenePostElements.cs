@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.OvkTab.API;
+using osu.Game.Rulesets.OvkTab.Tests.Stubs;
 using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
 using osu.Game.Tests.Visual;
 using System;
@@ -27,6 +28,9 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
 
         [Cached]
         public readonly DialogOverlay dialogOverlay = new();
+
+        [Cached]
+        public readonly IOvkApiHub apiHub = new OvkApiHubStub();
 
         public TestScenePostElements()
         {
