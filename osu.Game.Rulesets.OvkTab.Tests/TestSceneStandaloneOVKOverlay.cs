@@ -22,8 +22,6 @@ namespace osu.Game.Rulesets.OvkTab.Tests
         public readonly NotificationOverlay notifOverlay = new();
         [Cached]
         public readonly OvkOverlay ovkOverlay = new(null);
-        [Cached]
-        public readonly NowPlayingOverlay npo = new();
 
         [BackgroundDependencyLoader]
         private void load(GameHost host, OsuGameBase gameBase)
@@ -37,7 +35,6 @@ namespace osu.Game.Rulesets.OvkTab.Tests
                 },
             };
             Add(notifOverlay);
-            Add(npo);
             Add(dialogOverlay);
             Add(ovkOverlay);
         }
@@ -45,11 +42,10 @@ namespace osu.Game.Rulesets.OvkTab.Tests
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            AddStep("Run", () =>
+            AddStep("Show", () =>
             {
                 ovkOverlay.Show();
             });
-            AddStep("Show NPO", npo.Show);
         }
     }
 }
