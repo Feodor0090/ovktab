@@ -83,11 +83,12 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         {
             if (actions == null) return;
             var btns = this.OfType<TriangleButton>().ToArray();
-            for (int i = 0; i < btns.Length; i++)
+            for (int i = 0; i < actions.Length; i++)
             {
                 var button = btns[i];
-                button.Add(actions[i].Get(ts));
-                button.Action = () => actions[i].Action(button);
+                var action = actions[i];
+                button.Add(action.Get(ts));
+                button.Action = () => action.Action(button);
             }
         }
 
