@@ -6,6 +6,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
+using osu.Game.Online.Chat;
 using osu.Game.Rulesets.OvkTab.API;
 using System;
 using System.Threading.Tasks;
@@ -17,7 +18,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         private OsuTextBox login;
         private OsuTextBox password;
         private OsuSpriteText errorText;
-        private ShakeContainer shake;
 
         [Resolved]
         private IOvkApiHub Api { get; set; }
@@ -66,21 +66,17 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                         RelativeSizeAxes = Axes.X,
                         TabbableContentContainer = this,
                     },
-                    shake = new ShakeContainer
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        AutoSizeAxes = Axes.Y,
-                        Child = new OsuButton
-                        {
-                            Text = "Log in",
-                            RelativeSizeAxes = Axes.X,
-                            Action = Auth
-                        },
-                    },
                     new OsuCheckbox
                     {
                         LabelText = "Save session",
                         Current = keepSession
+                    },
+                    new OsuButton
+                    {
+                        Text = "Log in",
+                        RelativeSizeAxes = Axes.X,
+                        Action = Auth,
+                        Height = 40,
                     },
                     errorText = new OsuSpriteText
                     {
@@ -98,9 +94,19 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                 AutoSizeAxes = Axes.Y,
                 Text = "This is an experimental project, that works via multiple hacks." +
                 " If you experience problems with the game, uninstall this extension before attempting to diagnose them.",
-                Position = new(0, -10),
+                Position = new(0, -40),
                 TextAnchor = Anchor.TopCentre,
                 Padding = new() { Horizontal = 40 }
+            });
+            Add(new OsuButton
+            {
+                Text = "GitHub page",
+                Action = () => { Dependencies.Get<OsuGame>().HandleLink(new LinkDetails(LinkAction.External, "https://github.com/Feodor0090/ovktab")); },
+                Height = 30,
+                Width = 200,
+                Position = new(0, -5),
+                Origin = Anchor.BottomCentre,
+                Anchor = Anchor.BottomCentre,
             });
             password.OnCommit += (_, _) => Auth();
             errorText.Hide();
@@ -160,7 +166,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                     {
                         errorText.Text = ex.Message;
                         errorText.Show();
-                        shake.Shake();
+                        password.FlashColour(Colour4.Red, 750);
                     });
                 }
             });
