@@ -39,18 +39,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 Position = new(30)
             }, x =>
             {
-                Add(x); if (user.full is User u)
-                {
-                    if (u.Online ?? false)
-                        Add(new Circle()
-                        {
-                            Size = new(15),
-                            Position = new(40),
-                            Colour = colour.GreenDark
-                        });
-                };
+                Add(x);
             });
-            Add(new OsuSpriteText()
+            OsuSpriteText t;
+            Add(t = new OsuSpriteText()
             {
                 Text = user.name,
                 Position = new(65, 0),
@@ -58,6 +50,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 Anchor = Anchor.CentreLeft,
                 Font = OsuFont.GetFont(size: 24),
             });
+            if (user.full is User u)
+            {
+                if (u.Online ?? false)
+                    t.Colour = colour.Lime;
+            };
 
         }
         Colour4 kiai = Colour4.FromHex("222");
