@@ -137,7 +137,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                             int peer = tab.currentChat.Value;
                             if(peer == 0) return;
                             try {
-                                if(osuApi.IsLoggedIn) return;
+                                if(!osuApi.IsLoggedIn) return;
                                 
                                 var link = $"https://osu.ppy.sh/users/{osuApi.LocalUser.Value.Id}/";
 
