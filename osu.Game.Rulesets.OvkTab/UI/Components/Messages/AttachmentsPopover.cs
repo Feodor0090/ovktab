@@ -10,6 +10,7 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
+using osu.Game.Online.API;
 using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
 
@@ -22,6 +23,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         IBindable<WorkingBeatmap> wb { get; set; }
         [Resolved]
         IOvkApiHub api { get; set; }
+        [Resolved]
+        private IAPIProvider osuApi { get; set; }
         public AttachmentsPopover(DialogsTab tab)
         {
             Drawable reply;
@@ -117,6 +120,28 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                                 var link = $"https://osu.ppy.sh/beatmapsets/{wb.Value.BeatmapSetInfo.OnlineID}/";
 
                                 api.SendLink(peer, title, link,$"{tab.TypedText} \n\nNow playing \"{title}\", {link}", tab.replyMessage.Value);
+                                tab.TypedText = string.Empty;
+                                tab.replyMessage.Value = 0;
+                                this.HidePopover();
+                            } catch {
+                            }
+                        }
+                    },
+                    new TriangleButton
+                    {
+                        Text = "Send with link to your profile",
+                        RelativeSizeAxes = Axes.X,
+                        Height = 40,
+                        Action = () =>
+                        {
+                            int peer = tab.currentChat.Value;
+                            if(peer == 0) return;
+                            try {
+                                if(osuApi.IsLoggedIn) return;
+                                
+                                var link = $"https://osu.ppy.sh/users/{osuApi.LocalUser.Value.Id}/";
+
+                                api.SendLink(peer, osuApi.LocalUser.Value.Username, link, $"{tab.TypedText} {link}", tab.replyMessage.Value);
                                 tab.TypedText = string.Empty;
                                 tab.replyMessage.Value = 0;
                                 this.HidePopover();
