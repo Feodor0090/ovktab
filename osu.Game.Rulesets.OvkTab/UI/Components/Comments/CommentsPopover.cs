@@ -9,7 +9,6 @@ using osu.Game.Overlays;
 using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
 using osuTK;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using VkNet.Model;
@@ -92,13 +91,15 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
                 var a = t.Select(x => new DrawableVkComment(x, canPost, c.Item5)).ToArray();
                 Schedule(() =>
                 {
-                    footer.comments.Value = c.Item3;
-                    content.AddRange(a);
-                    if (canPost)
+                    try
                     {
-                        input.Show();
+                        footer.comments.Value = c.Item3;
+                        content.AddRange(a);
                     }
-                    ll.Hide();
+                    catch { }
+                    if (canPost)
+                        input.Show();
+                    Schedule(ll.Hide);
                 });
             });
         }
