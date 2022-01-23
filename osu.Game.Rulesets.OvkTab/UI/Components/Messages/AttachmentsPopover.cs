@@ -115,6 +115,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                             try {
                                 api.SendMessage(peer, $"{tab.TypedText} https://osu.ppy.sh/beatmapsets/{wb.Value.BeatmapSetInfo.OnlineID}/", tab.replyMessage.Value);
                                 tab.TypedText = string.Empty;
+                                tab.replyMessage.Value = 0;
                             } catch { }
                         }
                     },
