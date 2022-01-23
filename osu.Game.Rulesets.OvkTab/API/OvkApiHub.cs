@@ -37,6 +37,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         public int UserId { get => (int)(api.UserId ?? 0); }
 
         public event Action<LongpollMessage> OnNewMessage;
+        public event Action<LongpollMessageEdit> OnMessageEdit;
 
         public OvkApiHub()
         {
@@ -73,7 +74,6 @@ namespace osu.Game.Rulesets.OvkTab.API
 
             Auth(int.Parse(dict["user_id"]), dict["access_token"]);
         }
-
         public void Auth(int id, string token)
         {
             api.Authorize(new ApiAuthParams { AccessToken = token, UserId = id });
@@ -347,9 +347,8 @@ namespace osu.Game.Rulesets.OvkTab.API
             return await api.Messages.GetLongPollServerAsync(true);
         }
 
-        public void ReceiveNewMessage(LongpollMessage msg)
-        {
-            OnNewMessage.Invoke(msg);
-        }
+        public void ReceiveNewMessage(LongpollMessage msg) => OnNewMessage.Invoke(msg);
+
+        internal void EditMessage(LongpollMessageEdit msg) => OnMessageEdit.Invoke(msg);
     }
 }

@@ -60,6 +60,10 @@ namespace osu.Game.Rulesets.OvkTab.API
                             {
                                 api.ReceiveNewMessage(new LongpollMessage(update));
                             }
+                            else if (update.type == 5)
+                            {
+                                api.EditMessage(new LongpollMessageEdit(update));
+                            }
                         }
                     }
                 }

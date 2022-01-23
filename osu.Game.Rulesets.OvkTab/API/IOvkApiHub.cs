@@ -17,6 +17,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         int UserId { get; }
 
         event Action<LongpollMessage> OnNewMessage;
+        event Action<LongpollMessageEdit> OnMessageEdit;
 
         Task<bool> AddToBookmarks(int ownerId, int postId);
         void Auth(int id, string token);

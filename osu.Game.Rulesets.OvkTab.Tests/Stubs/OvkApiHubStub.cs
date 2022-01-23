@@ -22,6 +22,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
         public int UserId => 727;
 
         public event Action<LongpollMessage> OnNewMessage;
+        public event Action<LongpollMessageEdit> OnMessageEdit;
 
         public Task<bool> AddToBookmarks(int ownerId, int postId)
         {

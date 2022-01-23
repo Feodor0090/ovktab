@@ -136,12 +136,16 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         [BackgroundDependencyLoader]
         void load()
         {
+            // longpoll
             ApiHub.OnNewMessage += OnNewMessage;
+            ApiHub.OnMessageEdit += OnMessageEdit;
             messageInput.OnCommit += MessageInput_OnCommit;
+            // handle logout
             ApiHub.LoggedUser.ValueChanged += x =>
             {
                 if (x.NewValue == null) ClearContents();
             };
+            // handle network failures
             ApiHub.IsLongpollFailing.BindValueChanged(e => Schedule(() =>
             {
                 if (e.NewValue)
@@ -160,6 +164,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                     }
                 }
             }, false);
+        }
+
+        private void OnMessageEdit(LongpollMessageEdit obj)
+        {
         }
 
         public string TypedText
