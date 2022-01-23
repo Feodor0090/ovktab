@@ -19,6 +19,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         Bindable<int> replyId;
         Bindable<string> replyPreview;
 
+        public int MessageId { get => (int)msg.Id; }
+
         public DrawableVkChatMessage(SimpleVkUser user, Message msg, IEnumerable<SimpleVkUser> allUsers, bool isRoot = true) : base(user)
         {
             this.msg = msg;
