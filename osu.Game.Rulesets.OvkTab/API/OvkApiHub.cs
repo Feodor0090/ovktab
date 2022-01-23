@@ -355,7 +355,11 @@ namespace osu.Game.Rulesets.OvkTab.API
         {
             await api.Messages.DeleteAsync(new[] { id }, deleteForAll: true);
             return true;
-            return (await api.Messages.DeleteAsync(new ulong[] { convMsgId }, (ulong)peerId, deleteForAll: true)).ToList()[0].Value;
+        }
+
+        public void ReportRead(int peerId, int msgId)
+        {
+            api.Messages.MarkAsRead(peerId.ToString(), msgId);
         }
     }
 }

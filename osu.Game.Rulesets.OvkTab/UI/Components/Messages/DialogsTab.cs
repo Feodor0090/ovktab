@@ -238,6 +238,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                     };
                 }
                 Schedule(() => history.Add(new DrawableVkChatMessage(usersCache[id], msg, usersCache.Values)));
+                ApiHub.ReportRead(m.targetId, m.messageId);
             }
         }
 

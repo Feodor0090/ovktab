@@ -37,6 +37,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         Task<IEnumerable<(Post, SimpleVkUser)>> LoadWall(int pageId);
         void Logout();
         void ReceiveNewMessage(LongpollMessage msg);
+        void ReportRead(int peerId, int msgId);
         Task<(int?, int?)?> Repost(int ownerId, int postId);
         Task<bool> SendMessage(int peerId, string text, int replyTo);
         Task<bool> SendWall(int peerId, int ownerId, int postId, string text = null);

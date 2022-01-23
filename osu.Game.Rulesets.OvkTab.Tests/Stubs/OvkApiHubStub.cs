@@ -235,6 +235,11 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
             throw new NotImplementedException();
         }
 
+        public void ReportRead(int peerId, int msgId)
+        {
+            throw new NotImplementedException();
+        }
+
         public static SimpleVkUser Maho => new SimpleVkUser
         {
             avatarUrl = "https://sun9-46.userapi.com/s/v1/ig2/CrdTs9uQS4a3hJVoKOK4Dd8jio613BHW-svlRZzj_qrw2mRGPPoJeYQ1ueseW8m7e2NtIfN1afB4jaX_U0m0jkfE.jpg?size=200x241&quality=96&crop=0,0,700,845&ava=1",
