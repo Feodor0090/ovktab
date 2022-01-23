@@ -2,6 +2,8 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
+using osu.Game.Graphics;
+using osu.Game.Graphics.Sprites;
 using osu.Game.Rulesets.OvkTab.API;
 using System;
 using System.Collections.Generic;
@@ -68,10 +70,21 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 
         internal void UpdateContent(Message message, DialogsTab tab)
         {
-            content.Clear(true);
-            header.Clear(true);
-            msg = message;
-            Schedule(() => load(tab));
+            Schedule(() =>
+            {
+                content.Clear(true);
+                header.Clear(true);
+                msg = message;
+                load(tab);
+                header.Add(new OsuSpriteText
+                {
+                    Font = OsuFont.GetFont(size: 18),
+                    Text = $"/edited/",
+                    Origin = Anchor.CentreLeft,
+                    Anchor = Anchor.CentreLeft,
+                    Colour = Colour4.Gray
+                });
+            });
         }
     }
 }

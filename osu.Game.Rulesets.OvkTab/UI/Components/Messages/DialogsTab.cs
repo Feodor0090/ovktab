@@ -171,7 +171,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             //another chat
             if (obj.peerId != currentChat.Value) return;
             //searching by ID
-            DrawableVkChatMessage m = history.OfType<DrawableVkChatMessage>().Where(x => x.MessageId == obj.peerId).FirstOrDefault();
+            DrawableVkChatMessage m = history.OfType<DrawableVkChatMessage>().Where(x => x.MessageId == obj.messageId).FirstOrDefault();
             //not loaded message
             if (m == null) return;
 
