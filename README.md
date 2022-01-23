@@ -4,7 +4,12 @@ A custom ruleset for osu!lazer, that adds an overlay to use VK social network in
 ![](OvkScreenshot1.png)
 
 ## Features list
-Ovktab can provide you most of things that you need to browse VK communities and chat with your friends without opening browser. Don't expect a lot - it doesn't have video player, voice recorder, calls, uploads and so on. But instead, it has unique integration features with the game, such as direct files importing. You can see full list [here](https://github.com/Feodor0090/ovktab/projects/1). If you are sure that a feature is easy to implement, submit a request to issues.
+Ovktab can provide you most of things that you need to browse VK communities and chat with your friends without opening browser. Don't expect a lot - it doesn't have video player, voice recorder, calls, uploads and so on. But instead, it has unique integration features with the game, such as direct files importing.
+
+| [Full list](https://github.com/Feodor0090/ovktab/projects/1) |
+| ------------------------------------------------------------ |
+
+If you are sure that something is easy to implement, submit a request to issues.
 
 # Installing
 1. Download a latest [release](https://github.com/Feodor0090/ovktab/releases/) or build manually.
