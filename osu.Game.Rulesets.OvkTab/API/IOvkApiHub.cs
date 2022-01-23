@@ -24,6 +24,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         void Auth(string login, string password);
         Task<LongPollServerResponse> ConnectToLongPoll();
         Task<bool> DeleteMessage(int peerId, ulong convMsgId, ulong id);
+        Task<bool> EditMessage(int peerId, long convMsgId, int msgId, string newText);
         Task<(IEnumerable<Comment>, SimpleVkUser[], int, bool, bool)> GetComments(int ownerId, int postId);
         Task<IEnumerable<(SimpleVkUser, ConversationAndLastMessage)>> GetDialogsList();
         Task<IEnumerable<SimpleVkUser>> GetFriendsList();
@@ -39,6 +40,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         void ReceiveNewMessage(LongpollMessage msg);
         void ReportRead(int peerId, int msgId);
         Task<(int?, int?)?> Repost(int ownerId, int postId);
+        Task<bool> SendLink(int peerId, string title, string url, string text, int replyTo);
         Task<bool> SendMessage(int peerId, string text, int replyTo);
         Task<bool> SendWall(int peerId, int ownerId, int postId, string text = null);
         void StartLongPoll();

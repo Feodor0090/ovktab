@@ -113,7 +113,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                             int peer = tab.currentChat.Value;
                             if(peer == 0) return;
                             try {
-                                api.SendMessage(peer, $"{tab.TypedText} https://osu.ppy.sh/beatmapsets/{wb.Value.BeatmapSetInfo.OnlineID}/", tab.replyMessage.Value);
+                                var title = wb.Value.BeatmapSetInfo.ToString();
+                                var link = $"https://osu.ppy.sh/beatmapsets/{wb.Value.BeatmapSetInfo.OnlineID}/";
+
+                                api.SendLink(peer, title, link,$"{tab.TypedText} \n\nNow playing \"{title}\", {link}", tab.replyMessage.Value);
                                 tab.TypedText = string.Empty;
                                 tab.replyMessage.Value = 0;
                                 this.HidePopover();

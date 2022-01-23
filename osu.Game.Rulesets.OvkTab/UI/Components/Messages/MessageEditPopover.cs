@@ -40,6 +40,17 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                 Position = new(0, 45),
                 Size = new(120, 40),
                 Text = "Apply changes",
+                Action = async () =>
+                {
+                    if (await api.EditMessage(peerId, convMessageId, messageId, textBox.Text))
+                    {
+                        this.HidePopover();
+                    }
+                    else
+                    {
+                        textBox.FlashColour(Colour4.Red, 500);
+                    }
+                }
             });
             Add(new DangerousTriangleButton
             {
@@ -48,7 +59,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                 Text = "Delete this message",
                 Action = async () =>
                 {
-                    if (await api.DeleteMessage(peerId, (ulong)convMessageId, (ulong)messageId)) 
+                    if (await api.DeleteMessage(peerId, (ulong)convMessageId, (ulong)messageId))
                         onDelete();
                 }
             });

@@ -329,6 +329,32 @@ namespace osu.Game.Rulesets.OvkTab.API
             }
         }
 
+        public async Task<bool> SendLink(int peerId, string title, string url, string text, int replyTo)
+        {
+            try
+            {
+                await api.Messages.SendAsync(new MessagesSendParams
+                {
+                    PeerId = peerId,
+                    Message = text,
+                    RandomId = DateTime.Now.Ticks,
+                    ReplyTo = replyTo,
+                    DontParseLinks = true,
+                    Attachments = new MediaAttachment[] { new Link() {
+                        Uri = new Uri(url),
+                        Title = title,
+                        Description = title,
+                        Caption = title,
+                    }}
+                });
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public void StartLongPoll()
         {
             if (currentLongPoll != null) currentLongPoll.Dispose();
@@ -360,6 +386,20 @@ namespace osu.Game.Rulesets.OvkTab.API
         public void ReportRead(int peerId, int msgId)
         {
             api.Messages.MarkAsRead(peerId.ToString(), msgId);
+        }
+
+        public async Task<bool> EditMessage(int peerId, long convMsgId, int msgId, string newText)
+        {
+            Message msg = LoadMessage(msgId);
+            return await api.Messages.EditAsync(new MessageEditParams 
+            {
+                KeepForwardMessages = true,
+                KeepSnippets = true,
+                PeerId = peerId,
+                MessageId = msgId,
+                Attachments = msg.Attachments.Select(x=>x.Instance),
+                Message = newText
+            });
         }
     }
 }
