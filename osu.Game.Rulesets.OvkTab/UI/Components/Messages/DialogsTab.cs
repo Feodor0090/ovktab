@@ -162,6 +162,12 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             }, false);
         }
 
+        public string TypedText
+        {
+            get => messageInput.Text;
+            set => messageInput.Text = value;
+        }
+
         private async void MessageInput_OnCommit(Framework.Graphics.UserInterface.TextBox sender, bool newText)
         {
             if (currentChat.Value != 0 && !string.IsNullOrWhiteSpace(sender.Text))

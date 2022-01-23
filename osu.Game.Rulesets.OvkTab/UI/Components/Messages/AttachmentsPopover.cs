@@ -1,18 +1,27 @@
-﻿using osu.Framework.Extensions;
+﻿using osu.Framework.Allocation;
+using osu.Framework.Bindables;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
+using osu.Game.Beatmaps;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
+using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {
     public class AttachmentsPopover : OsuPopover
     {
+
+        [Resolved]
+        IBindable<WorkingBeatmap> wb { get; set; }
+        [Resolved]
+        IOvkApiHub api { get; set; }
         public AttachmentsPopover(DialogsTab tab)
         {
             Drawable reply;
@@ -96,13 +105,22 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                     },
                     new TriangleButton
                     {
-                        Text = "More options",
+                        Text = "Send with link to now playing song",
                         RelativeSizeAxes = Axes.X,
-                        Height = 40
+                        Height = 40,
+                        Action = () =>
+                        {
+                            int peer = tab.currentChat.Value;
+                            if(peer == 0) return;
+                            try {
+                                api.SendMessage(peer, $"{tab.TypedText} https://osu.ppy.sh/beatmapsets/{wb.Value.BeatmapSetInfo.OnlineID}/", tab.replyMessage.Value);
+                                tab.TypedText = string.Empty;
+                            } catch { }
+                        }
                     },
                     new TriangleButton
                     {
-                        Text = "coming soon",
+                        Text = "More options coming soon",
                         RelativeSizeAxes = Axes.X,
                         Height = 40
                     },

@@ -328,6 +328,7 @@ namespace osu.Game.Rulesets.OvkTab.API
                 return false;
             }
         }
+
         public void StartLongPoll()
         {
             if (currentLongPoll != null) currentLongPoll.Dispose();
