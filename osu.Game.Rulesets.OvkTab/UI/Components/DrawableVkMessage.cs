@@ -35,11 +35,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 Padding = new() { Left = 65 }
             };
             Add(header);
-            if (user != null) header.Add(new OsuSpriteText
-            {
-                Text = user.name,
-                Font = font,
-            });
 
             Add(new Container
             {
@@ -82,6 +77,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         /// <param name="date">Time, when this message was sent.</param>
         protected void AddContent(string text, IEnumerable<Attachment> atts, DateTime date, IEnumerable<SimpleVkUser> users = null)
         {
+            if (user != null) header.Add(new OsuSpriteText
+            {
+                Text = user.name,
+                Font = OsuFont.GetFont(size: 20),
+            });
             content.Add(new TextFlowContainer(x => x.Font = OsuFont.GetFont(size: 18))
             {
                 Text = text.ClearTextFromMentions(),

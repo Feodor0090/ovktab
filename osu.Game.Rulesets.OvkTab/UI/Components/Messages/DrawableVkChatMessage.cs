@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
     public class DrawableVkChatMessage : DrawableVkMessage
     {
         private readonly IEnumerable<SimpleVkUser> allUsers;
-        private readonly Message msg;
+        private Message msg;
         private readonly bool canReplyOnThis;
 
         Bindable<int> replyId;
@@ -64,6 +64,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             replyPreview.Value = user.name + ": " + msg.Text;
 
             return true;
+        }
+
+        internal void UpdateContent(Message message, DialogsTab tab)
+        {
+            content.Clear(true);
+            header.Clear(true);
+            msg = message;
+            Schedule(() => load(tab));
         }
     }
 }
