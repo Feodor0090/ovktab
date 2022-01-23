@@ -42,19 +42,28 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                 Text = "Apply changes",
                 Action = async () =>
                 {
-                    if (await api.EditMessage(peerId, convMessageId, messageId, textBox.Text))
-                    {
+                    if (await api.EditMessage(peerId, convMessageId, messageId, textBox.Text, true, true))
                         this.HidePopover();
-                    }
                     else
-                    {
                         textBox.FlashColour(Colour4.Red, 500);
-                    }
                 }
             });
             Add(new DangerousTriangleButton
             {
                 Position = new(125, 45),
+                Size = new(140, 40),
+                Text = "Apply & drop reply",
+                Action = async () =>
+                {
+                    if (await api.EditMessage(peerId, convMessageId, messageId, textBox.Text, false, true))
+                        this.HidePopover();
+                    else
+                        textBox.FlashColour(Colour4.Red, 500);
+                }
+            });
+            Add(new DangerousTriangleButton
+            {
+                Position = new(540, 45),
                 Size = new(160, 40),
                 Text = "Delete this message",
                 Action = async () =>

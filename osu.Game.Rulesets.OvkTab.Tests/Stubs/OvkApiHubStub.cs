@@ -240,7 +240,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.Stubs
             throw new NotImplementedException();
         }
 
-        public Task<bool> EditMessage(int peerId, long convMsgId, int msgId, string newText)
+        public Task<bool> EditMessage(int peerId, long convMsgId, int msgId, string newText, bool keepReply, bool keepAtts)
         {
             throw new NotImplementedException();
         }

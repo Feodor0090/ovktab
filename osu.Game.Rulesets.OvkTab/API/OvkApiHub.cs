@@ -388,16 +388,16 @@ namespace osu.Game.Rulesets.OvkTab.API
             api.Messages.MarkAsRead(peerId.ToString(), msgId);
         }
 
-        public async Task<bool> EditMessage(int peerId, long convMsgId, int msgId, string newText)
+        public async Task<bool> EditMessage(int peerId, long convMsgId, int msgId, string newText, bool keepReply, bool keepAtts)
         {
             Message msg = LoadMessage(msgId);
-            return await api.Messages.EditAsync(new MessageEditParams 
+            return await api.Messages.EditAsync(new MessageEditParams
             {
-                KeepForwardMessages = true,
+                KeepForwardMessages = keepReply,
                 KeepSnippets = true,
                 PeerId = peerId,
                 MessageId = msgId,
-                Attachments = msg.Attachments.Select(x=>x.Instance),
+                Attachments = keepAtts ? msg.Attachments.Select(x => x.Instance) : Array.Empty<MediaAttachment>(),
                 Message = newText
             });
         }
