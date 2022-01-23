@@ -1,6 +1,9 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Sprites;
@@ -12,7 +15,7 @@ using VkNet.Model;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {
-    public class DrawableVkChatMessage : DrawableVkMessage
+    public class DrawableVkChatMessage : DrawableVkMessage, IHasPopover
     {
         private readonly IEnumerable<SimpleVkUser> allUsers;
         private Message msg;
@@ -23,6 +26,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 
         public int MessageId { get => (int)msg.Id; }
 
+        [Resolved(canBeNull: true)]
+        private DialogsTab tab { get; set; }
+
         public DrawableVkChatMessage(SimpleVkUser user, Message msg, IEnumerable<SimpleVkUser> allUsers, bool isRoot = true) : base(user)
         {
             this.msg = msg;
@@ -31,7 +37,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         }
 
         [BackgroundDependencyLoader(true)]
-        void load(DialogsTab tab)
+        void load()
         {
             AddContent(msg.Text, msg.Attachments, msg.Date ?? DateTime.Now, allUsers);
 
@@ -58,24 +64,51 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             }
         }
 
-        protected override bool OnClick(ClickEvent e)
+        protected override bool OnMouseDown(MouseDownEvent e)
         {
             if (!canReplyOnThis || replyId == null) return false;
 
-            replyId.Value = (int)msg.Id;
-            replyPreview.Value = user.name + ": " + msg.Text;
+            if (e.Button == osuTK.Input.MouseButton.Right)
+            {
+                IOvkApiHub api = Dependencies.Get<IOvkApiHub>();
+                if (user.id == api.UserId)
+                {
+                    this.ShowPopover();
+                    return true;
+                }
+            }
+            return false;
+        }
+        protected override bool OnClick(ClickEvent e)
+        {
+
+            if (!canReplyOnThis || replyId == null) return false;
+
+            if (e.Button == osuTK.Input.MouseButton.Left)
+            {
+                replyId.Value = (int)msg.Id;
+                replyPreview.Value = user.name + ": " + msg.Text;
+            } else if(e.Button == osuTK.Input.MouseButton.Right)
+            {
+                IOvkApiHub api = Dependencies.Get<IOvkApiHub>();
+                if(user.id == api.UserId)
+                {
+                    this.ShowPopover();
+                }
+            }
 
             return true;
         }
 
-        internal void UpdateContent(Message message, DialogsTab tab)
+
+        internal void UpdateContent(Message message)
         {
             Schedule(() =>
             {
                 content.Clear(true);
                 header.Clear(true);
                 msg = message;
-                load(tab);
+                load();
                 header.Add(new OsuSpriteText
                 {
                     Font = OsuFont.GetFont(size: 18),
@@ -86,5 +119,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                 });
             });
         }
+
+        public Popover GetPopover() => new MessageEditPopover(tab.currentChat.Value, MessageId, msg.ConversationMessageId ?? 0, msg.Text, () =>
+        {
+            this.Expire();
+        });
     }
 }

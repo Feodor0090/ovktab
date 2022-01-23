@@ -175,7 +175,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             //not loaded message
             if (m == null) return;
 
-            m.UpdateContent(obj.LoadFull(ApiHub), this);
+            m.UpdateContent(obj.LoadFull(ApiHub));
         }
 
         public string TypedText

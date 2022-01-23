@@ -118,9 +118,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             base.OnNewBeat(beatIndex, timingPoint, effectPoint, amplitudes);
             if (effectPoint.KiaiMode)
             {
-                double b4 = timingPoint.BeatLength / 4d;
-                avatar?.ScaleTo(1.02f, b4 * 3, Easing.Out).Then().ScaleTo(1f, b4, Easing.OutQuint);
-                userName?.FlashColour(Colour4.FromHex("BBB"), timingPoint.BeatLength);
+                try
+                {
+                    double b4 = timingPoint.BeatLength / 4d;
+                    avatar?.ScaleTo(1.02f, b4 * 3, Easing.Out).Then().ScaleTo(1f, b4, Easing.OutQuint);
+                    userName?.FlashColour(Colour4.FromHex("BBB"), timingPoint.BeatLength);
+                }
+                catch { }
             }
         }
 

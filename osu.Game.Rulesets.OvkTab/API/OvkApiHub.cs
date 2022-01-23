@@ -349,6 +349,13 @@ namespace osu.Game.Rulesets.OvkTab.API
 
         public void ReceiveNewMessage(LongpollMessage msg) => OnNewMessage.Invoke(msg);
 
-        internal void EditMessage(LongpollMessageEdit msg) => OnMessageEdit.Invoke(msg);
+        public void EditMessage(LongpollMessageEdit msg) => OnMessageEdit.Invoke(msg);
+
+        public async Task<bool> DeleteMessage(int peerId, ulong convMsgId, ulong id)
+        {
+            await api.Messages.DeleteAsync(new[] { id }, deleteForAll: true);
+            return true;
+            return (await api.Messages.DeleteAsync(new ulong[] { convMsgId }, (ulong)peerId, deleteForAll: true)).ToList()[0].Value;
+        }
     }
 }

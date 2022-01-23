@@ -23,6 +23,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         void Auth(int id, string token);
         void Auth(string login, string password);
         Task<LongPollServerResponse> ConnectToLongPoll();
+        Task<bool> DeleteMessage(int peerId, ulong convMsgId, ulong id);
         Task<(IEnumerable<Comment>, SimpleVkUser[], int, bool, bool)> GetComments(int ownerId, int postId);
         Task<IEnumerable<(SimpleVkUser, ConversationAndLastMessage)>> GetDialogsList();
         Task<IEnumerable<SimpleVkUser>> GetFriendsList();
