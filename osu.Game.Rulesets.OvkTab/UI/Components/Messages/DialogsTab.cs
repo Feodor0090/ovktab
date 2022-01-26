@@ -4,6 +4,7 @@ using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
@@ -39,6 +40,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         public Bindable<int> replyMessage = new(0);
         public Bindable<string> replyPreview = new();
         readonly AttachmentsPopoverContainer attsPopover;
+
+        readonly DialogsTabBackground bg;
+        public readonly BindableBool showBg = new BindableBool(false);
 
         [Resolved]
         private IOvkApiHub ApiHub { get; set; }
@@ -111,6 +115,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                 }
             };
 
+            Add(new DialogsTabBackground(showBg.GetBoundCopy()));
 
             Add(new Container
             {

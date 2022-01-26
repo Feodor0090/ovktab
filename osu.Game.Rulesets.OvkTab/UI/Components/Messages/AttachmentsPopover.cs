@@ -138,7 +138,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                             if(peer == 0) return;
                             try {
                                 if(!osuApi.IsLoggedIn) return;
-                                
+
                                 var link = $"https://osu.ppy.sh/users/{osuApi.LocalUser.Value.Id}/";
 
                                 api.SendLink(peer, osuApi.LocalUser.Value.Username, link, $"{tab.TypedText} {link}", tab.replyMessage.Value);
@@ -148,6 +148,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                             } catch {
                             }
                         }
+                    },
+                    new OsuCheckbox
+                    {
+                        Current = tab.showBg,
+                        LabelText = "Display background"
                     },
                     new TriangleButton
                     {

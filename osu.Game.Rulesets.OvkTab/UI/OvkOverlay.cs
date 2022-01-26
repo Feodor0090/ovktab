@@ -144,7 +144,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
 
                         } }
                     },
-                    RowDimensions = new[] { new Dimension(GridSizeMode.Absolute, 105), new Dimension(GridSizeMode.Distributed) }
+                    RowDimensions = new[] { new Dimension(GridSizeMode.Absolute, 102), new Dimension(GridSizeMode.Distributed) }
                 }
             });
             Header.Current.ValueChanged += e => Schedule(() => ChangeTab(e.NewValue));
