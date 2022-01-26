@@ -124,18 +124,6 @@ namespace osu.Game.Rulesets.OvkTab.UI
             groupsTab = new OverlayScrollContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Child = new FillFlowContainer
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Child = new OsuButton
-                    {
-                        Width = 300,
-                        Height = 100,
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Text = "GROUPS"
-                    }
-                }
             };
             groupsTab.Hide();
 
