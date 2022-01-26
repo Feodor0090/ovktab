@@ -14,6 +14,7 @@ using osu.Game.Rulesets.OvkTab.UI.Components.Account;
 using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.Messages;
 using osu.Game.Rulesets.OvkTab.UI.Components.Posts;
+using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
 
 namespace osu.Game.Rulesets.OvkTab.UI
 {
@@ -94,59 +95,42 @@ namespace osu.Game.Rulesets.OvkTab.UI
 
             // Tabs
             loginTab = new VkLoginBlock(ovkTabRuleset);
-            newsTab = new OverlayScrollContainer
+            newsTab = new FullsizeScroll();
+            newsTab.Add(new FillFlowContainer
             {
-                RelativeSizeAxes = Axes.Both,
-                Child = new FillFlowContainer
-                {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                }
-            };
-            newsTab.Hide();
-            recommsTab = new OverlayScrollContainer
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+            });
+            recommsTab = new FullsizeScroll();
+            recommsTab.Add(new FillFlowContainer
             {
-                RelativeSizeAxes = Axes.Both,
-                Child = new FillFlowContainer
-                {
-                    RelativeSizeAxes = Axes.X,
-                    AutoSizeAxes = Axes.Y,
-                }
-            };
-            recommsTab.Hide();
+                RelativeSizeAxes = Axes.X,
+                AutoSizeAxes = Axes.Y,
+            });
             dialogsTab = new DialogsTab();
-            dialogsTab.Hide();
-            friendsTab = new OverlayScrollContainer
-            {
-                RelativeSizeAxes = Axes.Both,
-            };
-            friendsTab.Hide();
-            groupsTab = new OverlayScrollContainer
-            {
-                RelativeSizeAxes = Axes.Both,
-            };
-            groupsTab.Hide();
+            friendsTab = new FullsizeScroll();
+            groupsTab = new FullsizeScroll();
 
             // Building layout
             tabs = new Drawable[] { newsTab, recommsTab, dialogsTab, friendsTab, groupsTab, loginTab };
-            GridContainer grid;
+            foreach(var d in tabs) 
+                d.Hide();
+            loginTab.Show();
+
             Add(pc = new PopoverContainer
             {
                 RelativeSizeAxes = Axes.Both,
-                Child = grid = new GridContainer
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Content = new Drawable[][] {
-                        new Drawable[] { Header },
-                        new Drawable[] { container = new Container {
-                            RelativeSizeAxes = Axes.Both,
-                            Children = (IReadOnlyList<Drawable>)tabs.Clone(),
-
-                        } }
+                    container = new Container {
+                        Padding = new MarginPadding { Top = 102 },
+                        RelativeSizeAxes = Axes.Both,
+                        Children = tabs
                     },
-                    RowDimensions = new[] { new Dimension(GridSizeMode.Absolute, 102), new Dimension(GridSizeMode.Distributed) }
+                    Header
                 }
             });
+            
             Header.Current.ValueChanged += e => Schedule(() => ChangeTab(e.NewValue));
             Add(loginLoading = new LoadingLayer(dimBackground: true));
             Add(newsLoading = new LoadingLayer(dimBackground: true));
