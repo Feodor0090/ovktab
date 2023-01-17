@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
       <StartupObject>osu.Game.Rulesets.OvkTab.Tests.VisualTestRunner</StartupObject>
+      <LangVersion>10</LangVersion>
     </PropertyGroup>
     <ItemGroup Label="Service">
       <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
@@ -10,9 +11,9 @@
     </PropertyGroup>
   <ItemGroup Label="Package References">
     <PackageReference Include="Appveyor.TestLogger" Version="2.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageReference Include="NUnit" Version="3.13.2" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
   </ItemGroup>
   <ItemGroup>
@@ -20,7 +21,7 @@
   </ItemGroup>
   <PropertyGroup Label="Project">
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>osu.Game.Rulesets.OvkTab.Tests</RootNamespace>
   </PropertyGroup>
 </Project>

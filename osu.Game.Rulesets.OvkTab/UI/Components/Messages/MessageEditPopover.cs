@@ -1,31 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using osu.Framework.Allocation;
-using osu.Framework.Bindables;
 using osu.Framework.Extensions;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Sprites;
-using osu.Game.Beatmaps;
-using osu.Game.Graphics;
-using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Graphics.UserInterfaceV2;
 using osu.Game.Rulesets.OvkTab.API;
-using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {
-    public class MessageEditPopover : OsuPopover
+    public partial class MessageEditPopover : OsuPopover
     {
         [Resolved]
-        IOvkApiHub api { get; set; }
+        private IOvkApiHub api { get; set; }
 
-        OsuTextBox textBox;
+        readonly OsuTextBox textBox;
 
         public MessageEditPopover(int peerId, int messageId, long convMessageId, string oldText, Action onDelete)
         {
@@ -73,6 +61,5 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                 }
             });
         }
-
     }
 }

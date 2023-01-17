@@ -7,10 +7,11 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Backgrounds;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Localisation;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
-    public class PostActionButton : OsuButton, IHasPopover
+    public partial class PostActionButton : OsuButton, IHasPopover, IHasTooltip
     {
         private readonly IconUsage icon;
         private OsuColour colour;
@@ -18,13 +19,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         private readonly Func<Popover> popover;
         private readonly bool isPink;
 
-
         public bool Checked
         {
             get => done;
             set
             {
                 done = value;
+
                 if (done)
                 {
                     BackgroundColour = colour.Lime;
@@ -40,9 +41,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             }
         }
 
-        public PostActionButton(IconUsage icon, bool pink, bool done, Action action, Func<Popover> popover = null)
+        public PostActionButton(IconUsage icon, string tooltip, bool pink, bool done, Action action, Func<Popover> popover = null)
         {
             Action = action;
+            TooltipText = tooltip;
             this.icon = icon;
             isPink = pink;
             this.done = done;
@@ -58,7 +60,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         {
             colour = colours;
             Add(Triangles = new SmallTriangles());
-            Add(new SpriteIcon()
+            Add(new SpriteIcon
             {
                 Icon = icon,
                 Anchor = Anchor.Centre,
@@ -70,18 +72,20 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
         public Popover GetPopover()
         {
-            if (popover == null) return null;
-            return popover();
+            return popover?.Invoke();
         }
 
-        private class SmallTriangles : Triangles
+        private partial class SmallTriangles : Triangles
         {
             protected override float SpawnRatio => 2f;
+
             public SmallTriangles()
             {
                 RelativeSizeAxes = Axes.Both;
                 TriangleScale = 0.5f;
             }
         }
+
+        public LocalisableString TooltipText { get; }
     }
 }

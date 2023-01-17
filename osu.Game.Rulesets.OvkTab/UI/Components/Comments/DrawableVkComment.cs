@@ -12,34 +12,37 @@ using VkNet.Model;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
 {
-    public class DrawableVkComment : DrawableVkMessage
+    public partial class DrawableVkComment : DrawableVkMessage
     {
-        readonly Comment comm;
-        readonly List<CommentsLevel> replies;
+        private readonly Comment comm;
+        private readonly List<CommentsLevel> replies;
         private PostActionButton likeButton;
         private readonly Bindable<int> likes = new();
 
-        bool CanPost { get; set; }
-        bool CanLike { get; set; }
+        private readonly bool canPost;
+        private readonly bool canLike;
 
         [Resolved]
         private CommentsPopover comms { get; set; }
+
         [Resolved]
         private IOvkApiHub api { get; set; }
 
-        public DrawableVkComment(CommentsLevel level, bool canPost, bool canLike) : base(level.user)
+        public DrawableVkComment(CommentsLevel level, bool canPost, bool canLike)
+            : base(level.user)
         {
             comm = level.comment;
             replies = level.replies;
-            CanPost = canPost;
-            CanLike = canLike;
+            this.canPost = canPost;
+            this.canLike = canLike;
         }
 
         [BackgroundDependencyLoader(true)]
         void load()
         {
             AddContent(comm.Text, comm.Attachments, comm.Date ?? System.DateTime.Now);
-            if (CanLike)
+
+            if (canLike)
             {
                 likes.Value = comm.Likes.Count;
                 content.Add(new FillFlowContainer
@@ -54,13 +57,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
                     },
                     Children = new Drawable[]
                     {
-                        likeButton = new PostActionButton(FontAwesome.Regular.Heart, true, comm.Likes.UserLikes, async ()=>
+                        likeButton = new PostActionButton(FontAwesome.Regular.Heart, "like", true, comm.Likes.UserLikes, async () =>
                         {
-                            if(likeButton.Checked) return;
+                            if (likeButton.Checked) return;
                             likeButton.Checked = true;
                             likes.Value++;
                             var l = await api.LikeComment(comm);
-                            if(l.HasValue)
+
+                            if (l.HasValue)
                             {
                                 likes.Value = (int)l.Value;
                             }
@@ -73,18 +77,19 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
                     }
                 });
             }
-            if (CanPost)
+
+            if (canPost)
             {
                 var f = new OsuTextBox
                 {
                     RelativeSizeAxes = Axes.X,
                     PlaceholderText = "type your reply",
-
                 };
                 f.OnCommit += F_OnCommit;
                 content.Add(f);
             }
-            content.AddRange(replies.Select(x => new DrawableVkComment(x, CanPost, CanLike)));
+
+            content.AddRange(replies.Select(x => new DrawableVkComment(x, canPost, canLike)));
         }
 
         private void F_OnCommit(Framework.Graphics.UserInterface.TextBox sender, bool newText)

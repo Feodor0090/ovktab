@@ -9,15 +9,15 @@ namespace osu.Game.Rulesets.OvkTab.API
     /// <summary>
     /// VK document, that can be downloaded and imported into the game.
     /// </summary>
-    public class VkOsuFile
+    public partial class VkOsuFile
     {
         public string docUrl;
         public string ext;
         public string docName;
         private string filename;
-        public Action<Notification> PostNotification;
-        public Action OnFail;
-        public Action OnOk;
+        public Action<Notification> postNotification;
+        public Action onFail;
+        public Action onOk;
         private readonly OsuGame game;
 
         public VkOsuFile(OsuGame osuGame)
@@ -41,7 +41,7 @@ namespace osu.Game.Rulesets.OvkTab.API
             nof.CancelRequested += () =>
             {
                 request.Abort();
-                OnFail();
+                onFail();
                 return true;
             };
 
@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.OvkTab.API
             request.Failed += e =>
             {
                 nof.State = ProgressNotificationState.Cancelled;
-                OnFail();
+                onFail();
             };
             request.Finished += () =>
             {
@@ -57,15 +57,15 @@ namespace osu.Game.Rulesets.OvkTab.API
                 {
                     nof.State = ProgressNotificationState.Completed;
                     await game.Import(filename);
-                    OnOk();
+                    onOk();
                 }, TaskCreationOptions.LongRunning);
             };
 
-            PostNotification?.Invoke(nof);
+            postNotification?.Invoke(nof);
             request.PerformAsync();
         }
 
-        private class DocDownloadNotification : ProgressNotification
+        private partial class DocDownloadNotification : ProgressNotification
         {
             public override bool IsImportant => false;
 

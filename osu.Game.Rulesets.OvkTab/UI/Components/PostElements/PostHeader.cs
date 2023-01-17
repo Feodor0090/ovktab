@@ -1,7 +1,6 @@
 ﻿using System;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Textures;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
@@ -11,7 +10,7 @@ using osu.Game.Rulesets.OvkTab.API;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
-    public class PostHeader : BeatSyncedContainer
+    public partial class PostHeader : BeatSyncedContainer
     {
         private readonly SimpleVkUser author;
         private readonly OsuSpriteText authorText;
@@ -25,14 +24,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             var font = OsuFont.GetFont(size: 20);
             Children = new Drawable[]
             {
-                authorText = new OsuSpriteText()
+                authorText = new OsuSpriteText
                 {
                     Text = author?.name ?? string.Empty,
                     Position = new(65, 15),
                     Origin = Anchor.CentreLeft,
                     Font = font,
                 },
-                new OsuSpriteText()
+                new OsuSpriteText
                 {
                     Text = $"{time:d MMMM HH:mm} ",
                     Position = new(65, 45),
@@ -48,12 +47,17 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             LoadComponentAsync(new DrawableVkAvatar(author)
             {
                 Position = new(30),
-            }, x => { Add(x); avatar = x; });
+            }, x =>
+            {
+                Add(x);
+                avatar = x;
+            });
         }
 
         protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
         {
             base.OnNewBeat(beatIndex, timingPoint, effectPoint, amplitudes);
+
             if (effectPoint.KiaiMode)
             {
                 double b4 = timingPoint.BeatLength / 4d;

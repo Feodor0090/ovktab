@@ -3,30 +3,33 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Online.Chat;
 using osu.Game.Rulesets.OvkTab.API;
 using System;
 using System.Threading.Tasks;
+using osu.Game.Graphics.UserInterfaceV2;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
 {
-    internal class VkLoginBlock : Container
+    internal partial class VkLoginBlock : Container
     {
         private OsuTextBox login;
         private OsuTextBox password;
         private OsuSpriteText errorText;
 
         [Resolved]
-        private IOvkApiHub Api { get; set; }
+        private IOvkApiHub api { get; set; }
+
         [Resolved]
-        private OvkOverlay Ovk { get; set; }
+        private OvkOverlay ovk { get; set; }
+
         private OvkTabConfig config;
         private readonly OvkTabRuleset ruleset;
 
         private readonly Bindable<bool> keepSession = new();
+
         public VkLoginBlock(OvkTabRuleset ruleset)
         {
             this.ruleset = ruleset;
@@ -35,9 +38,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         [BackgroundDependencyLoader]
         void load(IRulesetConfigCache c)
         {
-
             RelativeSizeAxes = Axes.Both;
-            if(ruleset!=null) config = c?.GetConfigFor(ruleset) as OvkTabConfig;
+            if (ruleset != null) config = c?.GetConfigFor(ruleset) as OvkTabConfig;
             string loginStr = config?.Get<string>(OvkTabRulesetSetting.Login) ?? string.Empty;
             Add(new FillFlowContainer
             {
@@ -46,7 +48,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                 Width = 300,
                 AutoSizeAxes = Axes.Y,
                 Spacing = new osuTK.Vector2(0, 5),
-                Children = new Drawable[] {
+                Children = new Drawable[]
+                {
                     new OsuSpriteText
                     {
                         Text = "Log into your VK account",
@@ -71,11 +74,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                         LabelText = "Save session",
                         Current = keepSession
                     },
-                    new OsuButton
+                    new RoundedButton
                     {
                         Text = "Log in",
                         RelativeSizeAxes = Axes.X,
-                        Action = Auth,
+                        Action = auth,
                         Height = 40,
                     },
                     errorText = new OsuSpriteText
@@ -86,19 +89,19 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                     }
                 }
             });
-            Add(new TextFlowContainer()
+            Add(new TextFlowContainer
             {
                 Origin = Anchor.BottomCentre,
                 Anchor = Anchor.BottomCentre,
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Text = "This is an experimental project, that works via multiple hacks." +
-                " If you experience problems with the game, uninstall this extension before attempting to diagnose them.",
+                       " If you experience problems with the game, uninstall this extension before attempting to diagnose them. 2FA not supported, you will have to disable it.",
                 Position = new(0, -40),
                 TextAnchor = Anchor.TopCentre,
                 Padding = new() { Horizontal = 40 }
             });
-            Add(new OsuButton
+            Add(new RoundedButton
             {
                 Text = "GitHub page",
                 Action = () => { Dependencies.Get<OsuGame>().HandleLink(new LinkDetails(LinkAction.External, "https://github.com/Feodor0090/ovktab")); },
@@ -108,18 +111,19 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                 Origin = Anchor.BottomCentre,
                 Anchor = Anchor.BottomCentre,
             });
-            password.OnCommit += (_, _) => Auth();
+            password.OnCommit += (_, _) => auth();
             errorText.Hide();
             if (config == null) return;
+
             // auto-login section
             if (config.Get<int>(OvkTabRulesetSetting.Id) != 0 && !string.IsNullOrEmpty(config.Get<string>(OvkTabRulesetSetting.Token)))
             {
-                Ovk.loginLoading.Show();
+                ovk.loginLoading.Show();
                 Task.Run(() =>
                 {
                     try
                     {
-                        Api.Auth(config.Get<int>(OvkTabRulesetSetting.Id), config.Get<string>(OvkTabRulesetSetting.Token));
+                        api.Auth(config.Get<int>(OvkTabRulesetSetting.Id), config.Get<string>(OvkTabRulesetSetting.Token));
                     }
                     catch
                     {
@@ -129,34 +133,37 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                             errorText.Show();
                         });
                     }
-                    Schedule(Ovk.loginLoading.Hide);
+
+                    Schedule(ovk.loginLoading.Hide);
                 });
             }
         }
 
         public void ClearSession()
         {
-            if(config == null) return;
+            if (config == null) return;
             config.SetValue(OvkTabRulesetSetting.Id, 0);
             config.SetValue(OvkTabRulesetSetting.Token, string.Empty);
         }
 
-        async void Auth()
+        private async void auth()
         {
             errorText.Hide();
-            Ovk.loginLoading.Show();
+            ovk.loginLoading.Show();
             await Task.Run(() =>
             {
                 try
                 {
-                    Api.Auth(login.Current.Value, password.Current.Value);
+                    api.Auth(login.Current.Value, password.Current.Value);
+
                     if (config != null)
                     {
                         config.SetValue(OvkTabRulesetSetting.Login, login.Current.Value);
+
                         if (keepSession.Value)
                         {
-                            config.SetValue(OvkTabRulesetSetting.Id, Api.UserId);
-                            config.SetValue(OvkTabRulesetSetting.Token, Api.Token);
+                            config.SetValue(OvkTabRulesetSetting.Id, api.UserId);
+                            config.SetValue(OvkTabRulesetSetting.Token, api.Token);
                         }
                     }
                 }
@@ -171,7 +178,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                 }
             });
 
-            Schedule(Ovk.loginLoading.Hide);
+            Schedule(ovk.loginLoading.Hide);
         }
     }
 }

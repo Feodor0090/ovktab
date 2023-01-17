@@ -4,7 +4,7 @@ using osu.Game.Rulesets.OvkTab.UI.Components.Account;
 
 namespace osu.Game.Rulesets.OvkTab.UI
 {
-    public class OvkOverlayHeader : TabControlOverlayHeader<OVKSections>
+    public class OvkOverlayHeader : TabControlOverlayHeader<OvkSections>
     {
         public OvkOverlayHeader()
         {

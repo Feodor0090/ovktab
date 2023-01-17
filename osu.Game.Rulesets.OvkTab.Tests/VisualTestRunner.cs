@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests
         [STAThread]
         public static int Main(string[] args)
         {
-            using (DesktopGameHost host = Host.GetSuitableHost(@"osu", true))
+            using (DesktopGameHost host = Host.GetSuitableDesktopHost(@"visual-tests"))
             {
                 host.Run(new OsuTestBrowser());
                 return 0;

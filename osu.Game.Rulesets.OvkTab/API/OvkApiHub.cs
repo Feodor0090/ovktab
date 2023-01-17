@@ -19,22 +19,33 @@ namespace osu.Game.Rulesets.OvkTab.API
     [Cached]
     public sealed class OvkApiHub : IOvkApiHub
     {
-
         private readonly VkApi api;
         private readonly Bindable<SimpleVkUser> loggedUser = new();
         private readonly BindableBool isLongpollFailing = new(false);
         private LongpollQuery currentLongPoll = null;
 
-        public Bindable<SimpleVkUser> LoggedUser { get => loggedUser; }
+        public Bindable<SimpleVkUser> LoggedUser
+        {
+            get => loggedUser;
+        }
 
         /// <summary>
         /// Will be true, if longpoll is failing.
         /// </summary>
-        public BindableBool IsLongpollFailing { get => isLongpollFailing; }
+        public BindableBool IsLongpollFailing
+        {
+            get => isLongpollFailing;
+        }
 
-        public string Token { get => api.Token; }
+        public string Token
+        {
+            get => api.Token;
+        }
 
-        public int UserId { get => (int)(api.UserId ?? 0); }
+        public int UserId
+        {
+            get => (int)(api.UserId ?? 0);
+        }
 
         public event Action<LongpollMessage> OnNewMessage;
         public event Action<LongpollMessageEdit> OnMessageEdit;
@@ -44,29 +55,31 @@ namespace osu.Game.Rulesets.OvkTab.API
             api = new VkApi();
         }
 
-        public const int IPhoneId = 3140623;
-        public const string IPhoneSecret = "VeWdmVclDCtn6ihuP1nt";
-        public const int AndroidId = 2274003;
-        public const string AndroidSecret = "hHbZxrka2uZ6jB1inYsH";
-        public const int VkMeId = 6146827;
-        public const string VkMeSecret = "qVxWRF1CwHERuIrKBnqe";
-        public const int VkmId = 2685278;
-        public const string VkmSecret = "lxhD8OD7dMsqtXIm5IUY";
+        public const int IPHONE_ID = 3140623;
+        public const string IPHONE_SECRET = "VeWdmVclDCtn6ihuP1nt";
+        public const int ANDROID_ID = 2274003;
+        public const string ANDROID_SECRET = "hHbZxrka2uZ6jB1inYsH";
+        public const int VK_ME_ID = 6146827;
+        public const string VK_ME_SECRET = "qVxWRF1CwHERuIrKBnqe";
+        public const int VKM_ID = 2685278;
+        public const string VKM_SECRET = "lxhD8OD7dMsqtXIm5IUY";
 
         public void Auth(string login, string password)
         {
             string result;
+
             using (WebRequest request = new()
-            {
-                Method = HttpMethod.Get,
-                Url = "https://oauth.vk.com/token?grant_type=password" +
-                "&client_id=" + VkmId + "&client_secret=" + VkmSecret + "&username=" + login + "&password=" + password +
-                "&scope=notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads"
-            })
+                   {
+                       Method = HttpMethod.Get,
+                       Url = "https://oauth.vk.com/token?grant_type=password" +
+                             "&client_id=" + VKM_ID + "&client_secret=" + VKM_SECRET + "&username=" + login + "&password=" + password +
+                             "&scope=notify,friends,photos,audio,video,docs,notes,pages,status,offers,questions,wall,groups,messages,notifications,stats,ads"
+                   })
             {
                 request.Perform();
                 result = request.GetResponseString();
             }
+
             if (result[0] != '{')
                 throw new Exception(result);
 
@@ -74,23 +87,26 @@ namespace osu.Game.Rulesets.OvkTab.API
 
             Auth(int.Parse(dict["user_id"]), dict["access_token"]);
         }
+
         public void Auth(int id, string token)
         {
             api.Authorize(new ApiAuthParams { AccessToken = token, UserId = id });
             loggedUser.Value = new SimpleVkUser(api.Users.Get(new[] { (long)id }, ProfileFields.All, NameCase.Nom).First());
             StartLongPoll();
             loggedUser.ValueChanged += e =>
-             {
-                 if (e.NewValue == null) StopLongPoll();
-             };
+            {
+                if (e.NewValue == null) StopLongPoll();
+            };
         }
 
         public static IEnumerable<(NewsItem, SimpleVkUser)> ProcessNewsFeed(NewsFeed feed)
         {
             List<(NewsItem, SimpleVkUser)> result = new();
+
             foreach (var post in feed.Items)
             {
                 SimpleVkUser user;
+
                 if (post.SourceId < 0)
                 {
                     user = feed.Groups.Where(x => x.Id == -post.SourceId).Select(g => new SimpleVkUser()
@@ -116,11 +132,13 @@ namespace osu.Game.Rulesets.OvkTab.API
 
             return result;
         }
+
         public async Task<IEnumerable<(NewsItem, SimpleVkUser)>> LoadNews()
         {
             NewsFeed feed = await api.NewsFeed.GetAsync(new NewsFeedGetParams() { Filters = NewsTypes.Post, MaxPhotos = 10 });
             return ProcessNewsFeed(feed);
         }
+
         public async Task<IEnumerable<(NewsItem, SimpleVkUser)>> LoadRecommended()
         {
             NewsFeed feed = await api.NewsFeed.GetRecommendedAsync(new NewsFeedGetRecommendedParams { MaxPhotos = 10 });
@@ -131,9 +149,11 @@ namespace osu.Game.Rulesets.OvkTab.API
         {
             var r = await api.Wall.GetAsync(new WallGetParams { Count = 100, Extended = true, OwnerId = pageId });
             List<(Post, SimpleVkUser)> result = new();
+
             foreach (var post in r.WallPosts)
             {
                 SimpleVkUser user;
+
                 if (post.FromId < 0)
                 {
                     user = r.Groups.Where(x => x.Id == -post.FromId).Select(g => new SimpleVkUser()
@@ -182,10 +202,7 @@ namespace osu.Game.Rulesets.OvkTab.API
         {
             try
             {
-                return await Task.Run(() =>
-                {
-                    return api.Likes.Add(new LikesAddParams() { Type = LikeObjectType.Comment, OwnerId = comm.OwnerId, ItemId = comm.Id });
-                });
+                return await Task.Run(() => api.Likes.Add(new LikesAddParams() { Type = LikeObjectType.Comment, OwnerId = comm.OwnerId, ItemId = comm.Id }));
             }
             catch
             {
@@ -195,7 +212,7 @@ namespace osu.Game.Rulesets.OvkTab.API
 
         public async Task<IEnumerable<SimpleVkUser>> GetFriendsList()
         {
-            var f = await api.Friends.GetAsync(new FriendsGetParams()
+            var f = await api.Friends.GetAsync(new FriendsGetParams
             {
                 Count = 100,
                 UserId = api.UserId.Value,
@@ -206,7 +223,7 @@ namespace osu.Game.Rulesets.OvkTab.API
 
         public async Task<IEnumerable<SimpleVkUser>> GetGroupsList()
         {
-            var g = await api.Groups.GetAsync(new GroupsGetParams() { Count = 100, Extended = true, UserId = api.UserId.Value, Fields = GroupsFields.All });
+            var g = await api.Groups.GetAsync(new GroupsGetParams { Count = 100, Extended = true, UserId = api.UserId.Value, Fields = GroupsFields.All });
             return g.Select(x => new SimpleVkUser(x));
         }
 
@@ -240,6 +257,7 @@ namespace osu.Game.Rulesets.OvkTab.API
             var u = await Convert(m.Users, m.Groups);
             return (MapObjectsWithUsers(m.Messages, u, x => (int)x.FromId), u);
         }
+
         public static async Task<SimpleVkUser[]> Convert(IEnumerable<User> people, IEnumerable<Group> groups)
         {
             var r = await Task.Run(() =>
@@ -250,9 +268,10 @@ namespace osu.Game.Rulesets.OvkTab.API
             });
             return r;
         }
+
         public static (SimpleVkUser, T)[] MapObjectsWithUsers<T>(IEnumerable<T> input, IEnumerable<SimpleVkUser> users, Func<T, int> idGetter)
         {
-            return input.Select(x => (users.Where(u => u.id == idGetter(x)).FirstOrDefault(), x)).ToArray();
+            return input.Select(x => (users.FirstOrDefault(u => u.id == idGetter(x)), x)).ToArray();
         }
 
         public async Task<(IEnumerable<Comment>, SimpleVkUser[], int, bool, bool)> GetComments(int ownerId, int postId)
@@ -340,12 +359,16 @@ namespace osu.Game.Rulesets.OvkTab.API
                     RandomId = DateTime.Now.Ticks,
                     ReplyTo = replyTo,
                     DontParseLinks = true,
-                    Attachments = new MediaAttachment[] { new Link() {
-                        Uri = new Uri(url),
-                        Title = title,
-                        Description = title,
-                        Caption = title,
-                    }}
+                    Attachments = new MediaAttachment[]
+                    {
+                        new Link()
+                        {
+                            Uri = new Uri(url),
+                            Title = title,
+                            Description = title,
+                            Caption = title,
+                        }
+                    }
                 });
                 return true;
             }

@@ -6,18 +6,18 @@ using osu.Game.Graphics.Containers;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Misc
 {
-    public class KiaiTriangles : BeatSyncedContainer
+    public partial class KiaiTriangles : BeatSyncedContainer
     {
         private readonly Triangles triangles;
-        public float MaxAlpha { get; private set; }
-        private bool wasKiai = false;
+        public readonly float maxAlpha;
+        private bool wasKiai;
 
         public KiaiTriangles(Colour4 light, Colour4 dark, float maxAlpha)
         {
             RelativeSizeAxes = Axes.Both;
-            triangles = new Triangles() { ColourDark = dark, ColourLight = light, RelativeSizeAxes = Axes.Both };
+            triangles = new Triangles { ColourDark = dark, ColourLight = light, RelativeSizeAxes = Axes.Both };
             triangles.Hide();
-            MaxAlpha = maxAlpha;
+            this.maxAlpha = maxAlpha;
             Add(triangles);
         }
 
@@ -26,12 +26,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Misc
             if (effectPoint.KiaiMode && !wasKiai)
             {
                 wasKiai = true;
-                triangles.FadeTo(MaxAlpha, timingPoint.BeatLength, Easing.None);
+                triangles.FadeTo(maxAlpha, timingPoint.BeatLength, Easing.None);
             }
+
             if (!effectPoint.KiaiMode && wasKiai)
             {
                 wasKiai = false;
-                triangles.FadeOut(timingPoint.BeatLength * (int)timingPoint.TimeSignature, Easing.Out);
+                triangles.FadeOut(timingPoint.BeatLength * timingPoint.TimeSignature.Numerator, Easing.Out);
             }
         }
     }

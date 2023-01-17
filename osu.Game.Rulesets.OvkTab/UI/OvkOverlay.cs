@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
@@ -19,41 +17,44 @@ using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
 namespace osu.Game.Rulesets.OvkTab.UI
 {
     [Cached]
-    public class OvkOverlay : FullscreenOverlay<OvkOverlayHeader>
+    public partial class OvkOverlay : FullscreenOverlay<OvkOverlayHeader>
     {
         [Cached]
-        readonly PopoverContainer pc;
-        readonly Container container;
+        private readonly PopoverContainer pc;
+
+        private readonly Container container;
 
         public LoadingLayer loginLoading;
         public LoadingLayer newsLoading;
 
-        readonly VkLoginBlock loginTab;
-        readonly OverlayScrollContainer newsTab;
-        readonly OverlayScrollContainer recommsTab;
-        readonly DialogsTab dialogsTab;
-        readonly OverlayScrollContainer friendsTab;
-        readonly OverlayScrollContainer groupsTab;
-        readonly Drawable[] tabs;
+        private readonly VkLoginBlock loginTab;
+        private readonly OverlayScrollContainer newsTab;
+        private readonly OverlayScrollContainer recommsTab;
+        private readonly DialogsTab dialogsTab;
+        private readonly OverlayScrollContainer friendsTab;
+        private readonly OverlayScrollContainer groupsTab;
+        private readonly Drawable[] tabs;
 
         private bool newsLoaded = false;
         private bool recommendedLoaded = false;
 
         [Cached(typeof(IOvkApiHub))]
         private readonly IOvkApiHub apiHub;
-        readonly Bindable<SimpleVkUser> logged;
+
+        private readonly Bindable<SimpleVkUser> logged;
 
         [Resolved]
-        private NotificationOverlay nofs { get; set; }
+        private INotificationOverlay nofs { get; set; }
 
-        public OvkOverlay(OvkTabRuleset ovkTabRuleset) : base(OverlayColourScheme.Blue)
+        public OvkOverlay(OvkTabRuleset ovkTabRuleset)
+            : base(OverlayColourScheme.Blue)
         {
             // API
             apiHub = new OvkApiHub();
             apiHub.IsLongpollFailing.ValueChanged += e =>
-              {
-                  if(e.NewValue == true) nofs.Post(new SimpleErrorNotification() { Text = "Longpoll is failing. Check your connection." });
-              };
+            {
+                if (e.NewValue == true) nofs.Post(new SimpleErrorNotification() { Text = "Longpoll is failing. Check your connection." });
+            };
             logged = apiHub.LoggedUser.GetBoundCopy();
             logged.BindValueChanged(e =>
             {
@@ -63,7 +64,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
                     {
                         loginTab.FadeOut(100);
                         dialogsTab.LoadDialogsList();
-                        ChangeTab(Header.Current.Value);
+                        changeTab(Header.Current.Value);
                     });
                 }
                 else
@@ -83,12 +84,13 @@ namespace osu.Game.Rulesets.OvkTab.UI
                         };
                         newsLoaded = false;
                         recommendedLoaded = false;
+
                         foreach (var d in tabs)
                         {
                             d.FadeOut(250, Easing.Out);
                         }
+
                         loginTab.Delay(500).FadeIn(500);
-                        
                     });
                 }
             });
@@ -113,7 +115,7 @@ namespace osu.Game.Rulesets.OvkTab.UI
 
             // Building layout
             tabs = new Drawable[] { newsTab, recommsTab, dialogsTab, friendsTab, groupsTab, loginTab };
-            foreach(var d in tabs) 
+            foreach (var d in tabs)
                 d.Hide();
             loginTab.Show();
 
@@ -122,7 +124,8 @@ namespace osu.Game.Rulesets.OvkTab.UI
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
-                    container = new Container {
+                    container = new Container
+                    {
                         Padding = new MarginPadding { Top = 102 },
                         RelativeSizeAxes = Axes.Both,
                         Children = tabs
@@ -130,22 +133,25 @@ namespace osu.Game.Rulesets.OvkTab.UI
                     Header
                 }
             });
-            
-            Header.Current.ValueChanged += e => Schedule(() => ChangeTab(e.NewValue));
+
+            Header.Current.ValueChanged += e => Schedule(() => changeTab(e.NewValue));
             Add(loginLoading = new LoadingLayer(dimBackground: true));
             Add(newsLoading = new LoadingLayer(dimBackground: true));
         }
-        private async void ChangeTab(OVKSections section)
+
+        private async void changeTab(OvkSections section)
         {
             if (logged.Value == null) return;
             container.ChangeChildDepth(tabs[(int)section], (float)-Clock.CurrentTime);
+
             foreach (var d in tabs)
             {
                 d.FadeOut(250, Easing.Out);
             }
+
             tabs[(int)section].FadeIn(250, Easing.In);
 
-            if (section == OVKSections.News && !newsLoaded)
+            if (section == OvkSections.News && !newsLoaded)
             {
                 newsLoaded = true;
                 Schedule(() => newsLoading.FadeIn(200));
@@ -154,7 +160,8 @@ namespace osu.Game.Rulesets.OvkTab.UI
                 Schedule(() => ((FillFlowContainer)newsTab.Child).AddRange(posts));
                 Schedule(() => newsLoading.FadeOut(200));
             }
-            if (section == OVKSections.Recommended && !recommendedLoaded)
+
+            if (section == OvkSections.Recommended && !recommendedLoaded)
             {
                 recommendedLoaded = true;
                 Schedule(() => newsLoading.FadeIn(200));
@@ -163,7 +170,8 @@ namespace osu.Game.Rulesets.OvkTab.UI
                 Schedule(() => ((FillFlowContainer)recommsTab.Child).AddRange(posts));
                 Schedule(() => newsLoading.FadeOut(200));
             }
-            if (section == OVKSections.Friends)
+
+            if (section == OvkSections.Friends)
             {
                 var friends = await apiHub.GetFriendsList();
                 var block = new FillFlowContainer()
@@ -176,8 +184,12 @@ namespace osu.Game.Rulesets.OvkTab.UI
                 };
                 Schedule(() => friendsTab.Child = block);
             }
-            else { friendsTab.Clear(true); }
-            if (section == OVKSections.Groups)
+            else
+            {
+                friendsTab.Clear(true);
+            }
+
+            if (section == OvkSections.Groups)
             {
                 var groups = await apiHub.GetGroupsList();
                 var block = new FillFlowContainer()
@@ -190,7 +202,10 @@ namespace osu.Game.Rulesets.OvkTab.UI
                 };
                 Schedule(() => groupsTab.Child = block);
             }
-            else { groupsTab.Clear(true); }
+            else
+            {
+                groupsTab.Clear(true);
+            }
         }
 
         protected override OvkOverlayHeader CreateHeader() => new();

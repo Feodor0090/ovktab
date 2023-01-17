@@ -11,12 +11,14 @@ using osu.Game.Rulesets.OvkTab.API;
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
     [LongRunningLoad]
-    public class DrawableVkAvatar : OsuClickableContainer, IHasPopover
+    public partial class DrawableVkAvatar : OsuClickableContainer, IHasPopover
     {
         readonly SimpleVkUser user;
         readonly string url;
 
-        [Resolved(canBeNull: true)] private PopoverContainer PopoverContainer { get; set; }
+        [Resolved(canBeNull: true)]
+        private PopoverContainer popoverContainer { get; set; }
+
         public DrawableVkAvatar(SimpleVkUser target)
         {
             user = target;
@@ -26,11 +28,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             CornerRadius = 10;
             TooltipText = user?.name;
             url = user?.avatarUrl ?? "https://vk.com/images/camera_50.png";
-            Action = () =>
-            {
-                this.ShowPopover();
-            };
+            Action = () => { this.ShowPopover(); };
         }
+
         public DrawableVkAvatar(string name, string url)
         {
             Size = new(50);
@@ -40,6 +40,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             TooltipText = name;
             this.url = url ?? "https://vk.com/images/camera_50.png";
         }
+
         [BackgroundDependencyLoader]
         void load(LargeTextureStore lts)
         {
@@ -54,7 +55,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         public Popover GetPopover()
         {
             if (user.id == 0) return null;
-            return new WallPopover(user.id, PopoverContainer?.DrawSize ?? new(600));
+
+            return new WallPopover(user.id, popoverContainer?.DrawSize ?? new(600));
         }
     }
 }

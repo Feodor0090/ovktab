@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace osu.Game.Rulesets.OvkTab.UI
+﻿namespace osu.Game.Rulesets.OvkTab.UI
 {
-
-    public enum OVKSections
+    public enum OvkSections
     {
         News,
         Recommended,

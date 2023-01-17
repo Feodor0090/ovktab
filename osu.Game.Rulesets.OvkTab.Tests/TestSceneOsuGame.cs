@@ -10,7 +10,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.OvkTab.Tests
 {
-    public class TestSceneOsuGame : OsuTestScene
+    public partial class TestSceneOsuGame : OsuTestScene
     {
         [BackgroundDependencyLoader]
         private void load(GameHost host, OsuGameBase gameBase)

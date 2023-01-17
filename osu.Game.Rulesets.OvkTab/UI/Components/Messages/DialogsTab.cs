@@ -4,7 +4,6 @@ using osu.Framework.Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Utils;
@@ -13,7 +12,6 @@ using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.Misc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +20,7 @@ using VkNet.Model;
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
 {
     [Cached]
-    public class DialogsTab : Container
+    public partial class DialogsTab : Container
     {
         readonly FillFlowContainer<DrawableDialog> dialogsList;
         readonly Container dialogView;
@@ -45,7 +43,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         public readonly BindableBool showBg = new BindableBool(false);
 
         [Resolved]
-        private IOvkApiHub ApiHub { get; set; }
+        private IOvkApiHub apiHub { get; set; }
+
         public DialogsTab()
         {
             RelativeSizeAxes = Axes.Both;
@@ -76,7 +75,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                 {
                     new Container
                     {
-                        Padding = new MarginPadding{Bottom = 45 },
+                        Padding = new MarginPadding { Bottom = 45 },
                         RelativeSizeAxes = Axes.Both,
                         Child = historyScroll = new HistoryScroll()
                         {
@@ -91,26 +90,23 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                         Height = 40,
                         Anchor = Anchor.BottomCentre,
                         Origin = Anchor.BottomCentre,
-                        Padding = new MarginPadding{ Left = 45 },
+                        Padding = new MarginPadding { Left = 45 },
                         Child = messageInput,
                     },
                     attsPopover = new AttachmentsPopoverContainer(this)
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
-                        Size = new(40,40),
+                        Size = new(40, 40),
                     },
                     new IconTrianglesButton
                     {
                         Anchor = Anchor.BottomLeft,
                         Origin = Anchor.BottomLeft,
-                        Size = new(40,40),
+                        Size = new(40, 40),
                         icon = FontAwesome.Solid.Bars,
                         iconSize = new(25),
-                        Action = () => {
-                            attsPopover.ShowPopover();
-                        }
-
+                        Action = () => { attsPopover.ShowPopover(); }
                     },
                 }
             };
@@ -142,23 +138,23 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         void load()
         {
             // longpoll
-            ApiHub.OnNewMessage += OnNewMessage;
-            ApiHub.OnMessageEdit += OnMessageEdit;
+            apiHub.OnNewMessage += OnNewMessage;
+            apiHub.OnMessageEdit += OnMessageEdit;
             messageInput.OnCommit += MessageInput_OnCommit;
             // handle logout
-            ApiHub.LoggedUser.ValueChanged += x =>
+            apiHub.LoggedUser.ValueChanged += x =>
             {
-                if (x.NewValue == null) ClearContents();
+                if (x.NewValue == null) clearContents();
             };
             // handle network failures
-            ApiHub.IsLongpollFailing.BindValueChanged(e => Schedule(() =>
+            apiHub.IsLongpollFailing.BindValueChanged(e => Schedule(() =>
             {
                 if (e.NewValue)
                     longpollPending.Show();
                 else
                     longpollPending.Hide();
             }), true);
-            ApiHub.IsLongpollFailing.BindValueChanged(e =>
+            apiHub.IsLongpollFailing.BindValueChanged(e =>
             {
                 if (!e.NewValue)
                 {
@@ -180,7 +176,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             //not loaded message
             if (m == null) return;
 
-            m.UpdateContent(obj.LoadFull(ApiHub));
+            m.UpdateContent(obj.LoadFull(apiHub));
         }
 
         public string TypedText
@@ -194,12 +190,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             if (currentChat.Value != 0 && !string.IsNullOrWhiteSpace(sender.Text))
             {
                 historyLoading.Show();
-                bool ok = await ApiHub.SendMessage(currentChat.Value, sender.Text, replyMessage.Value);
+                bool ok = await apiHub.SendMessage(currentChat.Value, sender.Text, replyMessage.Value);
+
                 if (ok)
                 {
                     sender.Text = string.Empty;
                     replyMessage.Value = 0;
                 }
+
                 Schedule(() =>
                 {
                     historyScroll.ScrollToEnd(true, true);
@@ -211,6 +209,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
         private void OnNewMessage(LongpollMessage m)
         {
             DrawableDialog dialog = dialogsList.Where(x => x.peerId == m.targetId).FirstOrDefault();
+
             if (dialog != null)
             {
                 Schedule(() =>
@@ -220,18 +219,20 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                     dialog.Update(m.text, m.time);
                 });
             }
+
             if (m.targetId == currentChat.Value)
             {
                 int id;
                 if (m.fromId != 0)
                     id = m.fromId;
                 else
-                    id = ApiHub.UserId;
+                    id = apiHub.UserId;
                 Message msg;
+
                 // let's just load full object for now.
                 if (m.extra.Count > 0)
                 {
-                    msg = ApiHub.LoadMessage(m.messageId);
+                    msg = apiHub.LoadMessage(m.messageId);
                     id = (int)msg.FromId;
                 }
                 else
@@ -242,31 +243,35 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
                         Id = m.messageId,
                     };
                 }
+
                 Schedule(() => history.Add(new DrawableVkChatMessage(usersCache[id], msg, usersCache.Values)));
-                ApiHub.ReportRead(m.targetId, m.messageId);
+                apiHub.ReportRead(m.targetId, m.messageId);
             }
         }
 
-        void ClearContents()
+        private void clearContents()
         {
             currentChat.Value = 0;
             dialogsList.Clear(true);
             history.Clear(true);
         }
+
         public async void LoadDialogsList()
         {
             Schedule(listLoading.Show);
-            var list = await ApiHub.GetDialogsList();
+            var list = await apiHub.GetDialogsList();
             var items = list.Select(x => new DrawableDialog(x));
             Schedule(() =>
             {
                 dialogsList.Clear(true);
                 dialogsList.AddRange(items);
             });
+
             foreach (var x in list)
             {
                 if (x.Item1 != null) usersCache.TryAdd(x.Item1.id, x.Item1);
             }
+
             Schedule(listLoading.Hide);
         }
 
@@ -276,13 +281,15 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             replyMessage.Value = 0;
             historyLoading.Show();
             history.Clear(true);
-            var data = await ApiHub.LoadHistory(peerId);
+            var data = await apiHub.LoadHistory(peerId);
             var msgs = data.Item1;
             history.AddRange(msgs.Select(x => new DrawableVkChatMessage(x.Item1, x.Item2, data.Item2)).Reverse());
+
             foreach (var x in data.Item2)
             {
                 usersCache.TryAdd(x.id, x);
             }
+
             await Task.Delay(250);
             Schedule(() =>
             {
@@ -292,7 +299,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             currentChat.Value = peerId;
         }
 
-        private class MessageInputBox : OsuTextBox
+        private partial class MessageInputBox : OsuTextBox
         {
             public MessageInputBox()
             {
@@ -307,20 +314,22 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             public override bool RequestsFocus => true;
         }
 
-        private class AttachmentsPopoverContainer : Drawable, IHasPopover
+        private partial class AttachmentsPopoverContainer : Drawable, IHasPopover
         {
             DialogsTab tab;
+
             public AttachmentsPopoverContainer(DialogsTab dialogsTab)
             {
                 tab = dialogsTab;
             }
+
             public Popover GetPopover()
             {
                 return new AttachmentsPopover(tab);
             }
         }
 
-        private class HistoryScroll : UserTrackingScrollContainer
+        private partial class HistoryScroll : UserTrackingScrollContainer
         {
             private const float auto_scroll_leniency = 100f;
 
@@ -336,8 +345,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Messages
             {
                 base.Update();
 
-                if (UserScrolling && IsScrolledToEnd(auto_scroll_leniency))
-                    CancelUserScroll();
+                if (UserScrolling && IsScrolledToEnd(auto_scroll_leniency)) ;
+                //CancelUserScroll();
+                //todo removed method
 
                 bool requiresScrollUpdate = !UserScrolling && (lastExtent == null || Precision.AlmostBigger(ScrollableExtent, lastExtent.Value));
 

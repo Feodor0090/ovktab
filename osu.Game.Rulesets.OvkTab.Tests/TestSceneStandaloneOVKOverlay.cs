@@ -4,22 +4,19 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Platform;
 using osu.Game.Tests.Visual;
 using osuTK.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using osu.Game.Rulesets.OvkTab.UI;
-using System.Threading.Tasks;
 using osu.Game.Overlays;
 
 namespace osu.Game.Rulesets.OvkTab.Tests
 {
-    public class TestSceneStandaloneOVKOverlay : OsuTestScene
+    public partial class TestSceneStandaloneOvkOverlay : OsuTestScene
     {
-
         [Cached]
         public readonly DialogOverlay dialogOverlay = new();
-        [Cached]
+
+        [Cached(typeof(INotificationOverlay))]
         public readonly NotificationOverlay notifOverlay = new();
+
         [Cached]
         public readonly OvkOverlay ovkOverlay = new(null);
 
@@ -42,10 +39,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            AddStep("Show", () =>
-            {
-                ovkOverlay.Show();
-            });
+            AddStep("Show", () => { ovkOverlay.Show(); });
         }
     }
 }

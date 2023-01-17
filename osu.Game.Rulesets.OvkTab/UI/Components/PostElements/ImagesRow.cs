@@ -9,7 +9,7 @@ using VkNet.Model.Attachments;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
-    public class ImagesRow : FillFlowContainer
+    public partial class ImagesRow : FillFlowContainer
     {
         readonly ImageInfo[] images;
         int loadedCount = 0;
@@ -39,14 +39,17 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 int maxH = images.Max(i => i.h);
                 if (items.Length == 1 && maxH > 350) maxH = 350;
                 float totalW = 0;
+
                 for (int i = 0; i < images.Length; i++)
                 {
                     float sw = images[i].w * ((float)maxH / images[i].h);
                     totalW += sw;
                 }
+
                 float avalW = DrawWidth - 10 * images.Length; // margins
                 float mul = avalW / totalW;
                 if (images.Length == 1 && mul > 1) mul = 1;
+
                 for (int i = 0; i < images.Length; i++)
                 {
                     float sw = images[i].w * ((float)maxH / images[i].h);
@@ -54,6 +57,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                     items[i].Hide();
                     items[i].OnLoadComplete += OnItemLoaded;
                 }
+
                 Schedule(() =>
                 {
                     Height = maxH * mul;
@@ -69,15 +73,15 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 Schedule(() =>
                 {
                     var ll = Children.OfType<LoadingLayer>().First();
-                    Remove(ll);
-                    ll.Dispose();
+                    Remove(ll, true);
                     foreach (var d in this) d.Show();
                 });
         }
 
         public struct ImageInfo
         {
-            public int w; public int h;
+            public int w;
+            public int h;
             public string normal;
             public int length;
 
@@ -89,6 +93,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 h = (int)size.Height;
                 length = isGif ? -2 : -1;
             }
+
             public ImageInfo(Video x)
             {
                 VideoImage size = x.Image.Where(p => p.Width < 1280).OrderByDescending(p => p.Height).First();

@@ -8,13 +8,12 @@ using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
-using osu.Game.Graphics.UserInterface;
 using System;
 using System.Linq;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
-    public class SimpleAttachment : BeatSyncedContainer
+    public partial class SimpleAttachment : BeatSyncedContainer
     {
         private readonly Circle circle;
         readonly Colour4 kiai = Colour4.PaleVioletRed;
@@ -46,26 +45,27 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 new OsuSpriteText()
                 {
                     Text = firstLine,
-                    Position = new(60, 50f/4),
+                    Position = new(60, 50f / 4),
                     Origin = Anchor.CentreLeft,
                     Font = font,
                 },
                 new OsuSpriteText()
                 {
                     Text = secondLine,
-                    Position = new(60, 50f*3f/4f),
+                    Position = new(60, 50f * 3f / 4f),
                     Origin = Anchor.CentreLeft,
                     Font = font,
                 },
                 new OsuSpriteText()
                 {
                     Text = note,
-                    Position = new(-45*buttonsCount, 50f/4),
+                    Position = new(-45 * buttonsCount, 50f / 4),
                     Origin = Anchor.CentreRight,
                     Anchor = Anchor.TopRight,
                     Font = font,
                 },
             };
+
             for (int i = 0; i < buttonsCount; i++)
             {
                 Add(new TriangleButton
@@ -83,6 +83,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         {
             if (actions == null) return;
             var btns = this.OfType<TriangleButton>().ToArray();
+
             for (int i = 0; i < actions.Length; i++)
             {
                 var button = btns[i];
@@ -104,6 +105,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
             public abstract Drawable Get(TextureStore ts);
         }
+
         public class IconAttachmentAction : AttachmentAction
         {
             private readonly IconUsage icon;
@@ -122,6 +124,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 Size = new(20),
             };
         }
+
         public class SpriteAttachmentAction : AttachmentAction
         {
             private readonly string sprite;

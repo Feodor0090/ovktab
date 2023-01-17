@@ -9,13 +9,13 @@ namespace osu.Game.Rulesets.OvkTab.Replays
 {
     public class OvkTabReplayFrame : ReplayFrame
     {
-        public List<OvkTabAction> Actions = new();
-        public Vector2 Position;
+        public List<OvkTabAction> actions = new();
+        public Vector2 position;
 
         public OvkTabReplayFrame(OvkTabAction? button = null)
         {
             if (button.HasValue)
-                Actions.Add(button.Value);
+                actions.Add(button.Value);
         }
     }
 }

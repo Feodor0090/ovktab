@@ -16,7 +16,7 @@ using VkNet.Model;
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
 {
     [Cached]
-    public class CommentsPopover : OsuPopover
+    public partial class CommentsPopover : OsuPopover
     {
         readonly FillFlowContainer content;
         readonly LoadingLayer ll;
@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         private readonly int postId;
 
         private readonly PostFooter footer;
-        private IOvkApiHub ApiHub { get; set; }
+        private IOvkApiHub apiHub { get; set; }
 
         [Cached]
         public readonly PopoverContainer pc;
@@ -81,7 +81,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         [BackgroundDependencyLoader]
         async void load(IOvkApiHub api)
         {
-            ApiHub = api;
+            apiHub = api;
             input.OnCommit += Input_OnCommit;
             await Task.Run(async () =>
             {
@@ -96,7 +96,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
                         footer.comments.Value = c.Item3;
                         content.AddRange(a);
                     }
-                    catch { }
+                    catch
+                    {
+                    }
+
                     if (canPost)
                         input.Show();
                     Schedule(ll.Hide);
@@ -114,12 +117,13 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         {
             if (string.IsNullOrEmpty(text)) return;
             ll.Show();
+
             try
             {
-                await ApiHub.WriteComment(ownerId, postId, replyTo, text);
+                await apiHub.WriteComment(ownerId, postId, replyTo, text);
                 container.Add(new DrawableVkComment(new DrawableVkComment.CommentsLevel
                 {
-                    user = ApiHub.LoggedUser.Value,
+                    user = apiHub.LoggedUser.Value,
                     replies = new(),
                     comment = new Comment
                     {
@@ -134,6 +138,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
             {
                 sender.FlashColour(Colour4.Red, 750);
             }
+
             ll.Hide();
         }
     }

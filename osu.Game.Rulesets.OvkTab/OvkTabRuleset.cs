@@ -4,19 +4,14 @@
 using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Game.Beatmaps;
-using osu.Game.Graphics;
 using osu.Game.Rulesets.Difficulty;
 using osu.Game.Rulesets.OvkTab.Beatmaps;
-using osu.Game.Rulesets.OvkTab.Mods;
 using osu.Game.Rulesets.OvkTab.UI;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.UI;
-using osuTK;
-using osuTK.Graphics;
 using osu.Game.Overlays.Notifications;
 using osu.Framework.Allocation;
 using osu.Framework.Platform;
@@ -31,7 +26,7 @@ using osu.Framework.Logging;
 
 namespace osu.Game.Rulesets.OvkTab
 {
-    public class OvkTabRuleset : Ruleset
+    public partial class OvkTabRuleset : Ruleset
     {
         public override string Description => "OVK";
 
@@ -48,14 +43,7 @@ namespace osu.Game.Rulesets.OvkTab
 
         public override IEnumerable<Mod> GetModsFor(ModType type)
         {
-            switch (type)
-            {
-                case ModType.Automation:
-                    return new[] { new OvkTabModAutoplay() };
-
-                default:
-                    return new Mod[] { null };
-            }
+            return Array.Empty<Mod>();
         }
 
         public override string ShortName => "OVK";
@@ -68,22 +56,26 @@ namespace osu.Game.Rulesets.OvkTab
 
         public override Drawable CreateIcon() => new Icon(this);
 
-        public class Icon : CompositeDrawable
+        public partial class Icon : CompositeDrawable
         {
             private readonly OvkTabRuleset ruleset;
+
             public Icon(OvkTabRuleset ovkTab)
             {
                 ruleset = ovkTab;
                 RelativeSizeAxes = Axes.Both;
 
-                InternalChildren = new Drawable[] {
-                    new SpriteIcon {
+                InternalChildren = new Drawable[]
+                {
+                    new SpriteIcon
+                    {
                         Icon = FontAwesome.Regular.Circle,
                         RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.Centre,
                         Anchor = Anchor.Centre
                     },
-                    new SpriteIcon {
+                    new SpriteIcon
+                    {
                         Icon = FontAwesome.Brands.Vk,
                         RelativeSizeAxes = Axes.Both,
                         Origin = Anchor.Centre,
@@ -92,6 +84,7 @@ namespace osu.Game.Rulesets.OvkTab
                     },
                 };
             }
+
             public static string ErrorMessage(string code)
                 => $"Could not load OVK: Please report this to the OVK repository NOT the osu!lazer repository: Code {code}";
 
@@ -102,6 +95,7 @@ namespace osu.Game.Rulesets.OvkTab
                 if (game.Dependencies.Get<OvkOverlay>() != null) return;
 
                 var notifications = typeof(OsuGame).GetField("Notifications", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(game) as NotificationOverlay;
+
                 if (notifications is null)
                 {
                     return;
@@ -130,7 +124,7 @@ namespace osu.Game.Rulesets.OvkTab
                 try
                 {
                     loadComponent.Invoke(game,
-                        new object[] { new OvkOverlay(ruleset), (Action<OvkOverlay>)addOverlay, true }
+                        new object[] { new OvkOverlay(ruleset), (Action<Drawable>)addOverlay, true }
                     );
                 }
                 catch (Exception ex)
@@ -140,17 +134,18 @@ namespace osu.Game.Rulesets.OvkTab
                     return;
                 }
 
-                void addOverlay(OvkOverlay overlay)
+                void addOverlay(Drawable overlay)
                 {
                     overlayContent.Add(overlay);
 
                     // https://github.com/ppy/osu/blob/edf5e558aca6cd75e70b510a5f0dd233d6cfcb90/osu.Game/Overlays/Toolbar/Toolbar.cs#L89
                     // leveraging an "easy" hack to get the container with toolbar buttons
                     var userButton = typeof(Toolbar).GetField("userButton", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(game.Toolbar) as Drawable;
+
                     if (userButton is null || userButton.Parent is not FillFlowContainer buttonsContainer)
                     {
                         Schedule(() => notifications.Post(new SimpleErrorNotification { Text = ErrorMessage("#UBNRE") }));
-                        overlayContent.Remove(overlay);
+                        overlayContent.Remove(overlay, true);
                         return;
                     }
 
@@ -161,8 +156,9 @@ namespace osu.Game.Rulesets.OvkTab
                     // add overlay hiding, since osu does it manually
                     var singleDisplayOverlays = new string[] { "chatOverlay", "news", "dashboard", "beatmapListing", "changelogOverlay", "wikiOverlay" };
                     var overlays = singleDisplayOverlays.Select(name =>
-                       typeof(OsuGame).GetField(name, BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(game) as OverlayContainer
+                        typeof(OsuGame).GetField(name, BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(game) as OverlayContainer
                     ).ToList();
+
                     if (game.Dependencies.TryGet<RankingsOverlay>(out var rov))
                     {
                         overlays.Add(rov);
@@ -170,29 +166,31 @@ namespace osu.Game.Rulesets.OvkTab
                     else
                     {
                         Schedule(() => notifications.Post(new SimpleErrorNotification { Text = ErrorMessage("#ROVNRE") }));
-                        overlayContent.Remove(overlay);
-                        buttonsContainer.Remove(button);
+                        overlayContent.Remove(overlay, true);
+                        buttonsContainer.Remove(button, true);
                         return;
                     }
 
                     if (overlays.Any(x => x is null))
                     {
                         Schedule(() => notifications.Post(new SimpleErrorNotification { Text = ErrorMessage("#OVNRE") }));
-                        overlayContent.Remove(overlay);
-                        buttonsContainer.Remove(button);
+                        overlayContent.Remove(overlay, true);
+                        buttonsContainer.Remove(button, true);
                         return;
                     }
 
                     foreach (var i in overlays)
                     {
-                        i.State.ValueChanged += v => {
+                        i.State.ValueChanged += v =>
+                        {
                             if (v.NewValue != Visibility.Visible) return;
 
                             overlay.Hide();
                         };
                     }
 
-                    overlay.State.ValueChanged += v => {
+                    ((OvkOverlay)overlay).State.ValueChanged += v =>
+                    {
                         if (v.NewValue != Visibility.Visible) return;
 
                         foreach (var i in overlays)

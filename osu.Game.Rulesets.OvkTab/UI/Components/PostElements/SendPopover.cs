@@ -7,7 +7,7 @@ using osu.Game.Rulesets.OvkTab.API;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
-    public class SendPopover : OsuPopover
+    public partial class SendPopover : OsuPopover
     {
         readonly FillFlowContainer content;
         private readonly int ownerId;
@@ -28,27 +28,29 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 }
             });
         }
-        [Resolved] private DialogOverlay DialogOverlay { get; set; }
-        [Resolved] private IOvkApiHub Api { get; set; }
+
+        [Resolved]
+        private IDialogOverlay dialogOverlay { get; set; }
+
+        [Resolved]
+        private IOvkApiHub api { get; set; }
 
         [BackgroundDependencyLoader(true)]
         async void load()
         {
-            foreach (var x in await Api.GetDialogsList())
+            foreach (var x in await api.GetDialogsList())
             {
                 var u = x.Item1;
-                if (u == null) u = new SimpleVkUser()
-                {
-                    name = x.Item2.Conversation.ChatSettings?.Title,
-                    avatarUrl = x.Item2.Conversation.ChatSettings?.Photo?.Photo100.AbsoluteUri
-                };
-                content.Add(new DrawableActionableDialog(u, (int)x.Item2.Conversation.Peer.Id, Send));
+                if (u == null)
+                    u = new SimpleVkUser()
+                    {
+                        name = x.Item2.Conversation.ChatSettings?.Title,
+                        avatarUrl = x.Item2.Conversation.ChatSettings?.Photo?.Photo100.AbsoluteUri
+                    };
+                content.Add(new DrawableActionableDialog(u, (int)x.Item2.Conversation.Peer.Id, send));
             }
         }
 
-        void Send(int peerId, string name) => DialogOverlay.Push(new SendDialog(name, async () =>
-        {
-            await Api.SendWall(peerId, ownerId, postId);
-        }));
+        private void send(int peerId, string name) => dialogOverlay.Push(new SendDialog(name, async () => { await api.SendWall(peerId, ownerId, postId); }));
     }
 }

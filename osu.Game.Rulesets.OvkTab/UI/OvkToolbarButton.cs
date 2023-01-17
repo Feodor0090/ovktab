@@ -4,19 +4,19 @@ using osu.Game.Overlays.Toolbar;
 
 namespace osu.Game.Rulesets.OvkTab.UI
 {
-	public class OvkToolbarButton : ToolbarOverlayToggleButton
-	{
-		protected override Anchor TooltipAnchor => Anchor.TopRight;
+    public partial class OvkToolbarButton : ToolbarOverlayToggleButton
+    {
+        protected override Anchor TooltipAnchor => Anchor.TopRight;
 
-		public OvkToolbarButton()
-		{
-			//Hotkey = GlobalAction.ToggleChat;
-		}
+        public OvkToolbarButton()
+        {
+            //Hotkey = GlobalAction.ToggleChat;
+        }
 
-		[BackgroundDependencyLoader(true)]
-		private void load(OvkOverlay overlay)
-		{
-			StateContainer = overlay;
-		}
-	}
+        [BackgroundDependencyLoader(true)]
+        private void load(OvkOverlay overlay)
+        {
+            StateContainer = overlay;
+        }
+    }
 }

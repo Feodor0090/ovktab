@@ -9,11 +9,10 @@ using osu.Game.Rulesets.OvkTab.Tests.Stubs;
 using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
 using osu.Game.Tests.Visual;
 using System;
-using VkNet.Model.Attachments;
 
 namespace osu.Game.Rulesets.OvkTab.Tests.UI
 {
-    public class TestScenePostElements : OsuTestScene
+    public partial class TestScenePostElements : OsuTestScene
     {
         private readonly FillFlowContainer headerContainer;
         private readonly FillFlowContainer footerContainer;
@@ -66,6 +65,7 @@ namespace osu.Game.Rulesets.OvkTab.Tests.UI
                 }
             });
         }
+
         [BackgroundDependencyLoader]
         void load()
         {

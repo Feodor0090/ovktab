@@ -7,11 +7,10 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.OvkTab.API;
-using System;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
 {
-    public class HeaderProfileBadge : Container
+    public partial class HeaderProfileBadge : Container
     {
         public HeaderProfileBadge()
         {
@@ -30,7 +29,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         }
 
         private readonly FillFlowContainer cont;
-        [Resolved(canBeNull: true)] private DialogOverlay DialogOverlay { get; set; }
+
+        [Resolved(canBeNull: true)]
+        private IDialogOverlay dialogOverlay { get; set; }
+
         IOvkApiHub api;
 
         [BackgroundDependencyLoader]
@@ -38,29 +40,30 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         {
             api = ovk;
             ovk.LoggedUser.BindValueChanged(e =>
-             {
-                 if (e.NewValue != null)
-                     Schedule(() => OnLogIn(e.NewValue));
-                 else
-                     cont.FadeOut(250);
-             }, true);
+            {
+                if (e.NewValue != null)
+                    Schedule(() => OnLogIn(e.NewValue));
+                else
+                    cont.FadeOut(250);
+            }, true);
             ovk.IsLongpollFailing.ValueChanged += e =>
-             {
-                 if (!e.NewValue && ovk.LoggedUser.Value != null)
-                 {
-                     Schedule(() => OnLogIn(ovk.LoggedUser.Value));
-                 }
-                 else
-                 {
-                     Schedule(OnConnectionFail);
-                 }
-             };
+            {
+                if (!e.NewValue && ovk.LoggedUser.Value != null)
+                {
+                    Schedule(() => OnLogIn(ovk.LoggedUser.Value));
+                }
+                else
+                {
+                    Schedule(OnConnectionFail);
+                }
+            };
         }
 
         private void OnConnectionFail()
         {
             LoadingSpinner spinner;
-            cont.Children = new Drawable[] {
+            cont.Children = new Drawable[]
+            {
                 spinner = new LoadingSpinner(true)
                 {
                     Size = new(40),
@@ -84,10 +87,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                     Text = "Log out",
                     Action = () =>
                     {
-                        if (DialogOverlay == null)
+                        if (dialogOverlay == null)
                             api.Logout();
                         else
-                            DialogOverlay.Push(new LogoutDialog(api.Logout));
+                            dialogOverlay.Push(new LogoutDialog(api.Logout));
                     }
                 }
             };
@@ -99,7 +102,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         {
             Container avCont;
             DangerousTriangleButton button;
-            cont.Children = new Drawable[] {
+            cont.Children = new Drawable[]
+            {
                 avCont = new()
                 {
                     Size = new(50),
@@ -122,10 +126,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                     Anchor = Anchor.CentreLeft,
                     Action = () =>
                     {
-                        if (DialogOverlay == null)
+                        if (dialogOverlay == null)
                             api.Logout();
                         else
-                            DialogOverlay.Push(new LogoutDialog(api.Logout));
+                            dialogOverlay.Push(new LogoutDialog(api.Logout));
                     }
                 }
             };

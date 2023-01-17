@@ -3,7 +3,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
-using osu.Game.Configuration;
 using osuTK.Graphics;
 using System.Threading;
 using osu.Framework.Graphics.Shapes;
@@ -17,15 +16,14 @@ using osu.Game.Overlays;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components
 {
-
-    public class DialogsTabBackground : Container
+    public partial class DialogsTabBackground : Container
     {
         private Container<StoryboardLayer> storyboardContainer;
         private LoadingSpinner loading;
         private Box bgDim;
 
         protected Bindable<bool> enabled;
-        protected IBindable<WorkingBeatmap> Beatmap = new Bindable<WorkingBeatmap>();
+        protected IBindable<WorkingBeatmap> beatmap = new Bindable<WorkingBeatmap>();
 
         public DialogsTabBackground(Bindable<bool> enabled)
         {
@@ -35,14 +33,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         protected override void LoadComplete()
         {
             base.LoadComplete();
-            Beatmap.BindValueChanged(OnBeatmapChanged, true);
-            enabled.BindValueChanged(e => updateStoryboard(e.NewValue ? Beatmap.Value : null), false);
+            beatmap.BindValueChanged(OnBeatmapChanged, true);
+            enabled.BindValueChanged(e => updateStoryboard(e.NewValue ? beatmap.Value : null), false);
         }
 
         [BackgroundDependencyLoader]
         private void load(IBindable<WorkingBeatmap> working, OverlayColourProvider ovp)
         {
-            Beatmap.BindTo(working);
+            beatmap.BindTo(working);
             RelativeSizeAxes = Axes.Both;
             Children = new Drawable[]
             {
@@ -105,7 +103,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             }, (cancellationToken = new CancellationTokenSource()).Token);
         }
 
-        private class StoryboardLayer : AudioContainer
+        private partial class StoryboardLayer : AudioContainer
         {
             private readonly WorkingBeatmap beatmap;
 
@@ -121,12 +119,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                 Volume.Value = 0;
                 Alpha = 0;
 
-                if(!beatmap.Storyboard.HasDrawable)
+                if (!beatmap.Storyboard.HasDrawable)
                 {
                     Child = new BeatmapBackground(beatmap);
                     return;
                 }
-
 
                 Drawable layer;
 
@@ -143,14 +140,14 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
                     layer = new BeatmapBackground(beatmap);
                 }
 
-                Children = new Drawable[]
+                Children = new[]
                 {
                     layer,
                     new FillStoryboard(beatmap.Storyboard) { Clock = new InterpolatingFramedClock(beatmap.Track) }
                 };
             }
 
-            private class FillStoryboard : DrawableStoryboard
+            private partial class FillStoryboard : DrawableStoryboard
             {
                 protected override Vector2 DrawScale => Scale;
 
