@@ -7,19 +7,20 @@ using osu.Game.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Overlays;
 using osu.Game.Rulesets.OvkTab.API;
+using osuTK;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
 {
-    public partial class HeaderProfileBadge : Container
+    public sealed partial class HeaderProfileBadge : Container
     {
         public HeaderProfileBadge()
         {
-            cont = new FillFlowContainer()
+            cont = new FillFlowContainer
             {
                 RelativeSizeAxes = Axes.Y,
                 AutoSizeAxes = Axes.X,
                 Direction = FillDirection.Horizontal,
-                Spacing = new(10, 0)
+                Spacing = new Vector2(10, 0)
             };
             RelativeSizeAxes = Axes.Y;
             AutoSizeAxes = Axes.X;
