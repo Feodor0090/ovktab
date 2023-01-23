@@ -9,6 +9,7 @@
     <AssemblyVersion>2023.117.0</AssemblyVersion>
     <Version>2022.123.0</Version>
     <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\**" />
