@@ -4,7 +4,7 @@ using System;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
 {
-    public class LogoutDialog : PopupDialog
+    public partial class LogoutDialog : PopupDialog
     {
         public LogoutDialog(Action callback)
         {

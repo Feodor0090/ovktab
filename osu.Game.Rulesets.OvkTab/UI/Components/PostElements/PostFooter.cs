@@ -172,7 +172,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         {
             if (postId == 0 || repostButton.state.Value) return;
 
-            RepostDialog dialog = new(ownerId, postId, ovkApiHub, ovkOverlay?.newsLoading, x =>
+            RepostDialog dialog = new(ownerId, postId, ovkOverlay?.newsLoading, x =>
             {
                 ovkOverlay?.newsLoading.Hide();
 

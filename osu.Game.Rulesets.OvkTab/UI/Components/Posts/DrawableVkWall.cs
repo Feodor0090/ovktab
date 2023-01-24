@@ -1,7 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
 using System;
@@ -9,10 +8,11 @@ using VkNet.Model.Attachments;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
 {
-    public class DrawableVkWall : FillFlowContainer
+    public sealed partial class DrawableVkWall : FillFlowContainer
     {
-        Wall post;
-        SimpleVkUser author;
+        private readonly Wall post;
+        private readonly SimpleVkUser author;
+
         public DrawableVkWall(Wall post, SimpleVkUser author)
         {
             this.post = post;
@@ -24,22 +24,21 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Posts
             Margin = new() { Bottom = 25 };
         }
 
-        [BackgroundDependencyLoader(true)]
-        void load(OsuGame game, LargeTextureStore lts)
+        [BackgroundDependencyLoader]
+        private void load()
         {
             Children = new Drawable[]
             {
-                new PostHeader(author, post.Date??DateTime.UtcNow),
-                new TextFlowContainer()
+                new PostHeader(author, post.Date ?? DateTime.UtcNow),
+                new TextFlowContainer
                 {
                     Text = post.Text,
                     RelativeSizeAxes = Axes.X,
                     AutoSizeAxes = Axes.Y,
-                    Padding = new() { Horizontal = 5 }
+                    Padding = new MarginPadding { Horizontal = 5 }
                 }
             };
             AddRange(post.Attachments.ParseAttachments(Dependencies));
-            // footer
             Add(new PostFooter(post));
         }
     }

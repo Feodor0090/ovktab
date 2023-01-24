@@ -2,10 +2,9 @@
 using System;
 using osu.Framework.Graphics.Sprites;
 
-
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
-    public class SendDialog : PopupDialog
+    public partial class SendDialog : PopupDialog
     {
         public SendDialog(string chat, Action callback)
         {

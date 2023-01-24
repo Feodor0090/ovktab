@@ -25,7 +25,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         [Resolved]
         private OvkOverlay ovk { get; set; }
 
-        private OvkTabConfig config;
+        private OvkTabConfig? config;
         private readonly OvkTabRuleset ruleset;
 
         private readonly Bindable<bool> keepSession = new();
@@ -36,10 +36,10 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         }
 
         [BackgroundDependencyLoader]
-        void load(IRulesetConfigCache c)
+        void load(IRulesetConfigCache? c)
         {
             RelativeSizeAxes = Axes.Both;
-            if (ruleset != null) config = c?.GetConfigFor(ruleset) as OvkTabConfig;
+            config = c?.GetConfigFor(ruleset) as OvkTabConfig;
             string loginStr = config?.Get<string>(OvkTabRulesetSetting.Login) ?? string.Empty;
             Add(new FillFlowContainer
             {
@@ -96,7 +96,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                 RelativeSizeAxes = Axes.X,
                 AutoSizeAxes = Axes.Y,
                 Text = "This is an experimental project, that works via multiple hacks." +
-                       " If you experience problems with the game, uninstall this extension before attempting to diagnose them. 2FA not supported, you will have to disable it.",
+                       " If you experience problems with the game, uninstall this extension before attempting to diagnose them. 2FA not supported, you will have to disable it. "
+                       + "Your login, id and token will be stored in osu! database as plain text! No encryption yet, at all!",
                 Position = new(0, -40),
                 TextAnchor = Anchor.TopCentre,
                 Padding = new() { Horizontal = 40 }
@@ -105,7 +106,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
             {
                 Text = "GitHub page",
                 Action = () => { Dependencies.Get<OsuGame>().HandleLink(new LinkDetails(LinkAction.External, "https://github.com/Feodor0090/ovktab")); },
-                Height = 30,
+                Height = 40,
                 Width = 200,
                 Position = new(0, -5),
                 Origin = Anchor.BottomCentre,
