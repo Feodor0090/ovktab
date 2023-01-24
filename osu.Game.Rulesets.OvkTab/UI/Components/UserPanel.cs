@@ -3,6 +3,7 @@ using osu.Framework.Audio.Track;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Graphics;
@@ -31,10 +32,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
         [BackgroundDependencyLoader]
         private void load(OsuColour colour)
         {
+            kiai = colour.PinkLight;
             Add(bg = new Box
             {
                 Colour = Colour4.White,
-                Alpha = 0.3f,
+                Alpha = 0.1f,
                 RelativeSizeAxes = Axes.Both,
             });
 
@@ -60,8 +62,19 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components
             }, Add);
         }
 
-        private readonly Colour4 kiai = Colour4.FromHex("BBB");
+        private Colour4 kiai;
         private readonly Colour4 normal = Colour4.FromHex("EEE");
+
+        protected override bool OnHover(HoverEvent e)
+        {
+            bg.FadeTo(0.2f, 200, Easing.OutQuint);
+            return false;
+        }
+
+        protected override void OnHoverLost(HoverLostEvent e)
+        {
+            bg.FadeTo(0.1f, 500);
+        }
 
         protected override void OnNewBeat(int beatIndex, TimingControlPoint timingPoint, EffectControlPoint effectPoint, ChannelAmplitudes amplitudes)
         {
