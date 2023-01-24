@@ -26,11 +26,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         private OvkOverlay ovk { get; set; }
 
         private OvkTabConfig? config;
-        private readonly OvkTabRuleset ruleset;
+        private readonly OvkTabRuleset? ruleset;
 
         private readonly Bindable<bool> keepSession = new();
 
-        public VkLoginBlock(OvkTabRuleset ruleset)
+        public VkLoginBlock(OvkTabRuleset? ruleset)
         {
             this.ruleset = ruleset;
         }
@@ -39,7 +39,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
         void load(IRulesetConfigCache? c)
         {
             RelativeSizeAxes = Axes.Both;
-            config = c?.GetConfigFor(ruleset) as OvkTabConfig;
+            if (ruleset != null)
+                config = c?.GetConfigFor(ruleset) as OvkTabConfig;
             string loginStr = config?.Get<string>(OvkTabRulesetSetting.Login) ?? string.Empty;
             Add(new FillFlowContainer
             {
@@ -98,7 +99,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Account
                 Text = "This is an experimental project, that works via multiple hacks." +
                        " If you experience problems with the game, uninstall this extension before attempting to diagnose them. 2FA not supported, you will have to disable it. "
                        + "Your login, id and token will be stored in osu! database as plain text! No encryption yet, at all!",
-                Position = new(0, -40),
+                Position = new(0, -50),
                 TextAnchor = Anchor.TopCentre,
                 Padding = new() { Horizontal = 40 }
             });
