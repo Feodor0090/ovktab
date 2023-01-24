@@ -20,7 +20,7 @@ namespace osu.Game.Rulesets.OvkTab.API
 {
     public static class VkModelsExtensions
     {
-        public static IEnumerable<Drawable> ParseAttachments(this IEnumerable<Attachment> atts, IReadOnlyDependencyContainer deps, IEnumerable<SimpleVkUser> users = null)
+        public static IEnumerable<Drawable> ParseAttachments(this IEnumerable<Attachment>? atts, IReadOnlyDependencyContainer deps, IEnumerable<SimpleVkUser>? users = null)
         {
             if (atts == null) return Array.Empty<Drawable>();
 
@@ -54,7 +54,10 @@ namespace osu.Game.Rulesets.OvkTab.API
                         string length = (x.Duration / 60).ToString().PadLeft(2, '0') + ":" + (x.Duration % 60).ToString().PadLeft(2, '0');
                         result.Add(new SimpleAttachment(FontAwesome.Solid.Music, x.Title, x.Artist, length, new[]
                         {
-                            new SpriteAttachmentAction("Icons/Hexacons/beatmap", b => { game.HandleLink(new LinkDetails(LinkAction.SearchBeatmapSet, x.Artist + " " + x.Title)); }),
+                            new SpriteAttachmentAction("Icons/Hexacons/beatmap", b => { game.HandleLink(new LinkDetails(LinkAction.SearchBeatmapSet, x.Artist + " " + x.Title)); })
+                            {
+                                tooltip = "search in beatmap listing"
+                            }
                         }));
                         break;
 
@@ -65,7 +68,9 @@ namespace osu.Game.Rulesets.OvkTab.API
                     case AudioMessage x:
                         string len = (x.Duration / 60).ToString().PadLeft(2, '0') + ":" + (x.Duration % 60).ToString().PadLeft(2, '0');
                         result.Add(new SimpleAttachment(FontAwesome.Solid.Microphone, "Voice message", len, null));
+
                         if (x.Transcript != null)
+                        {
                             result.Add(new TextFlowContainer
                             {
                                 Text = x.Transcript,
@@ -73,6 +78,8 @@ namespace osu.Game.Rulesets.OvkTab.API
                                 AutoSizeAxes = Axes.Y,
                                 Padding = new() { Horizontal = 5 }
                             });
+                        }
+
                         break;
 
                     case VkNet.Model.Attachments.Link x:
@@ -107,7 +114,6 @@ namespace osu.Game.Rulesets.OvkTab.API
                 result.Add(new DrawableVkWall(x, users?.Where(u => u.id == x.OwnerId).FirstOrDefault()));
             }
 
-            // return
             return result;
         }
 
@@ -120,27 +126,25 @@ namespace osu.Game.Rulesets.OvkTab.API
 
         public static SimpleAttachment ToDrawable(this VkNet.Model.Attachments.Link x, OsuGame game)
         {
-            var globalLinkBtn = new IconAttachmentAction(FontAwesome.Solid.Link, b => { game.HandleLink(new LinkDetails(LinkAction.External, x.Uri.AbsoluteUri)); });
-
-            AttachmentAction[] linkBtns;
-            IconUsage linkIcon;
+            var globalLinkBtn = new IconAttachmentAction(FontAwesome.Solid.Link, _ => { game.HandleLink(new LinkDetails(LinkAction.External, x.Uri.AbsoluteUri)); })
+            {
+                tooltip = "open in browser"
+            };
 
             if (x.Uri.Host == "osu.ppy.sh")
             {
-                linkBtns = new[]
+                AttachmentAction[] buttons =
                 {
-                    new IconAttachmentAction(FontAwesome.Solid.AngleDoubleRight, b => game.HandleLink(x.Uri.AbsoluteUri)),
+                    new IconAttachmentAction(FontAwesome.Solid.AngleDoubleRight, _ => game.HandleLink(x.Uri.AbsoluteUri))
+                    {
+                        tooltip = "go to"
+                    },
                     globalLinkBtn
                 };
-                linkIcon = FontAwesome.Solid.Hashtag;
-            }
-            else
-            {
-                linkIcon = FontAwesome.Solid.ExternalLinkAlt;
-                linkBtns = new[] { globalLinkBtn };
+                return new SimpleAttachment(FontAwesome.Solid.Hashtag, x.Title, x.Uri.AbsoluteUri, null, buttons);
             }
 
-            return new SimpleAttachment(linkIcon, x.Title, x.Uri.AbsoluteUri, null, linkBtns);
+            return new SimpleAttachment(FontAwesome.Solid.ExternalLinkAlt, x.Title, x.Uri.AbsoluteUri, null, new AttachmentAction[] { globalLinkBtn });
         }
 
         public static SimpleAttachment ToDrawable(this Document x, OsuGame game, INotificationOverlay no)
@@ -182,7 +186,10 @@ namespace osu.Game.Rulesets.OvkTab.API
                             onOk = () => { b.OfType<SpriteIcon>().First().Icon = FontAwesome.Solid.CheckCircle; },
                             postNotification = n => no.Post(n),
                         }.Download();
-                    }),
+                    })
+                    {
+                        tooltip = "import file"
+                    }
                 };
             }
             else
@@ -190,7 +197,10 @@ namespace osu.Game.Rulesets.OvkTab.API
                 icon = FontAwesome.Solid.Paperclip;
                 actions = new[]
                 {
-                    new IconAttachmentAction(FontAwesome.Solid.Link, b => { game.HandleLink(new LinkDetails(LinkAction.External, x.Uri)); }),
+                    new IconAttachmentAction(FontAwesome.Solid.Link, b => { game.HandleLink(new LinkDetails(LinkAction.External, x.Uri)); })
+                    {
+                        tooltip = "open in browser"
+                    }
                 };
             }
 

@@ -9,18 +9,20 @@ using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using System;
-using System.Linq;
+using osu.Framework.Graphics.Cursor;
+using osu.Framework.Localisation;
+using osuTK;
 
 namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public partial class SimpleAttachment : BeatSyncedContainer
     {
         private readonly Circle circle;
-        readonly Colour4 kiai = Colour4.PaleVioletRed;
-        readonly Colour4 normal = Colour4.BlueViolet.Lighten(0.05f);
-        private readonly AttachmentAction[] actions;
+        private readonly Colour4 kiai = Colour4.PaleVioletRed;
+        private readonly Colour4 normal = Colour4.BlueViolet.Lighten(0.05f);
+        private readonly AttachmentAction[]? actions;
 
-        public SimpleAttachment(IconUsage icon, string firstLine, string secondLine, string note, AttachmentAction[] buttons = null)
+        public SimpleAttachment(IconUsage icon, string firstLine, string secondLine, string? note, AttachmentAction[]? buttons = null)
         {
             actions = buttons;
             int buttonsCount = buttons?.Length ?? 0;
@@ -58,38 +60,28 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 },
                 new OsuSpriteText()
                 {
-                    Text = note,
+                    Text = note ?? string.Empty,
                     Position = new(-45 * buttonsCount, 50f / 4),
                     Origin = Anchor.CentreRight,
                     Anchor = Anchor.TopRight,
                     Font = font,
                 },
             };
+        }
 
-            for (int i = 0; i < buttonsCount; i++)
+        [BackgroundDependencyLoader]
+        private void load(TextureStore ts)
+        {
+            if (actions == null) return;
+
+            for (int i = 0; i < actions.Length; i++)
             {
-                Add(new TriangleButton
+                Add(new AttachmentActionButton(actions[i], ts)
                 {
-                    Size = new(40, 50),
                     Position = new(-45 * i, 0),
                     Anchor = Anchor.CentreRight,
                     Origin = Anchor.CentreRight,
                 });
-            }
-        }
-
-        [BackgroundDependencyLoader]
-        void load(TextureStore ts)
-        {
-            if (actions == null) return;
-            var btns = this.OfType<TriangleButton>().ToArray();
-
-            for (int i = 0; i < actions.Length; i++)
-            {
-                var button = btns[i];
-                var action = actions[i];
-                button.Add(action.Get(ts));
-                button.Action = () => action.Action(button);
             }
         }
 
@@ -101,9 +93,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
         public abstract class AttachmentAction
         {
-            public Action<TriangleButton> Action { get; protected set; }
+            public Action<TriangleButton>? Action { get; protected set; }
 
             public abstract Drawable Get(TextureStore ts);
+
+            public LocalisableString tooltip;
         }
 
         public class IconAttachmentAction : AttachmentAction
@@ -137,11 +131,24 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
             public override Drawable Get(TextureStore ts) => new Sprite
             {
-                Texture = ts?.Get(sprite),
+                Texture = ts.Get(sprite),
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 Size = new(30),
             };
+        }
+
+        public sealed partial class AttachmentActionButton : TriangleButton, IHasTooltip
+        {
+            public AttachmentActionButton(AttachmentAction action, TextureStore ts)
+            {
+                Size = new Vector2(40, 50);
+                Action = () => action.Action?.Invoke(this);
+                TooltipText = action.tooltip;
+                Add(action.Get(ts));
+            }
+
+            public LocalisableString TooltipText { get; }
         }
     }
 }
