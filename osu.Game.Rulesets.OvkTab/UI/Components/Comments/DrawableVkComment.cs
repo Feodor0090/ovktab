@@ -2,7 +2,6 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics.UserInterface;
 using osu.Game.Rulesets.OvkTab.API;
 using osu.Game.Rulesets.OvkTab.UI.Components.PostElements;
@@ -38,7 +37,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         }
 
         [BackgroundDependencyLoader(true)]
-        void load()
+        private void load()
         {
             AddContent(comm.Text, comm.Attachments, comm.Date ?? System.DateTime.Now);
 
@@ -57,22 +56,27 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
                     },
                     Children = new Drawable[]
                     {
-                        likeButton = new PostActionButton(FontAwesome.Regular.Heart, "like", true, comm.Likes.UserLikes, async () =>
+                        likeButton = new LikeButton()
                         {
-                            if (likeButton.Checked) return;
-                            likeButton.Checked = true;
-                            likes.Value++;
-                            var l = await api.LikeComment(comm);
+                            state = { Value = comm.Likes.UserLikes },
+                            Action = async () =>
+                            {
+                                if (likeButton.state.Value) return;
 
-                            if (l.HasValue)
-                            {
-                                likes.Value = (int)l.Value;
+                                likeButton.state.Value = true;
+                                likes.Value++;
+                                var l = await api.LikeComment(comm);
+
+                                if (l.HasValue)
+                                {
+                                    likes.Value = (int)l.Value;
+                                }
+                                else
+                                {
+                                    likeButton.state.Value = false;
+                                }
                             }
-                            else
-                            {
-                                likeButton.Checked = false;
-                            }
-                        }),
+                        },
                         new PostCounter(likes),
                     }
                 });
@@ -95,13 +99,12 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
         private void F_OnCommit(Framework.Graphics.UserInterface.TextBox sender, bool newText)
         {
             comms.SendComment(sender, sender.Text, (int)comm.Id, content);
-            return;
         }
 
         public struct CommentsLevel
         {
             public int id;
-            public SimpleVkUser user;
+            public SimpleVkUser? user;
             public Comment comment;
             public List<CommentsLevel> replies;
         }
@@ -111,15 +114,15 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
             return source.Select(x => new CommentsLevel
             {
                 id = (int)x.Id,
-                user = users.Where(u => u.id == x.FromId).FirstOrDefault(),
+                user = users.FirstOrDefault(u => u.id == x.FromId),
                 comment = x,
                 replies = x.Thread?.Items.Select(y => new CommentsLevel
                 {
                     id = (int)y.Id,
-                    user = users.Where(u => u.id == y.FromId).FirstOrDefault(),
+                    user = users.FirstOrDefault(u => u.id == y.FromId),
                     comment = y,
-                    replies = new(),
-                }).ToList() ?? new()
+                    replies = new List<CommentsLevel>(),
+                }).ToList() ?? new List<CommentsLevel>()
             }).ToArray();
         }
     }

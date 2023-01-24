@@ -131,7 +131,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.Comments
                     }
                 }, false, false));
                 footer.comments.Value++;
-                footer.commentsButton.Checked = true;
+                footer.commentsButton.state.Value = true;
                 sender.Text = string.Empty;
             }
             catch

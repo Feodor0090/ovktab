@@ -7,7 +7,6 @@ using osu.Game.Overlays;
 using osu.Game.Overlays.Notifications;
 using osu.Framework.Graphics.Sprites;
 using VkNet.Model;
-using osu.Game.Online.Chat;
 using VkNet.Model.Attachments;
 using osu.Framework.Graphics.Cursor;
 using osu.Game.Rulesets.OvkTab.API;
@@ -32,22 +31,19 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         private PostFooter footer;
 
         [Resolved]
-        private IOvkApiHub ovkApiHub { get; set; }
-
-        [Resolved(canBeNull: true)]
-        private OvkOverlay ovkOverlay { get; set; }
-
-        [Resolved(canBeNull: true)]
-        private INotificationOverlay nofs { get; set; }
+        private IOvkApiHub ovkApiHub { get; set; } = null!;
 
         [Resolved]
-        private IDialogOverlay dialogOverlay { get; set; }
+        private OvkOverlay? ovkOverlay { get; set; }
 
-        [Resolved(canBeNull: true)]
-        private OsuGame osuGame { get; set; }
+        [Resolved]
+        private INotificationOverlay? nofs { get; set; }
 
-        [Resolved(canBeNull: true)]
-        private PopoverContainer popoverContainer { get; set; }
+        [Resolved]
+        private IDialogOverlay dialogOverlay { get; set; } = null!;
+
+        [Resolved]
+        private PopoverContainer? popoverContainer { get; set; }
 
         public PostFooter(NewsItem post)
         {
@@ -109,32 +105,44 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             initialize(null, null);
         }
 
-        private void initialize(Likes likesInfo, Reposts repostsInfo)
+        private void initialize(Likes? likesInfo, Reposts? repostsInfo)
         {
             Direction = FillDirection.Horizontal;
             RelativeSizeAxes = Axes.X;
             Height = 40;
             Spacing = new(5);
-            Padding = new MarginPadding()
-            {
-                Left = 5
-            };
+            Padding = new MarginPadding { Left = 5 };
             bool userLikes = likesInfo?.UserLikes ?? false;
             Children = new Drawable[]
             {
-                likeButton = new PostActionButton(FontAwesome.Regular.Heart, "like", true, userLikes, like),
+                likeButton = new LikeButton
+                {
+                    state = { Value = userLikes },
+                    Action = like
+                },
                 new PostCounter(likes),
-                commentsButton = new PostActionButton(FontAwesome.Regular.Comment, "open comments", false, false, () => { commentsButton.ShowPopover(); },
-                    () => new CommentsPopover(ownerId, postId, this, popoverContainer?.DrawSize ?? new(600))),
+                commentsButton = new PostActionButton(FontAwesome.Regular.Comment, false)
+                {
+                    TooltipText = "open comments",
+                    Action = () => commentsButton.ShowPopover(),
+                    popover = () => new CommentsPopover(ownerId, postId, this, popoverContainer?.DrawSize ?? new(600))
+                },
                 new PostCounter(comments),
-                repostButton = new PostActionButton(FontAwesome.Solid.Bullhorn, "repost to your page", false, repostsInfo?.UserReposted ?? false, likesInfo?.CanPublish != false ? repost : null),
+                repostButton = new PostActionButton(FontAwesome.Solid.Bullhorn, false)
+                {
+                    TooltipText = "repost to your page",
+                    state = { Value = repostsInfo?.UserReposted ?? false },
+                    Action = likesInfo?.CanPublish != false ? repost : null
+                },
                 new PostCounter(reposts),
-                sendButton = new PostActionButton(FontAwesome.Regular.PaperPlane, "send in messages", false, false,
-                    () => { sendButton.ShowPopover(); },
-                    () => new SendPopover(ownerId, postId)),
-                faveButton = new PostActionButton(FontAwesome.Regular.Star, "toogle bookmark", false, false, fave),
-                new PostActionButton(FontAwesome.Solid.Link, "open in browser", false, false,
-                    () => { osuGame?.HandleLink(new LinkDetails(LinkAction.External, $"https://vk.com/wall{ownerId}_{postId}")); }),
+                sendButton = new PostActionButton(FontAwesome.Regular.PaperPlane, false)
+                {
+                    TooltipText = "send in messages",
+                    Action = () => sendButton.ShowPopover(),
+                    popover = () => new SendPopover(ownerId, postId)
+                },
+                faveButton = new PostActionButton(FontAwesome.Regular.Star, false) { TooltipText = "toogle bookmark", Action = fave },
+                new ViewPostButton($"https://vk.com/wall{ownerId}_{postId}"),
             };
         }
 
@@ -142,11 +150,11 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         {
             if (postId == 0) return;
             ovkOverlay?.newsLoading.Show();
-            long? newCount = await ovkApiHub.LikePost(ownerId, postId, !likeButton.Checked);
+            long? newCount = await ovkApiHub.LikePost(ownerId, postId, !likeButton.state.Value);
 
             if (newCount.HasValue)
             {
-                likeButton.Checked = !likeButton.Checked;
+                likeButton.state.Toggle();
                 likes.Value = (int)newCount.Value;
             }
             else
@@ -162,7 +170,7 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
         void repost()
         {
-            if (postId == 0 || repostButton.Checked) return;
+            if (postId == 0 || repostButton.state.Value) return;
 
             RepostDialog dialog = new(ownerId, postId, ovkApiHub, ovkOverlay?.newsLoading, x =>
             {
@@ -170,8 +178,8 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
                 if (x.HasValue)
                 {
-                    repostButton.Checked = true;
-                    likeButton.Checked = true;
+                    repostButton.state.Value = true;
+                    likeButton.state.Value = true;
                     if (x.Value.Item1.HasValue) likes.Value = x.Value.Item1.Value;
                     if (x.Value.Item2.HasValue) reposts.Value = x.Value.Item2.Value;
                 }
@@ -181,18 +189,18 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 
         async void fave()
         {
-            if (postId == 0 || faveButton.Checked) return;
+            if (postId == 0 || faveButton.state.Value) return;
 
             ovkOverlay?.newsLoading.Show();
             bool ok = await ovkApiHub.AddToBookmarks(ownerId, postId);
 
             if (ok)
             {
-                faveButton.Checked = true;
+                faveButton.state.Value = true;
             }
             else
             {
-                nofs?.Post(new SimpleErrorNotification()
+                nofs?.Post(new SimpleErrorNotification
                 {
                     Text = "Failed to fave the post. Is it favourite already?"
                 });

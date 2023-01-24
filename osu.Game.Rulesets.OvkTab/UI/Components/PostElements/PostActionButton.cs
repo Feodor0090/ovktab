@@ -1,5 +1,6 @@
 ﻿using System;
 using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Game.Graphics.UserInterface;
 using osu.Framework.Graphics.Sprites;
@@ -13,52 +14,20 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
 {
     public partial class PostActionButton : OsuButton, IHasPopover, IHasTooltip
     {
-        private readonly IconUsage icon;
-        private OsuColour colour;
-        private bool done;
-        private readonly Func<Popover> popover;
+        [Resolved]
+        private OsuColour colours { get; set; } = null!;
+
+        public Func<Popover>? popover;
         private readonly bool isPink;
 
-        public bool Checked
-        {
-            get => done;
-            set
-            {
-                done = value;
+        public readonly BindableBool state = new();
 
-                if (done)
-                {
-                    BackgroundColour = colour.Lime;
-                    Triangles.ColourDark = colour.Lime0;
-                    Triangles.ColourLight = colour.Lime3;
-                }
-                else
-                {
-                    BackgroundColour = isPink ? colour.PinkDark : colour.BlueDark;
-                    Triangles.ColourDark = isPink ? colour.PinkDarker : colour.BlueDarker;
-                    Triangles.ColourLight = isPink ? colour.Pink : colour.Blue;
-                }
-            }
-        }
-
-        public PostActionButton(IconUsage icon, string tooltip, bool pink, bool done, Action action, Func<Popover> popover = null)
+        public PostActionButton(IconUsage icon, bool pink)
         {
-            Action = action;
-            TooltipText = tooltip;
-            this.icon = icon;
             isPink = pink;
-            this.done = done;
             Size = new(30, 30);
             Anchor = Origin = Anchor.CentreLeft;
-            this.popover = popover;
-        }
 
-        protected Triangles Triangles { get; private set; }
-
-        [BackgroundDependencyLoader]
-        private void load(OsuColour colours)
-        {
-            colour = colours;
             Add(Triangles = new SmallTriangles());
             Add(new SpriteIcon
             {
@@ -67,12 +36,33 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
                 Origin = Anchor.Centre,
                 Size = new(18),
             });
-            Checked = done;
+        }
+
+        protected Triangles Triangles { get; }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            state.BindValueChanged(e =>
+            {
+                if (e.NewValue)
+                {
+                    BackgroundColour = colours.Lime;
+                    Triangles.ColourDark = colours.Lime0;
+                    Triangles.ColourLight = colours.Lime3;
+                }
+                else
+                {
+                    BackgroundColour = isPink ? colours.PinkDark : colours.BlueDark;
+                    Triangles.ColourDark = isPink ? colours.PinkDarker : colours.BlueDarker;
+                    Triangles.ColourLight = isPink ? colours.Pink : colours.Blue;
+                }
+            }, true);
         }
 
         public Popover GetPopover()
         {
-            return popover?.Invoke();
+            return popover?.Invoke()!;
         }
 
         private partial class SmallTriangles : Triangles
@@ -86,6 +76,6 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
             }
         }
 
-        public LocalisableString TooltipText { get; }
+        public LocalisableString TooltipText { get; set; }
     }
 }
