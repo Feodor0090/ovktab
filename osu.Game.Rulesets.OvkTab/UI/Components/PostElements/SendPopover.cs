@@ -36,9 +36,9 @@ namespace osu.Game.Rulesets.OvkTab.UI.Components.PostElements
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private async void load()
         {
-            foreach (var x in api.GetDialogsList().Result)
+            foreach (var x in await api.GetDialogsList())
             {
                 var u = x.Item1;
                 if (u == null)
